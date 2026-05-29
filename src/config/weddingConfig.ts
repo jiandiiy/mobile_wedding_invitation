@@ -28,13 +28,13 @@ export const weddingConfig: WeddingConfig = {
   name: '웨딩스퀘어 강변',
   hall: '아모르홀',
   address: '서울시 광진구 광나루로 56길 85, 4층',
-  mapUrl: 'https://map.kakao.com/',
+  mapUrl: 'https://naver.me/59UlRoZ3',
   lat: 37.535095,
   lng: 127.095681,
   mapLinks: {
-    kakao: 'https://map.kakao.com/',
-    naver: 'https://map.naver.com/',
-    tmap: 'https://www.tmapmobility.com/',
+    kakao: 'https://map.kakao.com/link/map/웨딩스퀘어+강변점(테크노마트+3,4층),37.5357252,127.0956922',
+    naver: 'https://naver.me/59UlRoZ3',
+    tmap: 'https://tmap.life/place?name=웨딩스퀘어강변&lat=37.5357252&lon=127.0956922',
   },
 },
 
