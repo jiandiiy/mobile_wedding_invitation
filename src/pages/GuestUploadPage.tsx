@@ -1,17 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { uploadGuestFiles } from '../services/guestUploadService';
-import { formatFileSize } from '../utils/file';
+
 
 const MAX_FILE_COUNT = 100;
 
-type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
 type PageView = 'landing' | 'form';
+type FormStep = 'name-input' | 'uploading' | 'success' | 'error';
 
 type PreviewFile = {
   id: string;
   file: File;
   previewUrl: string | null;
+  progress: number; // 0-100
+};
+
+type UploadAbortMap = {
+  [fileId: string]: AbortController;
 };
 
 function createPreviewFile(file: File): PreviewFile {
@@ -21,6 +26,7 @@ function createPreviewFile(file: File): PreviewFile {
     id: `${file.name}-${file.size}-${file.lastModified}-${crypto.randomUUID()}`,
     file,
     previewUrl: isImage ? URL.createObjectURL(file) : null,
+    progress: 0,
   };
 }
 
@@ -36,7 +42,6 @@ function revokePreviewUrls(previewFiles: PreviewFile[]) {
 function GuestUploadLanding({ onStart }: { onStart: () => void }) {
   return (
     <div className="guest-upload-landing">
-      {/* 히어로 이미지 */}
       <div className="guest-upload-landing__hero">
         <img
           src="/images/hero-couple.jpg"
@@ -53,7 +58,6 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
         </div>
       </div>
 
-      {/* 안내 박스 */}
       <div className="guest-upload-landing__body">
         <div className="guest-upload-landing__info-box">
           <p className="guest-upload-landing__deadline">
@@ -61,7 +65,7 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
           </p>
 
           <p className="guest-upload-landing__headline">
-            저희의 스냅 작가님이 되어주세요 📷
+            📷 저희의 스냅 작가님이 되어주세요 
           </p>
 
           <ul className="guest-upload-landing__list">
@@ -72,12 +76,12 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
           </ul>
 
           <p className="guest-upload-landing__gift">
-            가장 멋진 컷을 남겨주신 분께 🎁<br />
+            🎁 가장 멋진 컷을 남겨주신 분께 <br />
             <strong>감사의 선물을 드리겠습니다!</strong>
           </p>
 
           <p className="guest-upload-landing__cta-hint">
-            당일날, 아래 공유 버튼을 통해 올려주세요!
+            결혼식 당일날, 아래 업로드 버튼을 통해 사진과 영상을 올려주세요!
           </p>
         </div>
 
@@ -93,46 +97,23 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
   );
 }
 
+const API_BASE_URL = 'https://asia-northeast1-mobile-wedding-invitatio-d2312.cloudfunctions.net';
+
 export function GuestUploadPage() {
+  const navigate = useNavigate();
   const weddingId = import.meta.env.VITE_WEDDING_ID;
 
-  // 현재 뷰 상태: 'landing' → 'form' 으로 전환
+  // 페이지 뷰: 'landing' → 'form'
   const [view, setView] = useState<PageView>('landing');
   const [isFading, setIsFading] = useState(false);
 
+  // 폼 스텝: name-input → uploading → success/error
+  const [formStep, setFormStep] = useState<FormStep>('name-input');
   const [guestName, setGuestName] = useState('');
   const [previewFiles, setPreviewFiles] = useState<PreviewFile[]>([]);
-  const [uploadStatus, setUploadStatus] = useState<UploadStatus>('idle');
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [noticeMessage, setNoticeMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-
-  const files = useMemo(
-    () => previewFiles.map((previewFile) => previewFile.file),
-    [previewFiles],
-  );
-
-  const imageCount = useMemo(
-    () => files.filter((file) => file.type.startsWith('image/')).length,
-    [files],
-  );
-
-  const videoCount = useMemo(
-    () => files.filter((file) => file.type.startsWith('video/')).length,
-    [files],
-  );
-
-  const totalFileSize = useMemo(
-    () => files.reduce((sum, file) => sum + file.size, 0),
-    [files],
-  );
-
-  const remainingFileCount = MAX_FILE_COUNT - files.length;
-
-  const canSubmit =
-    guestName.trim().length > 0 &&
-    files.length > 0 &&
-    uploadStatus !== 'uploading';
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadAbortMapRef = useRef<UploadAbortMap>({});
 
   // previewUrls cleanup
   useEffect(() => {
@@ -141,128 +122,208 @@ export function GuestUploadPage() {
     };
   }, [previewFiles]);
 
-  // 랜딩 → 폼 전환: fade-out 후 view 변경
+  // 랜딩 → 폼 전환
   const handleStartUpload = () => {
     setIsFading(true);
     setTimeout(() => {
       setView('form');
       setIsFading(false);
-    }, 400); // CSS transition 시간과 맞춤
+    }, 400);
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // 페이지 닫기
+  const handleClose = () => {
+    if (view === 'form') {
+      setIsFading(true);
+      setTimeout(() => {
+        setView('landing');
+        setFormStep('name-input');
+        setGuestName('');
+        revokePreviewUrls(previewFiles);
+        setPreviewFiles([]);
+        setErrorMessage('');
+        setIsFading(false);
+      }, 400);
+    } else {
+      navigate('/');
+    }
+  };
+
+  // 이름 입력 후 업로드 버튼 클릭 → 파일 선택 열기
+  const handleStartFileSelect = () => {
+    if (guestName.trim().length > 0) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  // 파일별 진행률 업데이트
+  const updateFileProgress = (fileId: string, progress: number) => {
+    setPreviewFiles((prev) =>
+      prev.map((pf) =>
+        pf.id === fileId ? { ...pf, progress } : pf
+      )
+    );
+  };
+
+  // 파일 선택 완료 → 자동 업로드 시작
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files ?? []);
 
     if (selectedFiles.length === 0) return;
 
-    const availableCount = MAX_FILE_COUNT - previewFiles.length;
+    const nextPreviewFiles = selectedFiles.slice(0, MAX_FILE_COUNT).map(createPreviewFile);
+    setPreviewFiles(nextPreviewFiles);
 
-    if (availableCount <= 0) {
-      setNoticeMessage(`한 번에 최대 ${MAX_FILE_COUNT}개까지 선택할 수 있어요.`);
-      event.target.value = '';
-      return;
-    }
+    // 파일 선택 완료 후 바로 업로드 상태로 전환
+    setFormStep('uploading');
 
-    const limitedFiles = selectedFiles.slice(0, availableCount);
-    const exceededCount = selectedFiles.length - limitedFiles.length;
-    const nextPreviewFiles = limitedFiles.map(createPreviewFile);
+    // 자동 업로드 시작
+    await performUpload(nextPreviewFiles);
 
-    setPreviewFiles((prevFiles) => [...prevFiles, ...nextPreviewFiles]);
-    setErrorMessage('');
-    setUploadStatus('idle');
-
-    if (exceededCount > 0) {
-      setNoticeMessage(
-        `최대 ${MAX_FILE_COUNT}개까지만 선택할 수 있어 ${exceededCount}개는 제외했어요.`,
-      );
-    } else {
-      setNoticeMessage('');
-    }
-
+    // 파일 input 초기화
     event.target.value = '';
   };
 
-  const handleRemoveFile = (targetId: string) => {
-    setPreviewFiles((prevFiles) => {
-      const targetFile = prevFiles.find(
-        (previewFile) => previewFile.id === targetId,
-      );
-
-      if (targetFile?.previewUrl) {
-        URL.revokeObjectURL(targetFile.previewUrl);
-      }
-
-      return prevFiles.filter((previewFile) => previewFile.id !== targetId);
-    });
-
-    setNoticeMessage('');
-    setErrorMessage('');
-  };
-
-  const handleClearFiles = () => {
-    revokePreviewUrls(previewFiles);
-    setPreviewFiles([]);
-    setNoticeMessage('');
-    setErrorMessage('');
-    setUploadProgress(0);
-    setUploadStatus('idle');
-  };
-
-  const handleResetForMoreUpload = () => {
-    revokePreviewUrls(previewFiles);
-    setPreviewFiles([]);
-    setUploadProgress(0);
-    setNoticeMessage('');
-    setErrorMessage('');
-    setUploadStatus('idle');
-  };
-
-  const handleFullReset = () => {
-    revokePreviewUrls(previewFiles);
-    setGuestName('');
-    setPreviewFiles([]);
-    setUploadProgress(0);
-    setNoticeMessage('');
-    setErrorMessage('');
-    setUploadStatus('idle');
-  };
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  // 업로드 수행 (파일별 개별 업로드)
+  const performUpload = async (filesToUpload: PreviewFile[]) => {
     if (!weddingId) {
-      setUploadStatus('error');
+      setFormStep('error');
       setErrorMessage('청첩장 ID 설정이 필요합니다.');
       return;
     }
 
     try {
-      setUploadStatus('uploading');
-      setUploadProgress(0);
-      setNoticeMessage('');
       setErrorMessage('');
+      uploadAbortMapRef.current = {};
 
-      await uploadGuestFiles({
-        weddingId,
-        guestName: guestName.trim(),
-        files,
-        onProgress: setUploadProgress,
+      // 각 파일을 개별적으로 업로드
+      const uploadPromises = filesToUpload.map(async (previewFile) => {
+        const abortController = new AbortController();
+        uploadAbortMapRef.current[previewFile.id] = abortController;
+
+        try {
+          // 파일별 FormData 생성
+          const formData = new FormData();
+          formData.append('weddingId', weddingId);
+          formData.append('guestName', guestName.trim());
+          formData.append('file', previewFile.file);
+
+          // 파일 업로드 (XMLHttpRequest로 진행률 추적)
+          await new Promise<void>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+
+            xhr.upload.addEventListener('progress', (e) => {
+              if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                updateFileProgress(previewFile.id, percentComplete);
+              }
+            });
+
+            xhr.addEventListener('load', () => {
+              if (xhr.status >= 200 && xhr.status < 300) {
+                updateFileProgress(previewFile.id, 100);
+                resolve();
+              } else {
+                reject(new Error(`Upload failed with status ${xhr.status}`));
+              }
+            });
+
+            xhr.addEventListener('error', () => {
+              reject(new Error('Upload failed'));
+            });
+
+            xhr.addEventListener('abort', () => {
+              reject(new Error('Upload cancelled'));
+            });
+
+            // AbortController 연결
+            abortController.signal.addEventListener('abort', () => {
+              xhr.abort();
+            });
+
+            xhr.open('POST', `${API_BASE_URL}/guestUploadApi`);
+            xhr.send(formData);
+          });
+        } catch (error) {
+          if (error instanceof Error && error.message === 'Upload cancelled') {
+            updateFileProgress(previewFile.id, 0);
+          } else {
+            throw error;
+          }
+        }
       });
 
-      revokePreviewUrls(previewFiles);
-      setPreviewFiles([]);
-      setUploadStatus('success');
-      setUploadProgress(100);
+      await Promise.all(uploadPromises);
+      setFormStep('success');
     } catch (error) {
       console.error(error);
-
-      setUploadStatus('error');
+      setFormStep('error');
       setErrorMessage(
         error instanceof Error
           ? error.message
           : '업로드 중 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.',
       );
     }
+  };
+
+  // 파일별 삭제 (업로드 중 취소)
+  const handleRemoveFile = (fileId: string) => {
+    // 업로드 중이면 abort
+    if (uploadAbortMapRef.current[fileId]) {
+      uploadAbortMapRef.current[fileId].abort();
+      delete uploadAbortMapRef.current[fileId];
+    }
+
+    setPreviewFiles((prev) => {
+      const removed = prev.find((pf) => pf.id === fileId);
+      if (removed?.previewUrl) {
+        URL.revokeObjectURL(removed.previewUrl);
+      }
+      return prev.filter((pf) => pf.id !== fileId);
+    });
+  };
+
+  // 전체 업로드 취소
+  const handleCancelAll = () => {
+    Object.values(uploadAbortMapRef.current).forEach((controller) => {
+      controller.abort();
+    });
+    uploadAbortMapRef.current = {};
+    revokePreviewUrls(previewFiles);
+    setPreviewFiles([]);
+    setErrorMessage('');
+    setFormStep('name-input');
+    setGuestName('');
+  };
+
+  // 성공 후 다시 업로드
+  const handleUploadMore = () => {
+    revokePreviewUrls(previewFiles);
+    setPreviewFiles([]);
+    setFormStep('name-input');
+    setGuestName('');
+  };
+
+  // 성공 후 랜딩으로 돌아가기
+  const handleBackToLanding = () => {
+    revokePreviewUrls(previewFiles);
+    setPreviewFiles([]);
+    setFormStep('name-input');
+    setGuestName('');
+    setIsFading(true);
+    setTimeout(() => {
+      setView('landing');
+      setIsFading(false);
+    }, 400);
+  };
+
+  // 에러 후 다시 시도
+  const handleRetry = () => {
+    revokePreviewUrls(previewFiles);
+    setPreviewFiles([]);
+    setErrorMessage('');
+    setFormStep('name-input');
+    setGuestName('');
   };
 
   return (
@@ -273,11 +334,18 @@ export function GuestUploadPage() {
         transition: 'opacity 0.4s ease',
       }}
     >
+      <button
+        type="button"
+        className="guest-upload-page__close"
+        onClick={handleClose}
+        aria-label="이전으로 돌아가기"
+      >
+        ✕
+      </button>
+
       {view === 'landing' ? (
-        // 랜딩 화면
         <GuestUploadLanding onStart={handleStartUpload} />
       ) : (
-        // 폼 화면
         <section className="guest-snap-section guest-snap-section--page">
           <h2>Guest Snap</h2>
 
@@ -287,128 +355,134 @@ export function GuestUploadPage() {
             로그인 없이 원본 화질 그대로 업로드하실 수 있습니다.
           </p>
 
-          <form className="guest-upload-form" onSubmit={handleSubmit}>
-            <div className="guest-upload-fields">
-              <label className="guest-upload-field">
-                <span>이름</span>
-                <input
-                  value={guestName}
-                  onChange={(event) => setGuestName(event.target.value)}
-                  placeholder="이름을 입력해 주세요"
-                  disabled={uploadStatus === 'uploading'}
-                  required
-                />
-              </label>
-            </div>
+          {/* Step 1: 이름 입력 */}
+          {formStep === 'name-input' && (
+            <div className="guest-upload-form-step">
+              <div className="guest-upload-fields">
+                <label className="guest-upload-field">
+                  <span>이름</span>
+                  <input
+                    value={guestName}
+                    onChange={(event) => setGuestName(event.target.value)}
+                    placeholder="이름을 입력해 주세요"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && guestName.trim().length > 0) {
+                        handleStartFileSelect();
+                      }
+                    }}
+                  />
+                </label>
+              </div>
 
-            <label className="file-upload-dropzone">
+              <button
+                type="button"
+                className="guest-upload-submit"
+                disabled={guestName.trim().length === 0}
+                onClick={handleStartFileSelect}
+              >
+                사진 업로드하기
+              </button>
+
+              {/* 숨겨진 파일 input */}
               <input
+                ref={fileInputRef}
                 type="file"
                 accept="image/*,video/*"
                 multiple
                 onChange={handleFileChange}
-                disabled={
-                  uploadStatus === 'uploading' || files.length >= MAX_FILE_COUNT
-                }
+                style={{ display: 'none' }}
               />
-
-              <span className="file-upload-dropzone__icon">＋</span>
-              <strong>사진/영상 선택하기</strong>
-              <small>
-                한 번에 최대 {MAX_FILE_COUNT}개까지, 여러 번 나누어 올릴 수 있어요.
-              </small>
-            </label>
-
-            <div className="selected-file-summary">
-              <div>
-                <strong>{files.length}개 선택됨</strong>
-                <span>
-                  사진 {imageCount}개 · 영상 {videoCount}개
-                </span>
-              </div>
-
-              <div>
-                <strong>{formatFileSize(totalFileSize)}</strong>
-                <span>남은 선택 가능 {remainingFileCount}개</span>
-              </div>
             </div>
+          )}
 
-            {noticeMessage && (
-              <div className="upload-message upload-message--notice">
-                {noticeMessage}
-              </div>
-            )}
-
-            {previewFiles.length > 0 && (
-              <>
-                <div className="selected-file-actions">
-                  <p>업로드 전 선택한 파일을 확인해 주세요.</p>
-
-                  <button
-                    type="button"
-                    onClick={handleClearFiles}
-                    disabled={uploadStatus === 'uploading'}
-                  >
-                    전체 삭제
-                  </button>
-                </div>
-
-                <ul className="preview-file-grid">
-                  {previewFiles.map((previewFile) => {
-                    const { file } = previewFile;
-                    const isImage = file.type.startsWith('image/');
-                    const isVideo = file.type.startsWith('video/');
-
-                    return (
-                      <li key={previewFile.id} className="preview-file-card">
-                        <div className="preview-file-card__media">
-                          {isImage && previewFile.previewUrl ? (
-                            <img src={previewFile.previewUrl} alt={file.name} />
-                          ) : (
-                            <div className="preview-file-card__video">
-                              <span>{isVideo ? '▶' : 'FILE'}</span>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className="preview-file-card__body">
-                          <strong>{file.name}</strong>
-                          <span>
-                            {isVideo ? '영상' : '사진'} ·{' '}
-                            {formatFileSize(file.size)}
+          {/* Step 2: 업로드 중 */}
+          {formStep === 'uploading' && (
+            <div className="guest-upload-form-step">
+              <div className="upload-files-grid">
+                {previewFiles.map((previewFile) => {
+                  const isImage = previewFile.file.type.startsWith('image/');
+                  return (
+                    <div key={previewFile.id} className="upload-file-card">
+                      <div className="upload-file-card__media">
+                        {isImage && previewFile.previewUrl ? (
+                          <img
+                            src={previewFile.previewUrl}
+                            alt={previewFile.file.name}
+                          />
+                        ) : (
+                          <div className="upload-file-card__placeholder">
+                            {isImage ? '📸' : '🎥'}
+                          </div>
+                        )}
+                        <div className="upload-file-card__progress-overlay">
+                          <div className="upload-file-card__progress-track">
+                            <div
+                              className="upload-file-card__progress-bar"
+                              style={{ width: `${previewFile.progress}%` }}
+                            />
+                          </div>
+                          <span className="upload-file-card__progress-text">
+                            {previewFile.progress}%
                           </span>
                         </div>
-
+                      </div>
+                      <div className="upload-file-card__info">
+                        <strong>{previewFile.file.name}</strong>
                         <button
                           type="button"
-                          className="preview-file-card__remove"
+                          className="upload-file-card__remove"
                           onClick={() => handleRemoveFile(previewFile.id)}
-                          disabled={uploadStatus === 'uploading'}
-                          aria-label={`${file.name} 삭제`}
+                          aria-label="삭제"
                         >
-                          삭제
+                          ✕
                         </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
-            )}
-
-            {uploadStatus === 'uploading' && (
-              <div className="upload-progress-box">
-                <div className="upload-progress-track">
-                  <div
-                    className="upload-progress-bar"
-                    style={{ width: `${uploadProgress}%` }}
-                  />
-                </div>
-
-                <p>원본 파일을 업로드 중이에요... {uploadProgress}%</p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            )}
 
-            {uploadStatus === 'success' && (
+              <button
+                type="button"
+                className="guest-upload-cancel"
+                onClick={handleCancelAll}
+              >
+                전체 취소
+              </button>
+            </div>
+          )}
+
+          {/* Step 3: 성공 */}
+          {formStep === 'success' && (
+            <div className="guest-upload-form-step">
+              <div className="upload-files-grid">
+                {previewFiles.map((previewFile) => {
+                  const isImage = previewFile.file.type.startsWith('image/');
+                  return (
+                    <div key={previewFile.id} className="upload-file-card upload-file-card--completed">
+                      <div className="upload-file-card__media">
+                        {isImage && previewFile.previewUrl ? (
+                          <img
+                            src={previewFile.previewUrl}
+                            alt={previewFile.file.name}
+                          />
+                        ) : (
+                          <div className="upload-file-card__placeholder">
+                            {isImage ? '📸' : '🎥'}
+                          </div>
+                        )}
+                        <div className="upload-file-card__success-badge">
+                          ✓
+                        </div>
+                      </div>
+                      <div className="upload-file-card__info">
+                        <strong>{previewFile.file.name}</strong>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
               <div className="upload-success-card">
                 <strong>업로드가 완료되었어요.</strong>
 
@@ -421,7 +495,7 @@ export function GuestUploadPage() {
                   <button
                     type="button"
                     className="primary-button"
-                    onClick={handleResetForMoreUpload}
+                    onClick={handleUploadMore}
                   >
                     사진 더 올리기
                   </button>
@@ -429,30 +503,41 @@ export function GuestUploadPage() {
                   <button
                     type="button"
                     className="secondary-button"
-                    onClick={handleFullReset}
+                    onClick={handleBackToLanding}
                   >
-                    처음부터 다시 입력
+                    처음으로 돌아가기
                   </button>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {uploadStatus === 'error' && (
+          {/* Step 4: 에러 */}
+          {formStep === 'error' && (
+            <div className="guest-upload-form-step">
               <div className="upload-message upload-message--error">
                 {errorMessage}
               </div>
-            )}
 
-            {uploadStatus !== 'success' && (
-              <button
-                type="submit"
-                className="guest-upload-submit"
-                disabled={!canSubmit}
-              >
-                {uploadStatus === 'uploading' ? '업로드 중...' : '업로드하기'}
-              </button>
-            )}
-          </form>
+              <div className="upload-error-actions">
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={handleRetry}
+                >
+                  다시 시도
+                </button>
+
+                <button
+                  type="button"
+                  className="secondary-button"
+                  onClick={handleBackToLanding}
+                >
+                  처음으로 돌아가기
+                </button>
+              </div>
+            </div>
+          )}
         </section>
       )}
     </main>

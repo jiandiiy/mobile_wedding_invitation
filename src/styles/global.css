@@ -26,7 +26,7 @@
 }
 
 :root {
-  --layout-width: 375px;
+  --layout-width: 430px;
 
   --color-bg: #ffffff;
   --color-surface: #ffffff;
@@ -68,7 +68,7 @@ html {
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 370px;
   background: #ffffff;
   color: var(--color-text);
   font-family: var(--font-sans);
@@ -599,7 +599,7 @@ a {
 
   .account-row {
     grid-template-columns: 78px 1fr 38px;
-    column-gap: 10px;
+    column-gap: 40px;
     min-height: 72px;
   }
 
@@ -630,56 +630,196 @@ a {
 ========================= */
 
 .footer-section {
-  padding: 54px 28px 64px;
+  padding: 60px 24px 48px;
   text-align: center;
-  border-top: 1px solid rgba(17, 17, 17, 0.07);
-  background: #111111;
-  color: #f6f6f3;
+}
+
+.footer-section__names {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #111;
+}
+
+.footer-section__date {
+  margin: 0;
   font-size: 13px;
+  color: #999;
+  letter-spacing: 0.01em;
 }
 
 /* =========================
-   Guest Snap Upload Section
+   Guest Upload Files Grid
 ========================= */
 
-.guest-snap-section {
-  padding: 104px 0 108px;
+.upload-files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 0;
+}
+
+.upload-file-card {
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
-  color: #111111;
-  text-align: center;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.guest-snap-section h2 {
-  margin: 0;
-  font-family: var(--font-serif);
-  font-size: 25px;
-  font-weight: 200;
-  font-style: italic;
-  line-height: 1;
-  letter-spacing: -0.06em;
-  color: #111111;
+.upload-file-card__media {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* 1:1 정사각형 */
+  background: #f5f5f5;
+  overflow: hidden;
 }
 
-.guest-upload-description {
-  margin: 20px auto 0;
-  color: #222222;
+.upload-file-card__media img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-file-card__placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  background: #f0f0f0;
+}
+
+/* 진행 중일 때 오버레이 */
+.upload-file-card__progress-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.upload-file-card--completed .upload-file-card__progress-overlay {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.upload-file-card__progress-track {
+  width: 80%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.upload-file-card__progress-bar {
+  height: 100%;
+  background: #ffffff;
+  transition: width 0.2s ease;
+}
+
+.upload-file-card__progress-text {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* 완료 배지 */
+.upload-file-card__success-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  background: #4CAF50;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 16px;
-  font-weight: 400;
-  line-height: 2;
-  letter-spacing: -0.06em;
+  font-weight: 700;
 }
 
-.guest-upload-form {
-  width: calc(100% - 56px);
-  max-width: 640px;
-  margin: 64px auto 0;
+.upload-file-card__info {
+  flex: 1;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 60px;
 }
+
+.upload-file-card__info strong {
+  display: block;
+  overflow: hidden;
+  color: #111111;
+  font-size: 12px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.upload-file-card__remove {
+  align-self: flex-start;
+  margin-top: 6px;
+  border: 0;
+  background: transparent;
+  color: #999999;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  width: auto;
+  height: auto;
+}
+
+.upload-file-card__remove:hover {
+  color: #111111;
+}
+
+/* =========================
+   Form Step Container
+========================= */
+
+.guest-upload-form-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+/* =========================
+   Name Input Fields
+========================= */
 
 .guest-upload-fields {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
-  margin-bottom: 34px;
+  margin-bottom: 16px;
+  width: 100%;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .guest-upload-field {
@@ -687,6 +827,7 @@ a {
   grid-template-columns: 72px 1fr;
   align-items: center;
   text-align: left;
+  gap: 12px;
 }
 
 .guest-upload-field span {
@@ -719,110 +860,16 @@ a {
   border-bottom-color: #111111;
 }
 
-.file-upload-dropzone {
-  position: relative;
-  display: flex;
-  min-height: 258px;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 48px 24px;
-  border: 1px dashed #b8b8b8;
-  background: #fafafa;
-  cursor: pointer;
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
-}
-
-.file-upload-dropzone:hover {
-  border-color: #111111;
-  background: #ffffff;
-}
-
-.file-upload-dropzone input {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.file-upload-dropzone__icon {
-  display: inline-flex;
-  width: 42px;
-  height: 42px;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 25px;
-  background: #111111;
-  color: #ffffff;
-  font-size: 40px;
-  font-weight: 300;
-  line-height: 1;
-}
-
-.file-upload-dropzone strong {
-  color: #111111;
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.06em;
-}
-
-.file-upload-dropzone small {
-  display: block;
-  margin-top: 5px;
-  color: #777777;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.6;
-  letter-spacing: -0.05em;
-}
-
-.selected-file-summary {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  border-right: 1px solid #e5e5e5;
-  border-bottom: 1px solid #e5e5e5;
-  border-left: 1px solid #e5e5e5;
-  background: #ffffff;
-}
-
-.selected-file-summary > div {
-  min-height: 96px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.selected-file-summary > div + div {
-  border-left: 1px solid #e5e5e5;
-}
-
-.selected-file-summary strong {
-  color: #111111;
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.05em;
-}
-
-.selected-file-summary span {
-  margin-top: 14px;
-  color: #777777;
-  font-size: 16px;
-  font-weight: 400;
-  letter-spacing: -0.05em;
-}
+/* =========================
+   Submit & Cancel Buttons
+========================= */
 
 .guest-upload-submit {
   display: inline-flex;
-  min-width: 102px;
+  min-width: 70px;
   height: 52px;
   align-items: center;
   justify-content: center;
-  margin-top: 32px;
   border: 0;
   background: #111111;
   color: #ffffff;
@@ -830,6 +877,7 @@ a {
   font-weight: 700;
   letter-spacing: -0.06em;
   cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .guest-upload-submit:disabled {
@@ -838,18 +886,45 @@ a {
   cursor: not-allowed;
 }
 
+.guest-upload-submit:hover:not(:disabled) {
+  background: #333333;
+}
+
+.guest-upload-cancel {
+  display: inline-flex;
+  min-width: 70px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #b5b5b0;
+  background: transparent;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.guest-upload-cancel:hover {
+  border-color: #111111;
+  background: #f5f5f5;
+}
+
+/* =========================
+   Messages & Cards
+========================= */
+
 .upload-message {
-  margin-top: 20px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0;
   padding: 16px 18px;
   font-size: 15px;
   line-height: 1.6;
   letter-spacing: -0.04em;
   text-align: left;
-}
-
-.upload-message--notice {
-  background: #f7f7f3;
-  color: #555555;
+  border-radius: 4px;
 }
 
 .upload-message--error {
@@ -857,130 +932,14 @@ a {
   color: #c0392b;
 }
 
-.selected-file-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-top: 30px;
-  text-align: left;
-}
-
-.selected-file-actions p {
-  margin: 0;
-  color: #666666;
-  font-size: 15px;
-  letter-spacing: -0.04em;
-}
-
-.selected-file-actions button {
-  border: 0;
-  background: transparent;
-  color: #111111;
-  font-size: 14px;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.preview-file-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-  margin: 18px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.preview-file-card {
-  display: grid;
-  grid-template-columns: 64px 1fr auto;
-  align-items: center;
-  gap: 14px;
-  padding: 12px;
-  border: 1px solid #eeeeee;
-  background: #ffffff;
-  text-align: left;
-}
-
-.preview-file-card__media {
-  width: 64px;
-  height: 64px;
-  overflow: hidden;
-  background: #f1f1f1;
-}
-
-.preview-file-card__media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.preview-file-card__video {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  color: #111111;
-  font-size: 14px;
-}
-
-.preview-file-card__body {
-  min-width: 0;
-}
-
-.preview-file-card__body strong {
-  display: block;
-  overflow: hidden;
-  color: #111111;
-  font-size: 14px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.preview-file-card__body span {
-  display: block;
-  margin-top: 6px;
-  color: #777777;
-  font-size: 13px;
-}
-
-.preview-file-card__remove {
-  border: 0;
-  background: transparent;
-  color: #999999;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.upload-progress-box {
-  margin-top: 28px;
-}
-
-.upload-progress-track {
-  overflow: hidden;
-  height: 4px;
-  background: #eeeeee;
-}
-
-.upload-progress-bar {
-  height: 100%;
-  background: #111111;
-  transition: width 0.2s ease;
-}
-
-.upload-progress-box p {
-  margin: 12px 0 0;
-  color: #666666;
-  font-size: 14px;
-}
-
 .upload-success-card {
-  margin-top: 32px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0;
   padding: 32px 24px;
   background: #f8f8f5;
   text-align: center;
+  border-radius: 4px;
 }
 
 .upload-success-card strong {
@@ -996,135 +955,112 @@ a {
   line-height: 1.7;
 }
 
-.upload-success-actions {
+.upload-success-actions,
+.upload-error-actions {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
   margin-top: 24px;
+  width: 100%;
+  max-width: 560px;
 }
 
-.upload-success-actions .primary-button,
-.upload-success-actions .secondary-button {
+.primary-button,
+.secondary-button {
   height: 52px;
   border: 0;
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-.upload-success-actions .primary-button {
+.primary-button {
   background: #111111;
   color: #ffffff;
 }
 
-.upload-success-actions .secondary-button {
+.primary-button:hover {
+  background: #333333;
+}
+
+.secondary-button {
   background: #e7e7e5;
   color: #111111;
 }
 
-@media (max-width: 430px) {
-  .guest-snap-section {
-    padding: 88px 0 96px;
-  }
-
-  .guest-snap-section h2 {
-    font-size: 25px;
-  }
-
-  .guest-upload-description {
-    margin-top: 44px;
-    font-size: 20px;
-    line-height: 1.95;
-  }
-
-  .guest-upload-form {
-    width: calc(100% - 40px);
-    margin-top: 54px;
-  }
-
-  .guest-upload-field {
-    grid-template-columns: 62px 1fr;
-  }
-
-  .guest-upload-field span {
-    font-size: 17px;
-  }
-
-  .guest-upload-field input {
-    height: 44px;
-    font-size: 16px;
-  }
-
-  .file-upload-dropzone {
-    min-height: 238px;
-    padding: 42px 18px;
-  }
-
-  .file-upload-dropzone__icon {
-    width: 74px;
-    height: 74px;
-    margin-bottom: 24px;
-    font-size: 38px;
-  }
-
-  .file-upload-dropzone strong {
-    font-size: 22px;
-  }
-
-  .file-upload-dropzone small {
-    font-size: 15px;
-  }
-
-  .selected-file-summary > div {
-    min-height: 88px;
-  }
-
-  .selected-file-summary strong {
-    font-size: 21px;
-  }
-
-  .selected-file-summary span {
-    font-size: 14px;
-  }
-
-  .guest-upload-submit {
-    height: 66px;
-    min-width: 124px;
-    font-size: 21px;
-  }
+.secondary-button:hover {
+  background: #d5d5d0;
 }
 
-.guest-upload-open-button {
-  display: block;
-  margin-top: 54px;
-  width: calc(100% - 96px);
-  max-width: 120px;        
-  margin: 48px auto 0;
-  border: 0;
-  padding: 16px 22px;
-  background: #2f2a26;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  cursor: pointer;
-  text-decoration: none;
+/* =========================
+   Section & Page Base
+========================= */
+
+.guest-snap-section {
+  padding: 104px 0 108px;
+  background: #ffffff;
+  color: #111111;
   text-align: center;
 }
 
-/* ==============================================
-   /guest-upload 전용 — global.css 추가분
-   ============================================== */
+.guest-snap-section h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 25px;
+  font-weight: 200;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: #111111;
+}
 
-/* 페이지 루트 */
+.guest-snap-section--page {
+  padding: 3rem 1.5rem 4rem;
+  background: #faf9f7;
+}
+
+.guest-upload-description {
+  margin: 24px 0 48px;
+  color: #666666;
+  font-size: 15px;
+  line-height: 1.7;
+  letter-spacing: -0.04em;
+}
+
 .guest-upload-page {
   min-height: 100dvh;
   background-color: #faf9f7;
 }
 
-/* -----------------------------------------------
-   랜딩 화면
------------------------------------------------ */
+.guest-upload-page__close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  border: 0;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.guest-upload-page__close:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+/* =========================
+   Landing Page
+========================= */
 
 .guest-upload-landing {
   display: flex;
@@ -1132,7 +1068,6 @@ a {
   min-height: 100dvh;
 }
 
-/* 히어로 이미지 */
 .guest-upload-landing__hero {
   position: relative;
   width: 100%;
@@ -1157,7 +1092,6 @@ a {
   );
 }
 
-/* 히어로 텍스트 (이미지 하단 정렬) */
 .guest-upload-landing__hero-copy {
   position: absolute;
   inset: 0;
@@ -1187,7 +1121,6 @@ a {
   word-break: keep-all;
 }
 
-/* 안내 박스 + 버튼 영역 */
 .guest-upload-landing__body {
   flex: 1;
   display: flex;
@@ -1205,8 +1138,8 @@ a {
   gap: 0.9rem;
   padding: 1.75rem 1.5rem;
   border: 1px solid #ece9e3;
-  border-radius: 16px;
   background: #fff;
+  border-radius: 4px;
 }
 
 .guest-upload-landing__deadline {
@@ -1259,13 +1192,11 @@ a {
   word-break: keep-all;
 }
 
-/* 업로드 시작 버튼 */
 .guest-upload-landing__start-button {
   width: 100%;
   max-width: 480px;
   padding: 1rem;
   border: none;
-  border-radius: 12px;
   background-color: #2d2d2d;
   color: #fff;
   font-size: 1rem;
@@ -1273,6 +1204,7 @@ a {
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
+  border-radius: 4px;
 }
 
 .guest-upload-landing__start-button:hover {
@@ -1283,26 +1215,101 @@ a {
   transform: scale(0.98);
 }
 
-/* -----------------------------------------------
-   폼 화면 (/guest-upload 전용 오버라이드)
-   기존 .guest-snap-section 스타일을 덮어쓰되
-   청첩장 메인 페이지에는 영향 없도록 한정
------------------------------------------------ */
+/* =========================
+   Responsive
+========================= */
 
-/* 폼 섹션 wrapper — 청첩장의 guest-snap-section과 분리 */
-.guest-upload-page .guest-snap-section {
-  padding: 3rem 1.5rem 4rem;
-  background: #faf9f7;
+@media (max-width: 768px) {
+  .upload-files-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+  }
+
+  .guest-upload-field {
+    grid-template-columns: 60px 1fr;
+    gap: 10px;
+  }
+
+  .guest-upload-field span {
+    font-size: 14px;
+  }
+
+  .guest-upload-field input {
+    font-size: 14px;
+  }
+
+  .guest-upload-submit {
+    height: 48px;
+    font-size: 16px;
+  }
 }
 
-/* 폼 최대 너비 중앙 정렬 */
-.guest-upload-page .guest-upload-form {
-  width: 100%;
-  max-width: 560px;
-  margin: 2rem auto 0;
+@media (max-width: 480px) {
+  .upload-files-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .upload-file-card__info {
+    padding: 8px 10px;
+    min-height: 50px;
+  }
+
+  .upload-file-card__info strong {
+    font-size: 11px;
+  }
+
+  .guest-upload-fields {
+    margin-bottom: 12px;
+  }
+
+  .guest-upload-field {
+    grid-template-columns: 50px 1fr;
+    gap: 8px;
+  }
+
+  .guest-upload-field span {
+    font-size: 13px;
+  }
+
+  .guest-upload-field input {
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .guest-upload-submit,
+  .guest-upload-cancel {
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .upload-message,
+  .upload-success-card,
+  .upload-success-actions,
+  .upload-error-actions {
+    max-width: 100%;
+  }
+
+  .upload-success-card {
+    padding: 24px 16px;
+  }
+
+  .upload-success-card strong {
+    font-size: 18px;
+  }
+
+  .upload-success-card p {
+    font-size: 14px;
+    margin-top: 12px;
+  }
+
+  .primary-button,
+  .secondary-button {
+    height: 48px;
+    font-size: 14px;
+  }
 }
-
-
 
 
 /* =========================
@@ -1990,33 +1997,26 @@ a {
    Toast
 ========================= */
 
+/* Toast */
 .toast {
-  position: fixed;
-  left: 50%;
-  bottom: 28px;
-  z-index: 1300;
-  width: max-content;
-  max-width: calc(100vw - 40px);
-  padding: 13px 18px;
-  background: #111111;
-  color: #ffffff;
+   background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
   font-size: 14px;
-  font-weight: 700;
-  text-align: center;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
-  transform: translateX(-50%);
-  animation: toastIn 0.25s ease both;
+  padding: 10px 20px;
+  border-radius: 999px;
+  white-space: nowrap;
+  animation: toast-in 0.2s ease;
+  z-index: 9999;
 }
 
-@keyframes toastIn {
+@keyframes toast-in {
   from {
     opacity: 0;
-    transform: translate(-50%, 10px);
+    transform: translateX(-50%) translateY(8px);
   }
-
   to {
     opacity: 1;
-    transform: translate(-50%, 0);
+    transform: translateX(-50%) translateY(0);
   }
 }
 
@@ -2103,7 +2103,7 @@ a {
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  max-width: 320px;
+  max-width: 300px;
   margin: 0 auto;
 }
 
@@ -2119,14 +2119,14 @@ a {
   font-weight: 500;
   line-height: 1;
   color: #999999;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.02em;
 }
 
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   row-gap: 10px;
-  max-width: 320px;
+  max-width: 300px;
   margin: 0 auto;
 }
 
@@ -2800,7 +2800,7 @@ a {
 .guestbook-modal__panel {
   position: relative;
   z-index: 1;
-  width: min(100%, 370px);
+  width: min(100%, 430px);
   max-height: 80svh;
   overflow-y: auto;
   padding: 40px 28px 48px;
@@ -3075,7 +3075,7 @@ a {
   inset: 0;
   width: 100%;
   height: 100%;
-  max-width: none;
+  max-width: 430px;
   object-fit: cover;
   object-position: center top;
   filter: grayscale(100%);
@@ -3113,7 +3113,7 @@ a {
 .hero-center-copy__title {
   margin: 0;
   font-family: var(--font-script);
-  font-size: clamp(25px, 7vw, 39px);
+  font-size: clamp(45px, 7vw, 50px);
   font-style: italic;
   font-weight: 500;
   line-height: 1;
@@ -3121,7 +3121,6 @@ a {
 
 .hero-center-copy__subtitle {
   display: block;
-  margin-bottom: 16px;
   font-family: var(--font-serif);
   font-size: clamp(12px, 6vw, 18px);
   font-style: italic;
@@ -3165,10 +3164,6 @@ a {
     left: 18px;
     right: 18px;
     top: 49%;
-  }
-
-  .hero-center-copy__title {
-    margin-bottom: 18px;
   }
 
   .hero-center-copy__subtitle {
@@ -3351,26 +3346,32 @@ a {
   white-space: nowrap;
 }
 
+/* intro-screen 전체를 fixed + 이미지가 꽉 채우도록 */
 .intro-screen {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
   overflow: hidden;
+  background: #000;
+  opacity: 1;
+  transition: opacity 0.9s ease;
 }
 
-.intro-screen__inner {
-  width: 100%;
-  max-width: var(--layout-width);
-  padding: 0 28px;
+.intro-screen.is-leaving {
   opacity: 0;
-  transform: scale(0.96);
+}
+
+
+/* inner는 이미지 레이어 역할 — 패딩/max-width 제거 */
+.intro-screen__inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
   transition:
     opacity 1.2s ease,
     transform 2.4s ease;
+  transform: scale(0.96);
 }
 
 .intro-screen.is-visible .intro-screen__inner {
@@ -3386,17 +3387,20 @@ a {
     transform 0.9s ease;
 }
 
+/* 이미지 wrap이 화면 전체를 덮도록 */
 .intro-screen__image-wrap {
-  width: 100%;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  background: #f4f4f1;
+  background: #111;
 }
 
+/* 이미지가 화면 전체를 cover */
 .intro-screen__image {
   width: 100%;
-  aspect-ratio: 4 / 5;
+  height: 100%;
   object-fit: cover;
-  filter: grayscale(100%);
+  filter: grayscale(60%);
   transform: scale(1);
   transition: transform 2.8s ease;
 }
@@ -3405,35 +3409,27 @@ a {
   transform: scale(1.08);
 }
 
+/* 텍스트를 이미지 위 — 중앙 오버레이 */
 .intro-screen__content {
-  margin-top: 22px;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* 그라디언트 제거, 중앙 배치용 반투명 배경 없음 */
+  background: none;
+
   color: #111111;
-  text-align: left;
+  text-align: center;
 }
 
 .intro-screen__content p {
-  margin: 0 0 20px;
-  font-family: var(--font-script);
-  font-size: 20px;
-  font-weight: 500;
-  letter-spacing: -0.04em;
-}
-
-.intro-screen__content h1 {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(34px, 10vw, 52px);
-  font-weight: 800;
-  line-height: 1;
-  letter-spacing: -0.08em;
-}
-
-.intro-screen__content h1 em {
-  font-style: normal;
-  font-size: 0.9em;
+  font-family: var(--font-script);
+  font-size: 56px;        /* 20px → 28px */
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .app-content {
@@ -3510,7 +3506,7 @@ a {
   position: relative;
   z-index: 1;
   display: block;
-  width: min(100%, 370px);
+  width: min(100%, 430px);
   max-height: calc(100svh - 48px);
   overflow-y: auto;
   padding: 52px 30px 44px;
@@ -3684,7 +3680,7 @@ a {
   top: 0;
 }
 
-@media (max-width: 370px) {
+@media (max-width: 430px) {
   .contact-modal {
     align-items: center;
     padding: 20px;

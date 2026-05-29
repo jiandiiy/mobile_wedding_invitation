@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 
 import type { WeddingConfig } from '../types/wedding';
 import { Toast } from './Toast';
@@ -21,6 +21,7 @@ export function AccountSection({ config }: AccountSectionProps) {
 
   const [selectedOwner, setSelectedOwner] = useState<AccountOwner>('groom');
   const [toastMessage, setToastMessage] = useState('');
+  const sectionRef = useRef<HTMLDivElement>(null);
 
   const selectedAccounts = useMemo(
     () => accounts[selectedOwner] ?? [],
@@ -32,14 +33,17 @@ export function AccountSection({ config }: AccountSectionProps) {
   };
 
   const handleCopyAccountNumber = async (accountNumber: string) => {
-    try {
-      await navigator.clipboard.writeText(accountNumber);
-      setToastMessage('계좌번호가 복사되었습니다.');
-    } catch (error) {
-      console.error(error);
-      setToastMessage('복사에 실패했습니다. 계좌번호를 직접 선택해 주세요.');
-    }
-  };
+  console.log('클릭됨');
+  
+  try {
+    await navigator.clipboard.writeText(accountNumber);
+    console.log('복사 성공');
+    setToastMessage('계좌번호가 복사되었습니다.');
+  } catch (error) {
+    console.error('복사 실패:', error);
+    setToastMessage('복사에 실패했습니다. 계좌번호를 직접 선택해 주세요.');
+  }
+};
 
   useEffect(() => {
     if (!toastMessage) return;
@@ -54,7 +58,7 @@ export function AccountSection({ config }: AccountSectionProps) {
   }, [toastMessage]);
 
   return (
-    <section className="account-section is-visible">
+    <section className="account-section is-visible" ref={sectionRef}>
       <h2>Wedding Gift</h2>
 
       <div className="account-tabs" role="tablist" aria-label="계좌 정보 선택">
@@ -104,7 +108,7 @@ export function AccountSection({ config }: AccountSectionProps) {
         ))}
       </div>
 
-      <Toast message={toastMessage} />
+       <Toast message={toastMessage} parentRef={sectionRef} />
     </section>
   );
 }

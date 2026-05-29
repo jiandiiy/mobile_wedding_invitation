@@ -1,15 +1,72 @@
 import {onObjectFinalized} from "firebase-functions/v2/storage";
+import {onRequest} from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
+import express from "express";
+import multer from "multer";
+import cors from "cors";
 
 admin.initializeApp();
+
+// Express 앱 설정
+const app = express();
+app.use(cors({origin: true}));
+const upload = multer({storage: multer.memoryStorage()});
 
 // ── 환경변수 (.env에서 자동으로 읽어옴)
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN ?? "";
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID ?? "";
+const FIREBASE_STORAGE_BUCKET = process.env.FIREBASE_STORAGE_BUCKET ?? "";
 
 // 5MB 기준: sendPhoto 한도
 const PHOTO_SIZE_LIMIT = 5 * 1024 * 1024;
 
+// ── HTTP 엔드포인트: 프론트에서 파일 업로드
+app.post(
+  "/api/guest-upload",
+  upload.single("file"),
+  async (req: express.Request, res: express.Response) => {
+    try {
+      const {weddingId, guestName} = req.body;
+      const file = req.file;
+
+      // 유효성 검사
+      if (!weddingId || !guestName || !file) {
+        return res.status(400).json({error: "Missing required fields"});
+      }
+
+      // 파일 경로: guest-snaps/{weddingId}/{timestamp}-{fileName}
+      const timestamp = Date.now();
+      const sanitizedFileName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
+      const filePath = `guest-snaps/${weddingId}/${timestamp}-${sanitizedFileName}`;
+
+      // Firebase Storage에 업로드
+      const bucket = admin.storage().bucket(FIREBASE_STORAGE_BUCKET);
+      const fileRef = bucket.file(filePath);
+      await fileRef.save(file.buffer, {
+        metadata: {
+          contentType: file.mimetype,
+          metadata: {
+            guestName,
+            uploadedAt: new Date().toISOString(),
+          },
+        },
+      });
+
+      console.log(`✅ 파일 업로드 완료: ${filePath} (by ${guestName})`);
+      return res.status(200).json({success: true, filePath});
+    } catch (error) {
+      console.error("❌ 업로드 실패:", error);
+      return res.status(500).json({error: "Upload failed"});
+    }
+  }
+);
+
+export const guestUploadApi = onRequest(
+  {region: "asia-northeast1", cors: true},
+  app
+);
+
+// ── Storage 트리거: 파일 업로드되면 자동으로 텔레그램으로 전송
 export const onGuestUpload = onObjectFinalized(
   {region: "asia-northeast1"},
   async (event) => {
