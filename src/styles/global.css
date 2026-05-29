@@ -1,0 +1,3752 @@
+@import url('//fonts.googleapis.com/earlyaccess/nanummyeongjo.css');
+
+@font-face {
+  font-family: 'HappyTimeTwo';
+  src: url('/fonts/HappyTimeTwo.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+
+@font-face {
+  font-family: 'SUIT';
+  src: url('/fonts/SUIT-Variable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'The Californication';
+  src: url('/fonts/The_Californication.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --layout-width: 375px;
+
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-soft: #f7f7f5;
+
+  --color-text: #111111;
+  --color-subtext: #444444;
+  --color-muted: #888888;
+
+  --color-border: #eeeeee;
+
+  --color-primary: #111111;
+  --color-primary-dark: #000000;
+  --color-primary-light: #f7f7f5;
+
+  --shadow-card: none;
+  --shadow-soft: none;
+
+ --font-serif: 'HappyTimeTwo', serif;
+--font-script: 'The Californication', cursive;
+--font-korean-serif: 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+--font-korean-hand: 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+--font-korean-classic: 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+--font-sans: 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: #ffffff;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #ffffff;
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  word-break: keep-all;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* =========================
+   Invitation Layout
+========================= */
+
+.invitation-shell {
+  min-height: 100vh;
+  background: #ffffff;
+}
+
+.invitation-frame {
+  width: 100%;
+  max-width: var(--layout-width);
+  margin: 0 auto;
+  background: #ffffff;
+}
+
+.invitation-card {
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+
+
+/* =========================
+   Content Sections
+========================= */
+
+.content-section {
+  position: relative;
+  padding: 78px 26px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.section-label {
+  margin: 0 0 16px;
+  color: var(--color-muted);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.content-section h2 {
+  margin: 0 0 26px;
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  font-style: italic;
+}
+
+.section-description,
+.greeting-message {
+  margin: 0 auto;
+  color: var(--color-subtext);
+  font-size: 15px;
+  line-height: 2;
+}
+
+.parent-info {
+  margin-top: 36px;
+  color: var(--color-subtext);
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.parent-info p {
+  margin: 4px 0;
+}
+
+/* =========================
+   Video
+========================= */
+
+.video-section {
+  padding: 96px 0 104px;
+  background: #ffffff;
+  text-align: center;
+}
+
+
+.wedding-video {
+  display: block;
+  width: calc(100% - 30px);
+  margin: 42px auto 0;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: #000000;
+}
+
+/* =========================
+   Gallery
+========================= */
+
+.gallery-section {
+  padding: 96px 0 104px;
+  background: #ffffff;
+  color: #111111;
+  text-align: center;
+  overflow: hidden;
+}
+
+.gallery-section h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #111111;
+}
+
+.gallery-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 56px);
+  margin: 46px auto 0;
+  padding: 0 16px 18px;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.55);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: #9a9a9a;
+}
+
+.gallery-slider-wrap {
+  position: relative;
+  margin-top: 14px;
+}
+
+.gallery-slider {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  padding: 0 calc((100% - 89%) / 2);
+  scrollbar-width: none;
+}
+
+.gallery-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery-slide {
+  position: relative;
+  flex: 0 0 89%;
+  aspect-ratio: 4 / 5.45;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: #eeeeee;
+  padding: 0;
+  cursor: pointer;
+  scroll-snap-align: center;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+
+.gallery-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transform: scale(1.03);
+  transition:
+    opacity 0.5s ease,
+    transform 0.8s ease;
+}
+
+.gallery-slide img.is-loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.gallery-slide:hover img.is-loaded {
+  transform: scale(1.06);
+}
+
+.gallery-slide:not(.is-active) {
+  opacity: 0.72;
+}
+
+.gallery-slide:hover,
+.gallery-slide.is-active {
+  opacity: 1;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 48px;
+  border: 0;
+  background: transparent;
+  color: rgba(17, 17, 17, 0.55);
+  font-family: var(--font-serif);
+  font-size: 38px;
+  line-height: 1;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.gallery-arrow--prev {
+  left: 8px;
+}
+
+.gallery-arrow--next {
+  right: 8px;
+}
+
+
+.gallery-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.gallery-modal {
+  width: 100%;
+  max-width: 520px;
+  color: #ffffff;
+}
+
+.gallery-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+.gallery-modal__header button {
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.gallery-modal__content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-modal__content img {
+  display: block;
+  width: 100%;
+  max-height: 78vh;
+  object-fit: contain;
+}
+
+.gallery-modal__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 42px;
+  height: 64px;
+  border: 0;
+  background: rgba(0, 0, 0, 0.18);
+  color: #ffffff;
+  font-family: var(--font-serif);
+  font-size: 42px;
+  line-height: 1;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.gallery-modal__nav--prev {
+  left: 0;
+}
+
+.gallery-modal__nav--next {
+  right: 0;
+}
+
+
+
+/* =========================
+   Buttons
+========================= */
+
+.primary-button {
+  min-height: 54px;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
+}
+
+.primary-button:disabled {
+  background: #bdbdb8;
+  box-shadow: none;
+}
+
+.secondary-button {
+  min-height: 48px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* =========================
+   Account Section
+========================= */
+
+.account-section {
+  padding: 96px 0 92px;
+  background: #ffffff;
+  color: #111111;
+  text-align: center;
+}
+
+.account-section h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #111111;
+  text-transform: uppercase;
+}
+
+.account-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  width: calc(100% - 56px);
+  max-width: 420px;
+  margin: 42px auto 0;
+  border: 1px solid #111111;
+}
+
+.account-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  background: #ffffff;
+  color: #111111;
+  font-family: var(--font-korean-serif);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.account-tab + .account-tab {
+  border-left: 1px solid #111111;
+}
+
+.account-tab.is-selected {
+  background: #111111;
+  color: #ffffff;
+}
+
+.account-panel {
+  width: calc(100% - 56px);
+  max-width: 520px;
+  margin: 34px auto 0;
+}
+
+.account-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 42px;
+  align-items: center;
+  column-gap: 14px;
+  min-height: 74px;
+  text-align: left;
+}
+
+.account-row + .account-row {
+  border-top: 1px solid rgba(17, 17, 17, 0.1);
+}
+
+.account-row__person {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+  font-family: var(--font-korean-serif);
+}
+
+.account-row__person span {
+  color: #777777;
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.account-row__person strong {
+  color: #111111;
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.account-row__info {
+  min-width: 0;
+  font-family: var(--font-sans);
+}
+
+.account-row__info span {
+  display: block;
+  margin-bottom: 5px;
+  color: #888888;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.account-row__info strong {
+  display: block;
+  color: #111111;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+  word-break: break-all;
+}
+
+.account-row__copy {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  color: #111111;
+}
+
+.copy-icon {
+  position: relative;
+  width: 17px;
+  height: 17px;
+}
+
+.copy-icon::before,
+.copy-icon::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 14px;
+  border: 1px solid #111111;
+  background: #ffffff;
+}
+
+.copy-icon::before {
+  left: 0;
+  top: 3px;
+}
+
+.copy-icon::after {
+  right: 0;
+  top: 0;
+}
+
+@media (max-width: 430px) {
+  .account-section {
+    padding: 88px 0 86px;
+  }
+
+  .account-tabs,
+  .account-panel {
+    width: calc(100% - 40px);
+  }
+
+  .account-row {
+    grid-template-columns: 78px 1fr 38px;
+    column-gap: 10px;
+    min-height: 72px;
+  }
+
+  .account-row__person {
+    gap: 6px;
+  }
+
+  .account-row__person span {
+    font-size: 13px;
+  }
+
+  .account-row__person strong {
+    font-size: 16px;
+  }
+
+  .account-row__info strong {
+    font-size: 17px;
+  }
+
+  .account-row__copy {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* =========================
+   Footer
+========================= */
+
+.footer-section {
+  padding: 54px 28px 64px;
+  text-align: center;
+  border-top: 1px solid rgba(17, 17, 17, 0.07);
+  background: #111111;
+  color: #f6f6f3;
+  font-size: 13px;
+}
+
+/* =========================
+   Guest Snap Upload Section
+========================= */
+
+.guest-snap-section {
+  padding: 104px 0 108px;
+  background: #ffffff;
+  color: #111111;
+  text-align: center;
+}
+
+.guest-snap-section h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 25px;
+  font-weight: 200;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: #111111;
+}
+
+.guest-upload-description {
+  margin: 20px auto 0;
+  color: #222222;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 2;
+  letter-spacing: -0.06em;
+}
+
+.guest-upload-form {
+  width: calc(100% - 56px);
+  max-width: 640px;
+  margin: 64px auto 0;
+}
+
+.guest-upload-fields {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-bottom: 34px;
+}
+
+.guest-upload-field {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  align-items: center;
+  text-align: left;
+}
+
+.guest-upload-field span {
+  color: #111111;
+  font-family: var(--font-korean-serif);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+}
+
+.guest-upload-field input {
+  width: 100%;
+  height: 48px;
+  border: 0;
+  border-bottom: 1px solid #111111;
+  border-radius: 0;
+  background: transparent;
+  color: #111111;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  outline: none;
+}
+
+.guest-upload-field input::placeholder {
+  color: #aaaaaa;
+}
+
+.guest-upload-field input:focus {
+  border-bottom-color: #111111;
+}
+
+.file-upload-dropzone {
+  position: relative;
+  display: flex;
+  min-height: 258px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  border: 1px dashed #b8b8b8;
+  background: #fafafa;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.file-upload-dropzone:hover {
+  border-color: #111111;
+  background: #ffffff;
+}
+
+.file-upload-dropzone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-upload-dropzone__icon {
+  display: inline-flex;
+  width: 42px;
+  height: 42px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+  background: #111111;
+  color: #ffffff;
+  font-size: 40px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.file-upload-dropzone strong {
+  color: #111111;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.06em;
+}
+
+.file-upload-dropzone small {
+  display: block;
+  margin-top: 5px;
+  color: #777777;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.05em;
+}
+
+.selected-file-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  border-right: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  border-left: 1px solid #e5e5e5;
+  background: #ffffff;
+}
+
+.selected-file-summary > div {
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected-file-summary > div + div {
+  border-left: 1px solid #e5e5e5;
+}
+
+.selected-file-summary strong {
+  color: #111111;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+}
+
+.selected-file-summary span {
+  margin-top: 14px;
+  color: #777777;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+
+.guest-upload-submit {
+  display: inline-flex;
+  min-width: 102px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 32px;
+  border: 0;
+  background: #111111;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.06em;
+  cursor: pointer;
+}
+
+.guest-upload-submit:disabled {
+  background: #b5b5b0;
+  color: #ffffff;
+  cursor: not-allowed;
+}
+
+.upload-message {
+  margin-top: 20px;
+  padding: 16px 18px;
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.04em;
+  text-align: left;
+}
+
+.upload-message--notice {
+  background: #f7f7f3;
+  color: #555555;
+}
+
+.upload-message--error {
+  background: #fff1f1;
+  color: #c0392b;
+}
+
+.selected-file-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 30px;
+  text-align: left;
+}
+
+.selected-file-actions p {
+  margin: 0;
+  color: #666666;
+  font-size: 15px;
+  letter-spacing: -0.04em;
+}
+
+.selected-file-actions button {
+  border: 0;
+  background: transparent;
+  color: #111111;
+  font-size: 14px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.preview-file-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.preview-file-card {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid #eeeeee;
+  background: #ffffff;
+  text-align: left;
+}
+
+.preview-file-card__media {
+  width: 64px;
+  height: 64px;
+  overflow: hidden;
+  background: #f1f1f1;
+}
+
+.preview-file-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.preview-file-card__video {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  color: #111111;
+  font-size: 14px;
+}
+
+.preview-file-card__body {
+  min-width: 0;
+}
+
+.preview-file-card__body strong {
+  display: block;
+  overflow: hidden;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-file-card__body span {
+  display: block;
+  margin-top: 6px;
+  color: #777777;
+  font-size: 13px;
+}
+
+.preview-file-card__remove {
+  border: 0;
+  background: transparent;
+  color: #999999;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.upload-progress-box {
+  margin-top: 28px;
+}
+
+.upload-progress-track {
+  overflow: hidden;
+  height: 4px;
+  background: #eeeeee;
+}
+
+.upload-progress-bar {
+  height: 100%;
+  background: #111111;
+  transition: width 0.2s ease;
+}
+
+.upload-progress-box p {
+  margin: 12px 0 0;
+  color: #666666;
+  font-size: 14px;
+}
+
+.upload-success-card {
+  margin-top: 32px;
+  padding: 32px 24px;
+  background: #f8f8f5;
+  text-align: center;
+}
+
+.upload-success-card strong {
+  color: #111111;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.upload-success-card p {
+  margin: 16px 0 0;
+  color: #666666;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.upload-success-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.upload-success-actions .primary-button,
+.upload-success-actions .secondary-button {
+  height: 52px;
+  border: 0;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.upload-success-actions .primary-button {
+  background: #111111;
+  color: #ffffff;
+}
+
+.upload-success-actions .secondary-button {
+  background: #e7e7e5;
+  color: #111111;
+}
+
+@media (max-width: 430px) {
+  .guest-snap-section {
+    padding: 88px 0 96px;
+  }
+
+  .guest-snap-section h2 {
+    font-size: 25px;
+  }
+
+  .guest-upload-description {
+    margin-top: 44px;
+    font-size: 20px;
+    line-height: 1.95;
+  }
+
+  .guest-upload-form {
+    width: calc(100% - 40px);
+    margin-top: 54px;
+  }
+
+  .guest-upload-field {
+    grid-template-columns: 62px 1fr;
+  }
+
+  .guest-upload-field span {
+    font-size: 17px;
+  }
+
+  .guest-upload-field input {
+    height: 44px;
+    font-size: 16px;
+  }
+
+  .file-upload-dropzone {
+    min-height: 238px;
+    padding: 42px 18px;
+  }
+
+  .file-upload-dropzone__icon {
+    width: 74px;
+    height: 74px;
+    margin-bottom: 24px;
+    font-size: 38px;
+  }
+
+  .file-upload-dropzone strong {
+    font-size: 22px;
+  }
+
+  .file-upload-dropzone small {
+    font-size: 15px;
+  }
+
+  .selected-file-summary > div {
+    min-height: 88px;
+  }
+
+  .selected-file-summary strong {
+    font-size: 21px;
+  }
+
+  .selected-file-summary span {
+    font-size: 14px;
+  }
+
+  .guest-upload-submit {
+    height: 66px;
+    min-width: 124px;
+    font-size: 21px;
+  }
+}
+
+.guest-upload-open-button {
+  display: block;
+  margin-top: 54px;
+  width: calc(100% - 96px);
+  max-width: 120px;        
+  margin: 48px auto 0;
+  border: 0;
+  padding: 16px 22px;
+  background: #2f2a26;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+}
+
+/* ==============================================
+   /guest-upload 전용 — global.css 추가분
+   ============================================== */
+
+/* 페이지 루트 */
+.guest-upload-page {
+  min-height: 100dvh;
+  background-color: #faf9f7;
+}
+
+/* -----------------------------------------------
+   랜딩 화면
+----------------------------------------------- */
+
+.guest-upload-landing {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* 히어로 이미지 */
+.guest-upload-landing__hero {
+  position: relative;
+  width: 100%;
+  height: 55dvh;
+  overflow: hidden;
+}
+
+.guest-upload-landing__hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+
+.guest-upload-landing__hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.15) 0%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+}
+
+/* 히어로 텍스트 (이미지 하단 정렬) */
+.guest-upload-landing__hero-copy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: #fff;
+}
+
+.guest-upload-landing__eyebrow {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.guest-upload-landing__title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+/* 안내 박스 + 버튼 영역 */
+.guest-upload-landing__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1.5rem 3rem;
+  gap: 1.25rem;
+}
+
+.guest-upload-landing__info-box {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 1.75rem 1.5rem;
+  border: 1px solid #ece9e3;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.guest-upload-landing__deadline {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.guest-upload-landing__deadline strong {
+  color: #444;
+  font-weight: 600;
+}
+
+.guest-upload-landing__headline {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2d2d2d;
+  word-break: keep-all;
+}
+
+.guest-upload-landing__list {
+  margin: 0;
+  padding: 0 0 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: #555;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.guest-upload-landing__gift {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.guest-upload-landing__gift strong {
+  color: #2d2d2d;
+  font-weight: 600;
+}
+
+.guest-upload-landing__cta-hint {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #999;
+  word-break: keep-all;
+}
+
+/* 업로드 시작 버튼 */
+.guest-upload-landing__start-button {
+  width: 100%;
+  max-width: 480px;
+  padding: 1rem;
+  border: none;
+  border-radius: 12px;
+  background-color: #2d2d2d;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.guest-upload-landing__start-button:hover {
+  background-color: #444;
+}
+
+.guest-upload-landing__start-button:active {
+  transform: scale(0.98);
+}
+
+/* -----------------------------------------------
+   폼 화면 (/guest-upload 전용 오버라이드)
+   기존 .guest-snap-section 스타일을 덮어쓰되
+   청첩장 메인 페이지에는 영향 없도록 한정
+----------------------------------------------- */
+
+/* 폼 섹션 wrapper — 청첩장의 guest-snap-section과 분리 */
+.guest-upload-page .guest-snap-section {
+  padding: 3rem 1.5rem 4rem;
+  background: #faf9f7;
+}
+
+/* 폼 최대 너비 중앙 정렬 */
+.guest-upload-page .guest-upload-form {
+  width: 100%;
+  max-width: 560px;
+  margin: 2rem auto 0;
+}
+
+
+
+
+/* =========================
+   Admin Page
+========================= */
+
+.admin-page,
+.admin-dashboard {
+  min-height: 100vh;
+  padding: 32px 20px;
+  background: #eeeeeb;
+  color: var(--color-text);
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 420px;
+  margin: 80px auto 0;
+  padding: 28px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  box-shadow: var(--shadow-card);
+}
+
+.admin-login-card h1 {
+  margin: 0 0 12px;
+  font-size: 26px;
+}
+
+.admin-login-card p {
+  margin: 0 0 24px;
+  color: var(--color-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.admin-login-form {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-login-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--color-subtext);
+  font-size: 14px;
+}
+
+.admin-login-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text);
+  outline: none;
+}
+
+.admin-login-form input:focus {
+  border-color: var(--color-primary);
+}
+
+.admin-dashboard {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.admin-dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.admin-dashboard-header h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+}
+
+.admin-dashboard-header p {
+  margin: 0;
+  color: var(--color-muted);
+  line-height: 1.7;
+}
+
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.admin-summary-grid div {
+  display: grid;
+  gap: 8px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+.admin-summary-grid span {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.admin-summary-grid strong {
+  color: var(--color-text);
+  font-size: 26px;
+}
+
+.admin-empty-state {
+  padding: 60px 24px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.admin-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 160px 160px;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+.admin-toolbar label {
+  display: grid;
+  gap: 8px;
+  color: var(--color-subtext);
+  font-size: 13px;
+}
+
+.admin-toolbar input,
+.admin-toolbar select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-text);
+  outline: none;
+}
+
+.admin-toolbar input:focus,
+.admin-toolbar select:focus {
+  border-color: var(--color-primary);
+}
+
+.new-upload-banner {
+  width: 100%;
+  min-height: 48px;
+  margin-bottom: 18px;
+  background: #111111;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 20px;
+}
+
+.guest-group-list {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.guest-group-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  color: var(--color-subtext);
+  text-align: left;
+}
+
+.guest-group-item strong {
+  color: var(--color-text);
+  font-size: 15px;
+}
+
+.guest-group-item span,
+.guest-group-item small {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.guest-group-item small {
+  grid-column: 1;
+}
+
+.guest-group-item em {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  align-self: center;
+  padding: 6px 10px;
+  background: var(--color-primary-light);
+  color: var(--color-text);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.guest-group-item.is-active {
+  border-color: var(--color-primary);
+  background: #111111;
+}
+
+.guest-group-item.is-active strong,
+.guest-group-item.is-active span,
+.guest-group-item.is-active small {
+  color: #ffffff;
+}
+
+.guest-group-item.is-active em {
+  background: #ffffff;
+  color: #111111;
+}
+
+.guest-upload-detail {
+  min-width: 0;
+}
+
+.guest-upload-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 20px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+.guest-upload-detail-header h2 {
+  margin: 0 0 4px;
+  font-size: 22px;
+}
+
+.guest-upload-detail-header p {
+  margin: 0;
+  color: var(--color-muted);
+  font-size: 14px;
+}
+
+.admin-upload-list {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-upload-card {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+.admin-upload-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 18px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.admin-upload-card-header div {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-upload-card-header strong {
+  color: var(--color-text);
+  font-size: 15px;
+}
+
+.admin-upload-card-header span {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.danger-button {
+  min-height: 40px;
+  padding: 0 14px;
+  background: #111111;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.danger-button:disabled {
+  background: #a7a7a2;
+}
+
+.admin-media-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 0;
+  padding: 18px;
+  list-style: none;
+}
+
+.admin-media-item {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+.admin-media-preview {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: #e4e4df;
+  cursor: zoom-in;
+}
+
+.admin-media-preview:disabled {
+  cursor: wait;
+}
+
+.admin-media-preview img,
+.admin-media-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.admin-media-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 14px;
+  color: var(--color-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.admin-media-body {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+}
+
+.admin-media-body strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-media-body span {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.admin-media-body a,
+.admin-media-body button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 34px;
+  margin-top: 4px;
+  background: var(--color-primary-light);
+  color: var(--color-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-media-body button:disabled {
+  color: var(--color-muted);
+}
+
+.admin-file-delete-button {
+  background: #111111 !important;
+  color: #ffffff !important;
+}
+
+.admin-file-delete-button:disabled {
+  opacity: 0.55;
+}
+
+.admin-zip-button {
+  width: auto;
+  min-width: 190px;
+  padding: 0 18px;
+}
+
+.zip-progress-box {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+}
+
+/* =========================
+   Media Modal
+========================= */
+
+.media-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.media-modal {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: min(960px, 100%);
+  max-height: 92vh;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 30px 120px rgba(0, 0, 0, 0.34);
+}
+
+.media-modal-header,
+.media-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.media-modal-header {
+  border-bottom: 1px solid var(--color-border);
+}
+
+.media-modal-header strong {
+  overflow: hidden;
+  color: var(--color-text);
+  font-size: 15px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.media-modal-header span {
+  flex-shrink: 0;
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.media-modal-header button {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  background: var(--color-primary-light);
+  color: var(--color-text);
+  font-size: 13px;
+}
+
+.media-modal-content {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 0;
+  background: #000000;
+}
+
+.media-modal-content img,
+.media-modal-content video {
+  max-width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+}
+
+.media-modal-footer {
+  border-top: 1px solid var(--color-border);
+}
+
+.media-modal-footer span {
+  color: var(--color-muted);
+  font-size: 13px;
+}
+
+.media-modal-footer a {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 14px;
+  background: var(--color-primary);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.media-modal-nav {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 44px;
+  height: 64px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.82);
+  color: #111111;
+  font-size: 36px;
+  line-height: 1;
+  backdrop-filter: blur(8px);
+}
+
+.media-modal-nav--prev {
+  left: 14px;
+}
+
+.media-modal-nav--next {
+  right: 14px;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 860px) {
+  .admin-dashboard-header {
+    flex-direction: column;
+  }
+
+  .admin-summary-grid,
+  .admin-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .guest-group-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .admin-media-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-page,
+  .admin-dashboard {
+    padding: 20px 14px;
+  }
+
+  .admin-login-card {
+    margin-top: 40px;
+    padding: 22px;
+  }
+
+  .guest-group-list {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-upload-card-header,
+  .guest-upload-detail-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-media-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-zip-button {
+    width: 100%;
+  }
+
+  .media-modal-backdrop {
+    padding: 12px;
+  }
+
+  .media-modal {
+    max-height: 94vh;
+  }
+
+  .media-modal-header,
+  .media-modal-footer {
+    padding: 12px;
+  }
+
+  .media-modal-nav {
+    width: 36px;
+    height: 52px;
+    font-size: 28px;
+  }
+
+  .media-modal-nav--prev {
+    left: 8px;
+  }
+
+  .media-modal-nav--next {
+    right: 8px;
+  }
+}
+
+
+/* =========================
+   Brand Header
+========================= */
+
+.brand-header {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(17, 17, 17, 0.12);
+  background: rgba(255, 255, 255, 0.54);
+  color: var(--color-text);
+  backdrop-filter: blur(10px);
+}
+
+.brand-header__mark {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 34px;
+  height: 34px;
+  background: #111111;
+  color: #ffffff;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.brand-header__text {
+  padding-right: 2px;
+  color: var(--color-subtext);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* =========================
+   Image Tone Options
+========================= */
+
+.image-tone img {
+  transition:
+    filter 0.35s ease,
+    transform 0.35s ease;
+}
+
+.image-tone--mono img {
+  filter: grayscale(1) contrast(1.02);
+}
+
+.image-tone--soft-mono img {
+  filter: grayscale(0.72) contrast(0.98) brightness(1.02);
+}
+
+.image-tone--mono:hover img,
+.image-tone--soft-mono:hover img {
+  filter: grayscale(0.15) contrast(1);
+  transform: scale(1.025);
+}
+
+
+
+
+
+/* =========================
+   Toast
+========================= */
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 1300;
+  width: max-content;
+  max-width: calc(100vw - 40px);
+  padding: 13px 18px;
+  background: #111111;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+  transform: translateX(-50%);
+  animation: toastIn 0.25s ease both;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* =========================
+   Music Player
+========================= */
+
+.hero-section {
+  position: relative;
+}
+
+.music-player {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 5;
+}
+
+.music-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.music-button span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.music-button:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.music-button.is-playing {
+  background: rgba(255, 255, 255, 0.92);
+  color: #111111;
+  border-color: rgba(255, 255, 255, 0.92);
+}
+
+.music-button.is-playing span {
+  font-size: 15px;
+}
+
+/*=========================
+   Tails of Us Inspired Sections
+========================= */
+
+
+.wedding-date-section {
+  padding: 96px 28px 104px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.wedding-date-section h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1;
+  color: #111111;
+}
+
+.calendar-card {
+  margin-top: 44px;
+}
+
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.calendar-weekdays {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.18);
+}
+
+.calendar-weekdays span {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  color: #999999;
+  letter-spacing: 0.06em;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 10px;
+  max-width: 320px;
+  margin: 0 auto;
+}
+
+.calendar-day {
+  position: relative;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 400;
+  color: #444444;
+}
+
+.calendar-day.is-empty {
+  visibility: hidden;
+}
+
+
+.calendar-day.is-wedding-day::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 999px;
+  border: 1px solid #111111;
+}
+
+.calendar-card__date {
+  margin: 38px 0 0;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-style: italic;
+  color: #777777;
+}
+
+.calendar-card__dday {
+  margin: 12px 0 0;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 700;
+  color: #111111;
+}
+
+
+/* =========================
+   Location Section
+========================= */
+
+.location-section {
+  background: #ffffff;
+  color: #111111;
+  text-align: center;
+}
+
+.location-section h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #111111;
+  text-transform: uppercase;
+}
+
+.location-section__venue {
+  margin: 10px 0;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #666666;
+}
+
+.location-map-box {
+  width: 100%;
+  margin: 36px auto 0;
+  border: 1px solid #d8d8d8;
+  background: #ffffff;
+  text-align: left;
+}
+
+.location-map-box__map {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  background: #eeeeee;
+}
+
+.location-map-box__message {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 300;
+  color: #777777;
+  background: #eeeeee;
+}
+
+.location-address-row {
+  display: grid;
+  grid-template-columns: 1fr 46px;
+  align-items: center;
+  min-height: 24px;
+  border-top: 1px solid #d8d8d8;
+  background: #ffffff;
+}
+
+.location-address-row p {
+  margin: 0;
+  padding: 0 16px;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #111111;
+  text-align: center;
+  word-break: keep-all;
+}
+
+.location-address-row__copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 40px;
+  border: 0;
+  background: #ffffff;
+  color: #111111;
+  cursor: pointer;
+}
+
+.copy-icon {
+  position: relative;
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+}
+
+.copy-icon::before,
+.copy-icon::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 14px;
+  border: 1px solid #111111;
+  background: #ffffff;
+}
+
+.copy-icon::before {
+  left: 0;
+  top: 3px;
+}
+
+.copy-icon::after {
+  right: 0;
+  top: 0;
+}
+
+.transport-list {
+  width: 100%;
+  margin: 25px auto 0;
+  text-align: left;
+}
+
+.transport-item + .transport-item {
+  margin-top: 20px;
+}
+
+.transport-item strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 23px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #eeeeee;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  color: #222222;
+}
+
+.transport-item div {
+  margin-top: 10px;
+}
+
+.transport-item p {
+  margin: 0;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.65;
+  color: var(--theme-on-primary-muted, hsla(0, 0%, 7%, 0.65));
+  letter-spacing: -0.04em;
+  word-break: keep-all;
+}
+
+.location-map-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  margin: 20px auto 0;
+  border: 1px solid #ddd4d4;
+  background: #fffafa;
+}
+
+.location-map-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  color: #111111;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  text-decoration: none;
+}
+
+.location-map-actions a + a {
+  border-left: 1px solid #ddd4d4;
+}
+
+.location-map-actions span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 3px;
+  background: #111111;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* =========================
+   Guestbook Section
+========================= */
+
+.guestbook-section {
+  background: #ffffff;
+  text-align: center;
+}
+
+/* 탭 */
+.guestbook-tabs {
+  display: inline-flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border: 1px solid #d8d8d8;
+  overflow: hidden;
+}
+
+.guestbook-section__heading {
+  margin: 0 0 32px;
+  font-family: var(--font-korean-classic);
+  font-size: 26px;
+  font-weight: 700;
+  font-style: normal !important;
+  letter-spacing: -0.04em;
+  color: #111111;
+  text-align: center;
+}
+
+.guestbook-tabs button {
+  padding: 8px 22px;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #888888;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.guestbook-tabs button.is-active {
+  background: #111111;
+  color: #ffffff;
+}
+
+/* 카드 그리드 */
+.guestbook-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.guestbook-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+  padding: 24px 20px 20px;
+  background: #f4f4f4;
+  border: 1px dashed #d0c8bc;
+  text-align: center;
+}
+
+.guestbook-card__message {
+  flex: 1;
+  margin: 0 0 20px;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.8;
+  color: #333333;
+  word-break: keep-all;
+
+  /* 3줄 초과 말줄임 */
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.guestbook-card__footer {
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  color: #888888;
+}
+
+/* 빈 상태 */
+.guestbook-empty {
+  margin: 24px 0 28px;
+}
+
+.guestbook-empty p {
+  margin: 0;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #aaaaaa;
+  line-height: 1.8;
+}
+
+/* 액션 버튼 */
+.guestbook-section__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.guestbook-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 16px;
+  border: 1px solid #d8d8d8;
+  background: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  color: #444444;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.guestbook-action-button:hover {
+  background: #f4f4f4;
+}
+
+.guestbook-action-button--primary {
+  border-color: #111111;
+  background: #ffffff;
+  color: #111111;
+  font-weight: 600;
+}
+
+.guestbook-action-button--primary:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+/* =========================
+   작성 폼
+========================= */
+
+.guestbook-form {
+  display: grid;
+  gap: 14px;
+  padding: 28px 24px;
+  border: 1px solid #e8e8e8;
+  background: #fafafa;
+  text-align: left;
+}
+
+.guestbook-form__label {
+  display: grid;
+  gap: 6px;
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  color: #555555;
+}
+
+.guestbook-form__label input,
+.guestbook-form__label select,
+.guestbook-form__label textarea {
+  padding: 10px 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #111111;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.guestbook-form__label input:focus,
+.guestbook-form__label select:focus,
+.guestbook-form__label textarea:focus {
+  border-color: #111111;
+}
+
+.guestbook-form__label textarea {
+  resize: none;
+  line-height: 1.7;
+}
+
+.guestbook-submit-button {
+  height: 46px;
+  border: 0;
+  border-radius: 4px;
+  background: #111111;
+  color: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.guestbook-submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================
+   Guestbook Section
+========================= */
+
+.guestbook-section {
+  background: #ffffff;
+  text-align: center;
+}
+
+/* 탭 */
+.guestbook-tabs {
+  display: inline-flex;
+  gap: 0;
+  margin-bottom: 28px;
+  border: 1px solid #d8d8d8;
+  overflow: hidden;
+}
+
+.guestbook-tabs button {
+  padding: 8px 22px;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #888888;
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+
+.guestbook-tabs button.is-active {
+  background: #111111;
+  color: #ffffff;
+}
+
+/* 카드 그리드 */
+.guestbook-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.guestbook-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+  padding: 24px 20px 20px;
+  background: #f4f4f4;
+  border: 1px dashed #d0c8bc;
+  text-align: center;
+}
+
+.guestbook-card__message {
+  flex: 1;
+  margin: 0 0 20px;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.8;
+  color: #333333;
+  word-break: keep-all;
+
+  /* 3줄 초과 말줄임 */
+  display: -webkit-box;
+  -webkit-line-clamp: 6;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.guestbook-card__footer {
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  color: #888888;
+}
+
+/* 빈 상태 */
+.guestbook-empty {
+  margin: 24px 0 28px;
+}
+
+.guestbook-empty p {
+  margin: 0;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #aaaaaa;
+  line-height: 1.8;
+}
+
+/* 액션 버튼 */
+.guestbook-section__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.guestbook-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 34px;
+  padding: 0 16px;
+  border: 1px solid #d8d8d8;
+  background: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  color: #444444;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.guestbook-action-button:hover {
+  background: #f4f4f4;
+}
+
+.guestbook-action-button--primary {
+  border-color: #111111;
+  background: #ffffff;
+  color: #111111;
+  font-weight: 600;
+}
+
+.guestbook-action-button--primary:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+/* =========================
+   작성 폼
+========================= */
+
+.guestbook-form {
+  display: grid;
+  gap: 14px;
+  padding: 28px 24px;
+  border: 1px solid #e8e8e8;
+  background: #fafafa;
+  text-align: left;
+}
+
+.guestbook-form__label {
+  display: grid;
+  gap: 6px;
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  color: #555555;
+}
+
+.guestbook-form__label input,
+.guestbook-form__label select,
+.guestbook-form__label textarea {
+  padding: 10px 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #111111;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.guestbook-form__label input:focus,
+.guestbook-form__label select:focus,
+.guestbook-form__label textarea:focus {
+  border-color: #111111;
+}
+
+.guestbook-form__label textarea {
+  resize: none;
+  line-height: 1.7;
+}
+
+.guestbook-submit-button {
+  height: 46px;
+  border: 0;
+  border-radius: 4px;
+  background: #111111;
+  color: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.guestbook-submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================
+   Guestbook Modal
+========================= */
+
+.guestbook-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.guestbook-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.54);
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+}
+
+.guestbook-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 370px);
+  max-height: 80svh;
+  overflow-y: auto;
+  padding: 40px 28px 48px;
+  background: #ffffff;
+}
+
+.guestbook-modal__close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  border: 0;
+  background: transparent;
+  font-size: 28px;
+  font-weight: 200;
+  color: #111111;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.guestbook-modal__heading {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+/* heading 구분선 */
+.guestbook-heading__line {
+  display: block;
+  height: 1px;
+  background: #d0c8bc;
+}
+
+/* heading 텍스트 */
+.guestbook-heading__title {
+  font-family: var(--font-script);
+  font-size: 18px;
+  color: #888888;
+  white-space: nowrap;
+}
+
+.guestbook-modal__h2 {
+  margin: 0 0 28px;
+  font-family: var(--font-korean-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: #111111;
+  text-align: center;
+}
+
+/* 리스트 */
+.guestbook-modal__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+}
+
+/* 아이템 - 기본 */
+.guestbook-modal__item {
+  padding: 20px;
+  background: #f7f7f7;
+  border: 1px dashed #d0c8bc;
+  text-align: center;
+}
+
+/* 아이템 - 편집 중 (비밀번호 확인 / 수정 모드) */
+.guestbook-modal__item--editing {
+  border-color: #111111;
+  background: #ffffff;
+  text-align: left;
+}
+
+.guestbook-modal__message {
+  margin: 0 0 14px;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  line-height: 1.8;
+  color: #333333;
+  word-break: keep-all;
+}
+
+/* 메타 행 (이름 + 날짜 + 수정 버튼) */
+.guestbook-modal__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  color: #888888;
+}
+
+.guestbook-modal__meta-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guestbook-modal__delete-desc {
+  margin: 0 0 14px;
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  color: #888888;
+}
+
+.guestbook-modal__meta strong {
+  color: #444444;
+  font-weight: 600;
+}
+
+/* 수정 버튼 트리거 */
+.guestbook-edit-trigger {
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border: 1px solid #d8d8d8;
+  background: transparent;
+  font-family: var(--font-korean-serif);
+  font-size: 12px;
+  color: #999999;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.guestbook-edit-trigger:hover {
+  color: #111111;
+  border-color: #111111;
+}
+
+/* 편집 아이템 내 이름 */
+.guestbook-modal__item-name {
+  margin: 0 0 10px;
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  font-weight: 600;
+  color: #444444;
+}
+
+/* =========================
+   비밀번호 확인 영역
+========================= */
+
+.guestbook-password-check {
+  display: grid;
+  gap: 8px;
+}
+
+.guestbook-password-check input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #111111;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.guestbook-password-check input:focus {
+  border-color: #111111;
+}
+
+/* 비밀번호 오류 메시지 */
+.guestbook-password-check__error {
+  margin: 0;
+  font-family: var(--font-korean-serif);
+  font-size: 12px;
+  color: #e53e3e;
+}
+
+/* =========================
+   수정 textarea
+========================= */
+
+.guestbook-edit-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d8d8d8;
+  border-radius: 4px;
+  background: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  color: #111111;
+  line-height: 1.7;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.guestbook-edit-textarea:focus {
+  border-color: #111111;
+}
+
+/* =========================
+   확인 / 취소 액션 버튼 행
+========================= */
+
+.guestbook-modal__edit-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.guestbook-edit-button {
+  padding: 6px 14px;
+  border: 1px solid #d8d8d8;
+  background: #ffffff;
+  font-family: var(--font-korean-serif);
+  font-size: 13px;
+  color: #888888;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.guestbook-edit-button:hover {
+  background: #f4f4f4;
+}
+
+/* 확인 / 저장 버튼 강조 */
+.guestbook-edit-button--delete {
+  border-color: #e55;
+  color: #e55;
+}
+
+.guestbook-edit-button--confirm {
+  border-color: #111111;
+  color: #111111;
+  font-weight: 600;
+}
+
+.guestbook-edit-button--confirm:hover {
+  background: #111111;
+  color: #ffffff;
+}
+
+.guestbook-edit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+
+/* =========================
+   Hero - Our First Page
+========================= */
+
+.hero-section.hero-section--brand {
+  position: relative;
+  min-height: 45svh;
+  padding: 28px 24px 34px;
+  overflow: hidden;
+  background: #f7f7f5;
+  text-align: center;
+}
+
+/* 기존 hero-section 장식 제거 */
+.hero-section--brand::before,
+.hero-section--brand::after {
+  content: none;
+}
+
+/* 배경 이미지 */
+.hero-section--brand .hero-section__background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(100%);
+  opacity: 0.92;
+}
+
+/* 배경 위 그라데이션 */
+.hero-section--brand .hero-section__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.16) 48%,
+      rgba(255, 255, 255, 0.96) 100%
+    );
+  pointer-events: none;
+}
+
+
+/* 중앙 텍스트 */
+.hero-center-copy {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  transform: translateY(-50%);
+  color: #111111;
+}
+
+.hero-center-copy__title {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(25px, 7vw, 39px);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.hero-center-copy__subtitle {
+  display: block;
+  margin-bottom: 16px;
+  font-family: var(--font-serif);
+  font-size: clamp(12px, 6vw, 18px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+}
+
+
+/* 하단 날짜 정보 */
+.hero-bottom-info {
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  bottom: 2px;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  color: #111111;
+  font-family: var(--font-serif);
+  font-size: clamp(10px, 4.8vw, 12px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.hero-bottom-info span:nth-child(2) {
+  flex-shrink: 0;
+}
+
+/* Mobile */
+@media (max-width: 430px) {
+  .hero-section.hero-section--brand {
+    min-height: 45svh;
+    padding: 24px 18px 28px;
+  }
+
+  .hero-center-copy {
+    left: 18px;
+    right: 18px;
+    top: 49%;
+  }
+
+  .hero-center-copy__title {
+    margin-bottom: 18px;
+  }
+
+  .hero-center-copy__subtitle {
+    margin-bottom: 14px;
+  }
+
+  .hero-center-copy h1 {
+    font-size: clamp(56px, 18vw, 74px);
+    gap: 8px;
+  }
+
+  .hero-bottom-info {
+    left: 18px;
+    right: 18px;
+    bottom: 20px;
+    gap: 10px;
+    font-size: 14px;
+  }
+}
+
+/* =========================
+   Greeting + Couple Profile
+========================= */
+
+.greeting-section {
+  padding: 120px 28px 96px;
+  background: #ffffff;
+  color: #111111;
+  text-align: center;
+}
+
+.greeting-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+  font-family: var(--font-serif);
+  font-size: 40px;
+  font-weight: 500;
+  font-style: italic;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #111111;
+}
+
+.greeting-heading__serif {
+  display: block;
+}
+
+.greeting-heading__script {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--font-script);
+  font-size: 48px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.greeting-date {
+  margin: 44px 0 0;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  color: var(--theme-on-primary-muted, hsla(0, 0%, 7%, .65));
+  letter-spacing: -0.01em;
+}
+
+.greeting-message {
+  margin-top: 174px;
+  font-family: var(--font-korean-serif);
+  color: var(--theme-on-primary-muted, hsla(0, 0%, 7%, .65));
+}
+
+.greeting-message p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: -0.04em;
+  word-break: keep-all;
+}
+
+.greeting-message__space {
+  height: 24px;
+}
+
+.couple-photo-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 34px;
+}
+
+.couple-photo-card {
+  min-width: 0;
+  text-align: left;
+}
+
+.couple-photo-card__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #eeeeee;
+}
+
+.couple-photo-card__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.couple-photo-card__caption {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 6px 0 0;
+  color: #111111;
+}
+.couple-photo-card--bride .couple-photo-card__caption {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.couple-photo-card--groom .couple-photo-card__caption {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.couple-photo-card__caption em {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.couple-photo-card__caption strong {
+  font-family: var(--font-korean-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+}
+
+.couple-family-list {
+  display: grid;
+  gap: 18px;
+  width: fit-content;
+  margin: 150px auto -20px;
+  font-family: var(--font-sans);
+}
+
+.couple-family-list__row {
+  display: grid;
+  grid-template-columns: 80px 46px 30px;
+  align-items: baseline;
+  column-gap: 10px;
+  color: #777777;
+  font-size: 16px;
+  line-height: 1.2;
+  letter-spacing: -0.08em;
+}
+
+.couple-family-list__parents {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.couple-family-list__relation {
+  text-align: left;
+  white-space: nowrap;
+}
+
+.couple-family-list__person {
+  color: #111111;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+}
+
+.intro-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.intro-screen__inner {
+  width: 100%;
+  max-width: var(--layout-width);
+  padding: 0 28px;
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 1.2s ease,
+    transform 2.4s ease;
+}
+
+.intro-screen.is-visible .intro-screen__inner {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.intro-screen.is-leaving .intro-screen__inner {
+  opacity: 0;
+  transform: scale(1.1);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s ease;
+}
+
+.intro-screen__image-wrap {
+  width: 100%;
+  overflow: hidden;
+  background: #f4f4f1;
+}
+
+.intro-screen__image {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  filter: grayscale(100%);
+  transform: scale(1);
+  transition: transform 2.8s ease;
+}
+
+.intro-screen.is-visible .intro-screen__image {
+  transform: scale(1.08);
+}
+
+.intro-screen__content {
+  margin-top: 22px;
+  color: #111111;
+  text-align: left;
+}
+
+.intro-screen__content p {
+  margin: 0 0 20px;
+  font-family: var(--font-script);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.04em;
+}
+
+.intro-screen__content h1 {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: clamp(34px, 10vw, 52px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.08em;
+}
+
+.intro-screen__content h1 em {
+  font-style: normal;
+  font-size: 0.9em;
+}
+
+.app-content {
+  opacity: 0;
+}
+
+.app-content.is-visible {
+  opacity: 1;
+  animation: appContentFadeIn 1s ease forwards;
+}
+
+@keyframes appContentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.greeting-contact-area {
+  margin-top: 38px;
+}
+
+.greeting-contact-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 132px;
+  height: 42px;
+  padding: 0 22px;
+  border: 1px solid rgba(17, 17, 17, 0.22);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #111111;
+  font-family: var(--font-korean-serif);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  cursor: pointer;
+}
+
+/* =========================
+   Contact Modal
+========================= */
+
+.contact-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.contact-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: rgba(25, 20, 12, 0.88);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.contact-modal__panel {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: min(100%, 370px);
+  max-height: calc(100svh - 48px);
+  overflow-y: auto;
+  padding: 52px 30px 44px;
+  background: #2a2318;
+  color: #e9ddc8;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+}
+
+.contact-modal__panel * {
+  color: inherit;
+}
+
+.contact-modal__close {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  background: transparent;
+  color: #e9ddc8;
+  font-size: 28px;
+  font-weight: 200;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.contact-modal__heading {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 48px;
+}
+
+.contact-modal__heading span {
+  display: block;
+  height: 1px;
+  border-top: 1px dashed rgba(233, 221, 200, 0.72);
+}
+
+.contact-modal__heading h2 {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-script);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.contact-group {
+  display: block;
+}
+
+.contact-group + .contact-group {
+  margin-top: 54px;
+}
+
+.contact-group h3 {
+  margin: 0 0 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(233, 221, 200, 0.16);
+  color: #e9ddc8;
+  font-family: var(--font-korean-serif);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: left;
+}
+
+.contact-list {
+  display: grid;
+  gap: 22px;
+}
+
+.contact-row {
+  display: grid;
+  grid-template-columns: 112px 1fr auto;
+  align-items: center;
+  column-gap: 14px;
+  min-height: 28px;
+  font-family: var(--font-korean-serif);
+}
+
+.contact-row__relation {
+  color: rgba(233, 221, 200, 0.82);
+  font-size: 16px;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.contact-row__name {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.contact-row__actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+}
+
+.contact-row__button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #e9ddc8;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* 전화 아이콘 */
+.phone-icon {
+  position: relative;
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+}
+
+.phone-icon::before {
+  content: '✆';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  line-height: 1;
+  color: currentColor;
+}
+
+/* 복사 아이콘 */
+.copy-icon {
+  position: relative;
+  display: inline-block;
+  width: 17px;
+  height: 17px;
+}
+
+.copy-icon::before,
+.copy-icon::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 14px;
+  border: 1px solid currentColor;
+  background: transparent;
+}
+
+.copy-icon::before {
+  left: 0;
+  top: 3px;
+}
+
+.copy-icon::after {
+  right: 0;
+  top: 0;
+}
+
+@media (max-width: 370px) {
+  .contact-modal {
+    align-items: center;
+    padding: 20px;
+  }
+
+  .contact-modal__panel {
+    width: 100%;
+    max-height: calc(100svh - 40px);
+    padding: 54px 24px 42px;
+  }
+
+  .contact-row {
+    grid-template-columns: 90px 1fr auto;
+    column-gap: 12px;
+  }
+
+  .contact-row__relation {
+    font-size: 15px;
+  }
+
+  .contact-row__name {
+    font-size: 17px;
+  }
+
+  .contact-row__actions {
+    gap: 14px;
+  }
+}
+/* =========================
+   Scroll Reveal Animation
+========================= */
+
+.reveal-up {
+  opacity: 0 !important;
+  transform: translateY(42px) !important;
+  transition:
+    opacity 0.95s ease,
+    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1) !important;
+  will-change: opacity, transform;
+}
+
+.reveal-up.is-visible {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+.reveal-order-0 {
+  transition-delay: 0ms;
+}
+
+.reveal-order-1 {
+  transition-delay: 160ms;
+}
+
+.reveal-order-2 {
+  transition-delay: 320ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
