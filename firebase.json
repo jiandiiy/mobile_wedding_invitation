@@ -15,7 +15,41 @@
         "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ],
-      "rewrites": [{ "source": "**", "destination": "/index.html" }]
+       "params": [
+      {
+        "name": "TELEGRAM_BOT_TOKEN",
+        "type": "string"
+      },
+      {
+        "name": "TELEGRAM_CHAT_ID",
+        "type": "string"
+      }
+    ]
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "hosting": {
+      "port": 5000
+    }
+  },
+  "hosting": [
+    {
+      "target": "mobile-wedding-invitation",
+      "public": "dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
     }
   ]
 }

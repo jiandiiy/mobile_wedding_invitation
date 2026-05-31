@@ -1,129 +1,499 @@
-import {onObjectFinalized} from "firebase-functions/v2/storage";
-import {onRequest} from "firebase-functions/v2/https";
+import {onObjectFinalized} from "firebase-functions/storage";
+import {HttpsOptions, onRequest} from "firebase-functions/v2/https";
+import {defineString} from "firebase-functions/params";
+import * as express from "express";
 import * as admin from "firebase-admin";
-import express from "express";
-import multer from "multer";
-import cors from "cors";
+import * as axios from "axios";
+import FormData from "form-data";
+import {v4 as uuidv4} from "uuid";
+
+const telegramBotToken = defineString("TELEGRAM_BOT_TOKEN");
+const telegramChatId = defineString("TELEGRAM_CHAT_ID");
 
 admin.initializeApp();
 
-// Express 앱 설정
-const app = express();
-app.use(cors({origin: true}));
-const upload = multer({storage: multer.memoryStorage()});
+const functionsConfig = {
+  memory: "512MiB" as unknown as HttpsOptions["memory"],
+  timeoutSeconds: 300,
+  region: "asia-northeast1",
+};
 
-// ── 환경변수 (.env에서 자동으로 읽어옴)
-const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN ?? "";
-const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID ?? "";
-const FIREBASE_STORAGE_BUCKET = process.env.FIREBASE_STORAGE_BUCKET ?? "";
+// ============================================================================
+// Types
+// ============================================================================
 
-// 5MB 기준: sendPhoto 한도
-const PHOTO_SIZE_LIMIT = 5 * 1024 * 1024;
+interface ParsedFormData {
+  fields: Record<string, string>;
+  files: Array<{
+    fieldName: string;
+    filename: string;
+    buffer: Buffer;
+    contentType: string;
+  }>;
+}
 
-// ── HTTP 엔드포인트: 프론트에서 파일 업로드
-app.post(
-  "/api/guest-upload",
-  upload.single("file"),
-  async (req: express.Request, res: express.Response) => {
+// ============================================================================
+// Multipart Parser
+// ============================================================================
+
+const parseMultipart = (
+  bodyBuffer: Buffer,
+  boundary: string,
+): ParsedFormData => {
+  const fields: Record<string, string> = {};
+  const files: Array<{
+    fieldName: string;
+    filename: string;
+    buffer: Buffer;
+    contentType: string;
+  }> = [];
+
+  const boundaryBuffer = Buffer.from(`--${boundary}`);
+  const crlfBuffer = Buffer.from("\r\n");
+
+  let pos = 0;
+
+  while (pos < bodyBuffer.length) {
+    const boundaryPos = bodyBuffer.indexOf(boundaryBuffer, pos);
+    if (boundaryPos === -1) break;
+
+    pos = boundaryPos + boundaryBuffer.length;
+
+    if (
+      bodyBuffer[pos] === 45 &&
+      bodyBuffer[pos + 1] === 45
+    ) {
+      break;
+    }
+
+    if (bodyBuffer[pos] === 13 && bodyBuffer[pos + 1] === 10) {
+      pos += 2;
+    } else {
+      continue;
+    }
+
+    const crlfPos = bodyBuffer.indexOf(crlfBuffer, pos);
+    if (crlfPos === -1) break;
+
+    const headerEnd = bodyBuffer.indexOf(
+      Buffer.from("\r\n\r\n"),
+      pos,
+    );
+    if (headerEnd === -1) break;
+
+    const headers = bodyBuffer
+      .subarray(pos, headerEnd)
+      .toString("utf-8");
+
+    pos = headerEnd + 4;
+
+    const contentDispMatch = headers.match(
+      /Content-Disposition:\s*form-data;\s*name="([^"]+)"(?:;\s*filename="([^"]+)")?/i,
+    );
+    if (!contentDispMatch) continue;
+
+    const fieldName = contentDispMatch[1];
+    const filename = contentDispMatch[2];
+
+    const contentTypeMatch = headers.match(/Content-Type:\s*([^\r\n]+)/i);
+    const contentType = contentTypeMatch ?
+      contentTypeMatch[1].trim() :
+      "application/octet-stream";
+
+    const nextBoundaryPos = bodyBuffer.indexOf(
+      boundaryBuffer,
+      pos,
+    );
+    if (nextBoundaryPos === -1) break;
+
+    let dataEnd = nextBoundaryPos;
+    if (
+      bodyBuffer[dataEnd - 2] === 13 &&
+      bodyBuffer[dataEnd - 1] === 10
+    ) {
+      dataEnd -= 2;
+    }
+
+    const data = bodyBuffer.subarray(pos, dataEnd);
+
+    if (filename) {
+      files.push({
+        fieldName,
+        filename: filename ?? "unknown",
+        buffer: Buffer.from(data) as Buffer,
+        contentType,
+      });
+      console.log(
+        `📄 파일: ${filename} (${data.length} bytes, ${contentType})`,
+      );
+    } else {
+      const value = data.toString("utf-8");
+      fields[fieldName] = value;
+      console.log(`📝 필드: ${fieldName} = ${value}`);
+    }
+
+    pos = nextBoundaryPos;
+  }
+
+  return {fields, files};
+};
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+const inferContentType = (buffer: Buffer): string => {
+  if (buffer.length < 4) {
+    return "application/octet-stream";
+  }
+
+  const hex = buffer.subarray(0, 4).toString("hex");
+
+  if (hex.startsWith("ffd8ff")) {
+    return "image/jpeg";
+  }
+  if (hex === "89504e47") {
+    return "image/png";
+  }
+  if (hex.startsWith("47494638")) {
+    return "image/gif";
+  }
+  if (buffer.length > 12 && buffer.toString("utf-8", 8, 12) === "WEBP") {
+    return "image/webp";
+  }
+  if (buffer.length > 8 && buffer.toString("utf-8", 4, 8) === "ftyp") {
+    return "video/mp4";
+  }
+  if (hex === "00000020" || hex === "00000018") {
+    return "video/quicktime";
+  }
+
+  return "application/octet-stream";
+};
+
+const getFileType = (mimeType: string): "image" | "video" =>
+  mimeType.startsWith("image/") ? "image" : "video";
+
+// ============================================================================
+// Upload Handler
+// ============================================================================
+
+async function processUpload(
+  req: express.Request,
+  res: express.Response,
+): Promise<void> {
+  console.log("🔥 === processUpload 함수 실행 시작 ===");
+  let responseSent = false;
+
+  const sendResponse = (
+    status: number,
+    data: Record<string, unknown> | string,
+  ) => {
+    if (responseSent) {
+      return;
+    }
+    responseSent = true;
+    if (typeof data === "string") {
+      res.status(status).send(data);
+    } else {
+      res.status(status).json(data);
+    }
+  };
+
+  try {
+    console.log("📨 요청 수신");
+    console.log(`📋 Content-Type: ${req.headers["content-type"]}`);
+
+    const contentType = req.headers["content-type"] || "";
+    if (!contentType.includes("multipart/form-data")) {
+      sendResponse(400, {error: "Invalid Content-Type"});
+      return;
+    }
+
+    const boundaryMatch = contentType.match(/boundary=([^;]+)/);
+    if (!boundaryMatch) {
+      sendResponse(400, {error: "Missing boundary"});
+      return;
+    }
+
+    const boundary = boundaryMatch[1];
+    console.log(`🔍 Boundary: ${boundary}`);
+
+    const bodyBuffer = req.body as Buffer;
+    const parsed = parseMultipart(bodyBuffer, boundary);
+    console.log("✅ 파싱 완료");
+    console.log(`📊 파일 개수: ${parsed.files.length}`);
+
+    const weddingId = parsed.fields.weddingId;
+    const guestName = parsed.fields.guestName;
+
+    if (!weddingId || !guestName) {
+      sendResponse(400, {error: "Missing weddingId or guestName"});
+      return;
+    }
+
+    if (parsed.files.length === 0) {
+      sendResponse(400, {error: "No file uploaded"});
+      return;
+    }
+
+    console.log(
+      `🎯 결혼식: ${weddingId}, 게스트: ${guestName}, 파일: ${parsed.files.length}개`,
+    );
+
+    const bucket = admin.storage().bucket();
+    const db = admin.firestore();
+    const guestUploadRef = db
+      .collection("weddings")
+      .doc(weddingId)
+      .collection("guestUploads");
+
+    console.log("🔍 기존 업로드 확인 중...");
+    const existingSnapshot = await guestUploadRef
+      .where("guestName", "==", guestName)
+      .limit(1)
+      .get();
+
+    const existingUploadId = existingSnapshot.empty ?
+      null :
+      existingSnapshot.docs[0].id;
+    const existingData = existingSnapshot.empty ?
+      null :
+      existingSnapshot.docs[0].data();
+    const existingFiles = (
+      existingData?.files as Array<{
+        id: string;
+        name: string;
+        size: number;
+        type: string;
+        storagePath: string;
+      }>
+    ) || [];
+
+    if (existingUploadId) {
+      console.log(`🔄 기존 업로드: ${existingUploadId}`);
+    } else {
+      console.log("🆕 새 업로드 생성");
+    }
+
+    console.log(`📤 ${parsed.files.length}개 파일 저장 중...`);
+    const uploadPromises = parsed.files.map(
+      async ({filename, buffer, contentType: mimeType}) => {
+        const finalContentType = mimeType === "application/octet-stream" ?
+          inferContentType(buffer) :
+          mimeType;
+
+        const storagePath = `guest-snaps/${weddingId}/${filename}`;
+
+        try {
+          await bucket.file(storagePath).save(buffer, {
+            metadata: {
+              contentType: finalContentType,
+              metadata: {
+                guestName: String(guestName),
+                weddingId: String(weddingId),
+                uploadedAt: new Date().toISOString(),
+              },
+            },
+          });
+          console.log(`✅ ${filename}`);
+
+          return {storagePath, filename, buffer, finalContentType};
+        } catch (err) {
+          console.error(`❌ 저장 실패: ${filename}`, err);
+          throw err;
+        }
+      },
+    );
+
+    const uploadedFiles = await Promise.all(uploadPromises);
+
+    const fileId = uuidv4();
+    const now = admin.firestore.Timestamp.now();
+    const uploadId = existingUploadId || fileId;
+
+    const newFiles = uploadedFiles.map((file) => ({
+      id: uuidv4(),
+      name: file.filename,
+      size: file.buffer.length,
+      type: getFileType(file.finalContentType),
+      storagePath: file.storagePath,
+    }));
+
+    console.log("💾 Firestore 저장 중...");
+
     try {
-      const {weddingId, guestName} = req.body;
-      const file = req.file;
-
-      // 유효성 검사
-      if (!weddingId || !guestName || !file) {
-        return res.status(400).json({error: "Missing required fields"});
+      if (existingUploadId) {
+        await guestUploadRef.doc(uploadId).update({
+          fileCount: existingFiles.length + newFiles.length,
+          files: [...existingFiles, ...newFiles],
+        });
+      } else {
+        await guestUploadRef.doc(uploadId).set({
+          id: uploadId,
+          guestName: guestName,
+          guestPhone: null,
+          createdAt: now,
+          fileCount: newFiles.length,
+          files: newFiles,
+        });
       }
 
-      // 파일 경로: guest-snaps/{weddingId}/{timestamp}-{fileName}
-      const timestamp = Date.now();
-      const sanitizedFileName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
-      const filePath = `guest-snaps/${weddingId}/${timestamp}-${sanitizedFileName}`;
+      console.log(`🎉 ${newFiles.length}개 파일 저장 완료`);
+    } catch (err) {
+      console.error("❌ Firestore 저장 실패:", err);
+      throw err;
+    }
 
-      // Firebase Storage에 업로드
-      const bucket = admin.storage().bucket(FIREBASE_STORAGE_BUCKET);
-      const fileRef = bucket.file(filePath);
-      await fileRef.save(file.buffer, {
-        metadata: {
-          contentType: file.mimetype,
-          metadata: {
-            guestName,
-            uploadedAt: new Date().toISOString(),
-          },
-        },
+    sendResponse(200, {
+      success: true,
+      message: "Upload successful",
+      uploadId: uploadId,
+      fileCount: newFiles.length,
+    });
+  } catch (err) {
+    console.error("❌ 에러:", err);
+    if (!responseSent) {
+      res.status(500).json({
+        error: "Internal server error",
+        details: err instanceof Error ? err.message : String(err),
       });
-
-      console.log(`✅ 파일 업로드 완료: ${filePath} (by ${guestName})`);
-      return res.status(200).json({success: true, filePath});
-    } catch (error) {
-      console.error("❌ 업로드 실패:", error);
-      return res.status(500).json({error: "Upload failed"});
     }
   }
+}
+
+// ============================================================================
+// Express App Setup
+// ============================================================================
+
+const uploadApp = express.default();
+
+uploadApp.use(express.raw({type: "multipart/form-data", limit: "500mb"}));
+
+uploadApp.use(
+  (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction,
+  ) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.header("Access-Control-Max-Age", "3600");
+
+    if (req.method === "OPTIONS") {
+      res.sendStatus(200);
+      return;
+    }
+    next();
+  },
 );
+
+uploadApp.post(
+  "/guestUploadApi",
+  (req: express.Request, res: express.Response) => {
+    processUpload(req, res);
+  },
+);
+
+uploadApp.post("/", (req: express.Request, res: express.Response) => {
+  processUpload(req, res);
+});
 
 export const guestUploadApi = onRequest(
-  {region: "asia-northeast1", cors: true},
-  app
+  functionsConfig as HttpsOptions,
+  uploadApp,
 );
 
-// ── Storage 트리거: 파일 업로드되면 자동으로 텔레그램으로 전송
+// ============================================================================
+// Storage Trigger - Telegram Notification
+// ============================================================================
+
 export const onGuestUpload = onObjectFinalized(
-  {region: "asia-northeast1"},
+  {
+    bucket: "mobile-wedding-invitatio-d2312.firebasestorage.app",
+    region: "asia-northeast1",
+  },
   async (event) => {
-    const object = event.data;
-    const filePath = object.name ?? "";
-    const contentType = object.contentType ?? "application/octet-stream";
-    const fileName = filePath.split("/").pop() ?? "unknown";
+    const filePath = event.data.name;
 
-    // 하객 스냅 경로만 처리
-    if (!filePath.includes("guest-snaps")) return null;
-
-    console.log(`📥 업로드 감지: ${fileName}`);
-
-    // 1. Firebase Storage에서 파일 다운로드
-    const bucket = admin.storage().bucket(object.bucket);
-    const [fileBuffer] = await bucket.file(filePath).download();
-
-    // 2. 텔레그램 전송
-    const apiBase = `https://api.telegram.org/bot${TELEGRAM_TOKEN}`;
-    const isImage = contentType.startsWith("image/");
-    const isVideo = contentType.startsWith("video/");
-    const isLargeFile = fileBuffer.length > PHOTO_SIZE_LIMIT; // 5MB 초과 여부
-
-    const blob = new Blob([Buffer.from(fileBuffer)], {type: contentType});
-
-    if (isImage && !isLargeFile) {
-      // 이미지 5MB 이하: sendPhoto (인라인 미리보기 O)
-      const form = new FormData();
-      form.append("chat_id", TELEGRAM_CHAT_ID);
-      form.append("photo", blob, fileName);
-      form.append("caption", `📸 새 사진이 업로드됐어요!\n📁 ${fileName}`);
-      await fetch(`${apiBase}/sendPhoto`, {method: "POST", body: form});
-    } else if (isImage && isLargeFile) {
-      // 이미지 5MB 초과: sendDocument fallback (50MB까지, 미리보기 없음)
-      console.log(`⚠️ 5MB 초과 (${(fileBuffer.length / 1024 / 1024).toFixed(1)}MB) → sendDocument로 전환`);
-      const form = new FormData();
-      form.append("chat_id", TELEGRAM_CHAT_ID);
-      form.append("document", blob, fileName);
-      form.append("caption", `📸 새 사진이 업로드됐어요! (원본 고화질)\n📁 ${fileName}`);
-      await fetch(`${apiBase}/sendDocument`, {method: "POST", body: form});
-    } else if (isVideo) {
-      // 영상: sendVideo (50MB까지)
-      const form = new FormData();
-      form.append("chat_id", TELEGRAM_CHAT_ID);
-      form.append("video", blob, fileName);
-      form.append("caption", `🎥 새 영상이 업로드됐어요!\n📁 ${fileName}`);
-      await fetch(`${apiBase}/sendVideo`, {method: "POST", body: form});
-    } else {
-      // 기타 파일: sendDocument
-      const form = new FormData();
-      form.append("chat_id", TELEGRAM_CHAT_ID);
-      form.append("document", blob, fileName);
-      form.append("caption", `📎 새 파일이 업로드됐어요!\n📁 ${fileName}`);
-      await fetch(`${apiBase}/sendDocument`, {method: "POST", body: form});
+    if (!filePath.startsWith("guest-snaps/")) {
+      console.log("📁 guest-snaps가 아닙니다. 스킵합니다.");
+      return;
     }
 
-    console.log("✅ 텔레그램 전송 완료");
-    return null;
-  }
+    try {
+      console.log(`📤 Telegram 전송: ${filePath}`);
+
+      const botToken = telegramBotToken.value();
+      const chatIdStr = telegramChatId.value();
+      const chatId = parseInt(chatIdStr, 10);
+
+      if (!botToken || !chatIdStr || isNaN(chatId)) {
+        console.error("❌ Telegram 파라미터 누락");
+        return;
+      }
+
+      const bucket = admin.storage().bucket();
+      const file = bucket.file(filePath);
+      const [fileBuffer] = await file.download();
+      const [metadata] = await file.getMetadata();
+
+      const fileSize = metadata.size || 0;
+      console.log(`📦 ${fileSize} bytes`);
+
+      const contentType = metadata.contentType || "";
+      const parts = filePath.split("/");
+      const filename = parts[parts.length - 1];
+      const guestName = (metadata.metadata?.guestName as string | undefined) ||
+        "Unknown Guest";
+
+      const caption = `🎉 Guest Snap from ${guestName}`;
+
+      if (contentType.startsWith("image/")) {
+        const form = new FormData();
+        form.append("chat_id", String(chatId));
+        form.append("caption", caption);
+        form.append("photo", fileBuffer, {filename});
+
+        await axios.default.post(
+          `https://api.telegram.org/bot${botToken}/sendPhoto`,
+          form,
+          {headers: form.getHeaders()},
+        );
+        console.log("📸 이미지 전송 완료");
+      } else if (contentType.startsWith("video/")) {
+        const form = new FormData();
+        form.append("chat_id", String(chatId));
+        form.append("caption", caption);
+        form.append("video", fileBuffer, {filename});
+
+        await axios.default.post(
+          `https://api.telegram.org/bot${botToken}/sendVideo`,
+          form,
+          {headers: form.getHeaders()},
+        );
+        console.log("🎬 영상 전송 완료");
+      } else {
+        const form = new FormData();
+        form.append("chat_id", String(chatId));
+        form.append("caption", caption);
+        form.append("document", fileBuffer, {filename});
+
+        await axios.default.post(
+          `https://api.telegram.org/bot${botToken}/sendDocument`,
+          form,
+          {headers: form.getHeaders()},
+        );
+        console.log("📄 문서 전송 완료");
+      }
+
+      console.log(`✅ Telegram 완료: ${filePath}`);
+    } catch (error) {
+      console.error("❌ Telegram 에러:", error);
+    }
+  },
 );

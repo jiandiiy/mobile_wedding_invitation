@@ -1,6 +1,7 @@
 import JSZip from 'jszip';
 import { signOut } from 'firebase/auth';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { auth } from '../lib/firebase';
 import {
@@ -56,7 +57,12 @@ function getUploadTimeValue(upload: GuestUploadDocument) {
 }
 
 export function AdminDashboardPage() {
-  const weddingId = import.meta.env.VITE_WEDDING_ID;
+  const { weddingId: paramWeddingId } = useParams<{ weddingId: string }>();
+  const weddingId = paramWeddingId || import.meta.env.VITE_WEDDING_ID;
+
+  console.log('🔍 weddingId from params:', paramWeddingId);
+  console.log('🔍 weddingId from env:', import.meta.env.VITE_WEDDING_ID);
+  console.log('🔍 final weddingId:', weddingId);
 
   const previousUploadCountRef = useRef(0);
   const isInitialSnapshotRef = useRef(true);
@@ -127,7 +133,6 @@ export function AdminDashboardPage() {
 
         const haystack = [
           group.guestName,
-          group.guestPhone ?? '',
           ...group.uploads.flatMap((upload) =>
             upload.files.map((file) => file.name),
           ),
@@ -408,7 +413,7 @@ export function AdminDashboardPage() {
           <input
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
-            placeholder="하객 이름, 연락처, 파일명 검색"
+            placeholder="하객 이름, 파일명 검색"
           />
         </label>
 
@@ -466,7 +471,6 @@ export function AdminDashboardPage() {
                 onClick={() => handleSelectGroup(group.guestKey)}
               >
                 <strong>{group.guestName}</strong>
-                <span>{group.guestPhone ?? '연락처 없음'}</span>
                 <small>{formatFileSize(getGroupTotalSize(group))}</small>
                 <em>{group.totalFileCount}개</em>
               </button>
@@ -480,8 +484,7 @@ export function AdminDashboardPage() {
                   <div>
                     <h2>{selectedGroup.guestName}</h2>
                     <p>
-                      {selectedGroup.guestPhone ?? '연락처 없음'} · 총{' '}
-                      {selectedGroup.totalFileCount}개 ·{' '}
+                      총 {selectedGroup.totalFileCount}개 ·{' '}
                       {formatFileSize(getGroupTotalSize(selectedGroup))}
                     </p>
                   </div>

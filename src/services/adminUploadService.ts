@@ -55,6 +55,8 @@ export function subscribeGuestUploads(
   onNext: (uploads: GuestUploadDocument[]) => void,
   onError: (error: Error) => void,
 ) {
+  console.log('📡 Firestore query with weddingId:', weddingId);
+  
   const uploadsCollectionRef = collection(
     db,
     'weddings',
@@ -67,13 +69,20 @@ export function subscribeGuestUploads(
   return onSnapshot(
     uploadsQuery,
     (snapshot) => {
+      console.log('✅ Snapshot received:', snapshot.size, 'documents');
+      console.log('📋 Raw snapshot docs:', snapshot.docs.map(doc => ({ id: doc.id, data: doc.data() })));
+      
       const uploads = snapshot.docs.map((uploadDoc) =>
         convertUploadDoc(uploadDoc.id, uploadDoc.data()),
       );
 
+      console.log('🎯 Converted uploads:', uploads);
       onNext(uploads);
     },
-    onError,
+    (error) => {
+      console.error('❌ Firestore error:', error.code, error.message);
+      onError(error);
+    },
   );
 }
 

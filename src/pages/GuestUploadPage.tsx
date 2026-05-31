@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
-
 const MAX_FILE_COUNT = 100;
 
 type PageView = 'landing' | 'form';
@@ -12,16 +10,11 @@ type PreviewFile = {
   id: string;
   file: File;
   previewUrl: string | null;
-  progress: number; // 0-100
-};
-
-type UploadAbortMap = {
-  [fileId: string]: AbortController;
+  progress: number;
 };
 
 function createPreviewFile(file: File): PreviewFile {
   const isImage = file.type.startsWith('image/');
-
   return {
     id: `${file.name}-${file.size}-${file.lastModified}-${crypto.randomUUID()}`,
     file,
@@ -38,7 +31,6 @@ function revokePreviewUrls(previewFiles: PreviewFile[]) {
   });
 }
 
-// 랜딩 화면 컴포넌트
 function GuestUploadLanding({ onStart }: { onStart: () => void }) {
   return (
     <div className="guest-upload-landing">
@@ -49,7 +41,6 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
           className="guest-upload-landing__hero-img"
         />
         <div className="guest-upload-landing__hero-overlay" />
-
         <div className="guest-upload-landing__hero-copy">
           <p className="guest-upload-landing__eyebrow">Guest Snap</p>
           <h1 className="guest-upload-landing__title">
@@ -63,28 +54,21 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
           <p className="guest-upload-landing__deadline">
             📅 마감일: <strong>2027년 2월 28일까지</strong>
           </p>
-
-          <p className="guest-upload-landing__headline">
-            📷 저희의 스냅 작가님이 되어주세요 
-          </p>
-
+          <p className="guest-upload-landing__headline">📷 저희의 스냅 작가님이 되어주세요 </p>
           <ul className="guest-upload-landing__list">
             <li>행복한 신랑 &amp; 신부 사진</li>
             <li>신랑 &amp; 신부 행진</li>
             <li>가족 &amp; 친구들과 함께한 순간</li>
             <li>여러분들의 사진</li>
           </ul>
-
           <p className="guest-upload-landing__gift">
             🎁 가장 멋진 컷을 남겨주신 분께 <br />
             <strong>감사의 선물을 드리겠습니다!</strong>
           </p>
-
           <p className="guest-upload-landing__cta-hint">
             결혼식 당일날, 아래 업로드 버튼을 통해 사진과 영상을 올려주세요!
           </p>
         </div>
-
         <button
           type="button"
           className="guest-upload-landing__start-button"
@@ -97,32 +81,31 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
   );
 }
 
-const API_BASE_URL = 'https://asia-northeast1-mobile-wedding-invitatio-d2312.cloudfunctions.net';
+const API_BASE_URL =
+  'https://asia-northeast1-mobile-wedding-invitatio-d2312.cloudfunctions.net';
 
 export function GuestUploadPage() {
   const navigate = useNavigate();
   const weddingId = import.meta.env.VITE_WEDDING_ID;
 
-  // 페이지 뷰: 'landing' → 'form'
   const [view, setView] = useState<PageView>('landing');
   const [isFading, setIsFading] = useState(false);
-
-  // 폼 스텝: name-input → uploading → success/error
   const [formStep, setFormStep] = useState<FormStep>('name-input');
   const [guestName, setGuestName] = useState('');
   const [previewFiles, setPreviewFiles] = useState<PreviewFile[]>([]);
   const [errorMessage, setErrorMessage] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const uploadAbortMapRef = useRef<UploadAbortMap>({});
+  const uploadAbortControllerRef = useRef<AbortController | null>(null);
 
-  // previewUrls cleanup
+  // Revoke blob URLs only when leaving 'success' → 'name-input'
   useEffect(() => {
     return () => {
-      revokePreviewUrls(previewFiles);
+      if (formStep === 'success') {
+        revokePreviewUrls(previewFiles);
+      }
     };
-  }, [previewFiles]);
+  }, [formStep, previewFiles]);
 
-  // 랜딩 → 폼 전환
   const handleStartUpload = () => {
     setIsFading(true);
     setTimeout(() => {
@@ -131,16 +114,15 @@ export function GuestUploadPage() {
     }, 400);
   };
 
-  // 페이지 닫기
   const handleClose = () => {
     if (view === 'form') {
       setIsFading(true);
       setTimeout(() => {
+        revokePreviewUrls(previewFiles);
+        setPreviewFiles([]);
         setView('landing');
         setFormStep('name-input');
         setGuestName('');
-        revokePreviewUrls(previewFiles);
-        setPreviewFiles([]);
         setErrorMessage('');
         setIsFading(false);
       }, 400);
@@ -149,42 +131,33 @@ export function GuestUploadPage() {
     }
   };
 
-  // 이름 입력 후 업로드 버튼 클릭 → 파일 선택 열기
   const handleStartFileSelect = () => {
     if (guestName.trim().length > 0) {
       fileInputRef.current?.click();
     }
   };
 
-  // 파일별 진행률 업데이트
-  const updateFileProgress = (fileId: string, progress: number) => {
+  const updateAllFilesProgress = (progress: number) => {
     setPreviewFiles((prev) =>
-      prev.map((pf) =>
-        pf.id === fileId ? { ...pf, progress } : pf
-      )
+      prev.map((pf) => ({ ...pf, progress }))
     );
   };
 
-  // 파일 선택 완료 → 자동 업로드 시작
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(event.target.files ?? []);
-
     if (selectedFiles.length === 0) return;
 
-    const nextPreviewFiles = selectedFiles.slice(0, MAX_FILE_COUNT).map(createPreviewFile);
+    const nextPreviewFiles = selectedFiles
+      .slice(0, MAX_FILE_COUNT)
+      .map(createPreviewFile);
     setPreviewFiles(nextPreviewFiles);
-
-    // 파일 선택 완료 후 바로 업로드 상태로 전환
     setFormStep('uploading');
 
-    // 자동 업로드 시작
     await performUpload(nextPreviewFiles);
 
-    // 파일 input 초기화
     event.target.value = '';
   };
 
-  // 업로드 수행 (파일별 개별 업로드)
   const performUpload = async (filesToUpload: PreviewFile[]) => {
     if (!weddingId) {
       setFormStep('error');
@@ -194,69 +167,82 @@ export function GuestUploadPage() {
 
     try {
       setErrorMessage('');
-      uploadAbortMapRef.current = {};
+      uploadAbortControllerRef.current = new AbortController();
 
-      // 각 파일을 개별적으로 업로드
-      const uploadPromises = filesToUpload.map(async (previewFile) => {
-        const abortController = new AbortController();
-        uploadAbortMapRef.current[previewFile.id] = abortController;
+      // ✅ FormData 구성
+      const formData = new FormData();
+      formData.append('weddingId', weddingId);
+      formData.append('guestName', guestName.trim());
 
-        try {
-          // 파일별 FormData 생성
-          const formData = new FormData();
-          formData.append('weddingId', weddingId);
-          formData.append('guestName', guestName.trim());
-          formData.append('file', previewFile.file);
-
-          // 파일 업로드 (XMLHttpRequest로 진행률 추적)
-          await new Promise<void>((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-
-            xhr.upload.addEventListener('progress', (e) => {
-              if (e.lengthComputable) {
-                const percentComplete = Math.round((e.loaded / e.total) * 100);
-                updateFileProgress(previewFile.id, percentComplete);
-              }
-            });
-
-            xhr.addEventListener('load', () => {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                updateFileProgress(previewFile.id, 100);
-                resolve();
-              } else {
-                reject(new Error(`Upload failed with status ${xhr.status}`));
-              }
-            });
-
-            xhr.addEventListener('error', () => {
-              reject(new Error('Upload failed'));
-            });
-
-            xhr.addEventListener('abort', () => {
-              reject(new Error('Upload cancelled'));
-            });
-
-            // AbortController 연결
-            abortController.signal.addEventListener('abort', () => {
-              xhr.abort();
-            });
-
-            xhr.open('POST', `${API_BASE_URL}/guestUploadApi`);
-            xhr.send(formData);
-          });
-        } catch (error) {
-          if (error instanceof Error && error.message === 'Upload cancelled') {
-            updateFileProgress(previewFile.id, 0);
-          } else {
-            throw error;
-          }
-        }
+      filesToUpload.forEach((previewFile) => {
+        formData.append('files', previewFile.file);
       });
 
-      await Promise.all(uploadPromises);
+      // 🔍 디버깅: FormData 내용 확인
+      console.group('📦 FormData 디버깅');
+      console.log('weddingId:', weddingId);
+      console.log('guestName:', guestName.trim());
+      console.log('파일 개수:', filesToUpload.length);
+      filesToUpload.forEach((pf, i) => {
+        console.log(`  [${i}] ${pf.file.name} (${pf.file.size} bytes, ${pf.file.type})`);
+      });
+      console.groupEnd();
+
+      await new Promise<void>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+
+        // 🔍 요청 시작 시 디버깅
+        xhr.upload.addEventListener('start', () => {
+          console.log('📤 XHR 업로드 시작');
+        });
+
+        xhr.upload.addEventListener('progress', (e) => {
+          if (e.lengthComputable) {
+            const percentComplete = Math.round((e.loaded / e.total) * 100);
+            console.log(`📊 업로드 진행: ${e.loaded}/${e.total} bytes (${percentComplete}%)`);
+            updateAllFilesProgress(percentComplete);
+          }
+        });
+
+        xhr.addEventListener('loadstart', () => {
+          console.log('🚀 XHR loadstart');
+        });
+
+        xhr.addEventListener('load', () => {
+          console.log(`✅ XHR load (상태: ${xhr.status})`);
+          if (xhr.status >= 200 && xhr.status < 300) {
+            console.log('✅ 업로드 성공');
+            updateAllFilesProgress(100);
+            resolve();
+          } else {
+            console.error(`❌ 업로드 실패 상태: ${xhr.status}`);
+            console.error('응답:', xhr.responseText);
+            reject(new Error(`Upload failed with status ${xhr.status}`));
+          }
+        });
+
+        xhr.addEventListener('error', () => {
+          console.error('❌ XHR 네트워크 에러');
+          reject(new Error('Upload failed'));
+        });
+
+        xhr.addEventListener('abort', () => {
+          console.error('❌ XHR 취소됨');
+          reject(new Error('Upload cancelled'));
+        });
+
+        uploadAbortControllerRef.current?.signal.addEventListener('abort', () => {
+          xhr.abort();
+        });
+
+        console.log('📡 XHR 요청 전송:', `${API_BASE_URL}/guestUploadApi`);
+        xhr.open('POST', `${API_BASE_URL}/guestUploadApi`);
+        xhr.send(formData);
+      });
+
       setFormStep('success');
     } catch (error) {
-      console.error(error);
+      console.error('❌ performUpload 에러:', error);
       setFormStep('error');
       setErrorMessage(
         error instanceof Error
@@ -266,14 +252,7 @@ export function GuestUploadPage() {
     }
   };
 
-  // 파일별 삭제 (업로드 중 취소)
   const handleRemoveFile = (fileId: string) => {
-    // 업로드 중이면 abort
-    if (uploadAbortMapRef.current[fileId]) {
-      uploadAbortMapRef.current[fileId].abort();
-      delete uploadAbortMapRef.current[fileId];
-    }
-
     setPreviewFiles((prev) => {
       const removed = prev.find((pf) => pf.id === fileId);
       if (removed?.previewUrl) {
@@ -283,20 +262,13 @@ export function GuestUploadPage() {
     });
   };
 
-  // 전체 업로드 취소
   const handleCancelAll = () => {
-    Object.values(uploadAbortMapRef.current).forEach((controller) => {
-      controller.abort();
-    });
-    uploadAbortMapRef.current = {};
-    revokePreviewUrls(previewFiles);
-    setPreviewFiles([]);
+    uploadAbortControllerRef.current?.abort();
+    uploadAbortControllerRef.current = null;
     setErrorMessage('');
     setFormStep('name-input');
-    setGuestName('');
   };
 
-  // 성공 후 다시 업로드
   const handleUploadMore = () => {
     revokePreviewUrls(previewFiles);
     setPreviewFiles([]);
@@ -304,7 +276,6 @@ export function GuestUploadPage() {
     setGuestName('');
   };
 
-  // 성공 후 랜딩으로 돌아가기
   const handleBackToLanding = () => {
     revokePreviewUrls(previewFiles);
     setPreviewFiles([]);
@@ -317,13 +288,9 @@ export function GuestUploadPage() {
     }, 400);
   };
 
-  // 에러 후 다시 시도
   const handleRetry = () => {
-    revokePreviewUrls(previewFiles);
-    setPreviewFiles([]);
     setErrorMessage('');
     setFormStep('name-input');
-    setGuestName('');
   };
 
   return (
@@ -355,7 +322,6 @@ export function GuestUploadPage() {
             로그인 없이 원본 화질 그대로 업로드하실 수 있습니다.
           </p>
 
-          {/* Step 1: 이름 입력 */}
           {formStep === 'name-input' && (
             <div className="guest-upload-form-step">
               <div className="guest-upload-fields">
@@ -383,7 +349,6 @@ export function GuestUploadPage() {
                 사진 업로드하기
               </button>
 
-              {/* 숨겨진 파일 input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -395,7 +360,6 @@ export function GuestUploadPage() {
             </div>
           )}
 
-          {/* Step 2: 업로드 중 */}
           {formStep === 'uploading' && (
             <div className="guest-upload-form-step">
               <div className="upload-files-grid">
@@ -452,14 +416,16 @@ export function GuestUploadPage() {
             </div>
           )}
 
-          {/* Step 3: 성공 */}
           {formStep === 'success' && (
             <div className="guest-upload-form-step">
               <div className="upload-files-grid">
                 {previewFiles.map((previewFile) => {
                   const isImage = previewFile.file.type.startsWith('image/');
                   return (
-                    <div key={previewFile.id} className="upload-file-card upload-file-card--completed">
+                    <div
+                      key={previewFile.id}
+                      className="upload-file-card upload-file-card--completed"
+                    >
                       <div className="upload-file-card__media">
                         {isImage && previewFile.previewUrl ? (
                           <img
@@ -512,7 +478,6 @@ export function GuestUploadPage() {
             </div>
           )}
 
-          {/* Step 4: 에러 */}
           {formStep === 'error' && (
             <div className="guest-upload-form-step">
               <div className="upload-message upload-message--error">

@@ -20,7 +20,7 @@ import { weddingConfig } from './config/weddingConfig';
 import { useAuthUser } from './hooks/useAuthUser';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { AdminLoginPage } from './pages/AdminLoginPage';
-import { GuestUploadPage } from './pages/GuestUploadPage'; // 추가
+import { GuestUploadPage } from './pages/GuestUploadPage';
 import { WeddingDateSection } from './components/WeddingDateSection';
 import { LocationSection } from './components/LocationSection';
 import { GuestbookSection } from './components/GuestbookSection';
@@ -73,7 +73,14 @@ function AdminRoute() {
   }
 
   if (!user) {
-    return <AdminLoginPage onLoginSuccess={() => navigate('/admin')} />;
+    return (
+      <AdminLoginPage
+        onLoginSuccess={() => {
+          const weddingId = import.meta.env.VITE_WEDDING_ID;
+          navigate(`/admin/${weddingId}`);
+        }}
+      />
+    );
   }
 
   if (!isAdmin) {
@@ -96,8 +103,11 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<InvitationPage />} />
-        <Route path="/guest-upload" element={<GuestUploadPage />} /> {/* 추가 */}
+        <Route path="/guest-upload" element={<GuestUploadPage />} />
+        {/* 로그인 페이지 */}
         <Route path="/admin" element={<AdminRoute />} />
+        {/* 어드민 대시보드 */}
+        <Route path="/admin/:weddingId" element={<AdminRoute />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

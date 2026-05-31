@@ -650,176 +650,33 @@ a {
 }
 
 /* =========================
-   Guest Upload Files Grid
-========================= */
-
-.upload-files-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
-  padding: 0;
-}
-
-.upload-file-card {
-  display: flex;
-  flex-direction: column;
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.upload-file-card__media {
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%; /* 1:1 정사각형 */
-  background: #f5f5f5;
-  overflow: hidden;
-}
-
-.upload-file-card__media img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.upload-file-card__placeholder {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  background: #f0f0f0;
-}
-
-/* 진행 중일 때 오버레이 */
-.upload-file-card__progress-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  opacity: 1;
-  transition: opacity 0.3s ease;
-}
-
-.upload-file-card--completed .upload-file-card__progress-overlay {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.upload-file-card__progress-track {
-  width: 80%;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 8px;
-}
-
-.upload-file-card__progress-bar {
-  height: 100%;
-  background: #ffffff;
-  transition: width 0.2s ease;
-}
-
-.upload-file-card__progress-text {
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-/* 완료 배지 */
-.upload-file-card__success-badge {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
-  background: #4CAF50;
-  color: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.upload-file-card__info {
-  flex: 1;
-  padding: 10px 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 60px;
-}
-
-.upload-file-card__info strong {
-  display: block;
-  overflow: hidden;
-  color: #111111;
-  font-size: 12px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  line-height: 1.4;
-}
-
-.upload-file-card__remove {
-  align-self: flex-start;
-  margin-top: 6px;
-  border: 0;
-  background: transparent;
-  color: #999999;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 0;
-  width: auto;
-  height: auto;
-}
-
-.upload-file-card__remove:hover {
-  color: #111111;
-}
-
-/* =========================
-   Form Step Container
+   Guest Upload Form Step
 ========================= */
 
 .guest-upload-form-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
+  width: calc(100% - 56px);
+  max-width: 640px;
+  margin: 64px auto 0;
+  animation: fade-in 0.3s ease;
 }
 
-/* =========================
-   Name Input Fields
-========================= */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+/* Step 1: 이름 입력 */
 .guest-upload-fields {
   display: grid;
   grid-template-columns: 1fr;
   gap: 18px;
-  margin-bottom: 16px;
-  width: 100%;
-  max-width: 560px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 34px;
 }
 
 .guest-upload-field {
@@ -827,7 +684,6 @@ a {
   grid-template-columns: 72px 1fr;
   align-items: center;
   text-align: left;
-  gap: 12px;
 }
 
 .guest-upload-field span {
@@ -839,7 +695,7 @@ a {
 }
 
 .guest-upload-field input {
-  width: 100%;
+  width: 30%;
   height: 48px;
   border: 0;
   border-bottom: 1px solid #111111;
@@ -860,10 +716,7 @@ a {
   border-bottom-color: #111111;
 }
 
-/* =========================
-   Submit & Cancel Buttons
-========================= */
-
+/* 업로드 버튼 */
 .guest-upload-submit {
   display: inline-flex;
   min-width: 70px;
@@ -887,82 +740,228 @@ a {
 }
 
 .guest-upload-submit:hover:not(:disabled) {
-  background: #333333;
+  background: #2d2d2d;
+}
+
+/* Step 2: 업로드 중 */
+.upload-files-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 0 28px;
+}
+
+.upload-file-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: fade-in 0.3s ease;
+}
+
+.upload-file-card__media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  background: #f0eeeb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.upload-file-card__media img,
+.upload-file-card__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-file-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  background: #f5f3f0;
+}
+
+.upload-file-card__progress-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 17, 17, 0.6);
+  opacity: 1;
+  transition: opacity 0.2s ease;
+}
+
+.upload-file-card__progress-track {
+  width: 60px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.upload-file-card__progress-bar {
+  height: 100%;
+  background: #ffffff;
+  transition: width 0.2s ease;
+}
+
+.upload-file-card__progress-text {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.upload-file-card__info {
+  position: relative;
+  padding: 0 4px;
+}
+
+.upload-file-card__info strong {
+  display: block;
+  color: #111111;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  word-break: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.upload-file-card__remove {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ff4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0;
+}
+
+.upload-file-card:hover .upload-file-card__remove {
+  opacity: 1;
+}
+
+.upload-file-card__remove:hover {
+  background: #dd3333;
+  transform: scale(1.1);
+}
+
+.upload-file-card--completed .upload-file-card__progress-overlay {
+  display: none;
+}
+
+.upload-file-card--completed .upload-file-card__media {
+  opacity: 0.8;
+}
+
+.upload-file-card__success-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: #4caf50;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.upload-progress-box {
+  margin-bottom: 32px;
+}
+
+.upload-progress-track {
+  overflow: hidden;
+  height: 4px;
+  background: #eeeeee;
+  margin-bottom: 16px;
+}
+
+.upload-progress-bar {
+  height: 100%;
+  background: #111111;
+  transition: width 0.2s ease;
+}
+
+.upload-progress-box p {
+  margin: 0;
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.6;
 }
 
 .guest-upload-cancel {
   display: inline-flex;
   min-width: 70px;
-  height: 48px;
+  height: 52px;
   align-items: center;
   justify-content: center;
-  border: 1px solid #b5b5b0;
-  background: transparent;
+  border: 1px solid #111111;
+  background: #ffffff;
   color: #111111;
-  font-size: 16px;
-  font-weight: 600;
-  letter-spacing: -0.05em;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.06em;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .guest-upload-cancel:hover {
-  border-color: #111111;
   background: #f5f5f5;
 }
 
-/* =========================
-   Messages & Cards
-========================= */
-
-.upload-message {
-  width: 100%;
-  max-width: 560px;
-  margin: 0;
-  padding: 16px 18px;
-  font-size: 15px;
-  line-height: 1.6;
-  letter-spacing: -0.04em;
-  text-align: left;
-  border-radius: 4px;
-}
-
-.upload-message--error {
-  background: #fff1f1;
-  color: #c0392b;
-}
-
+/* Step 3: 성공 */
 .upload-success-card {
-  width: 100%;
-  max-width: 560px;
-  margin: 0;
-  padding: 32px 24px;
+  padding: 40px 28px;
   background: #f8f8f5;
   text-align: center;
-  border-radius: 4px;
+  border-radius: 2px;
 }
 
 .upload-success-card strong {
+  display: block;
   color: #111111;
   font-size: 22px;
   font-weight: 700;
+  margin-bottom: 16px;
 }
 
 .upload-success-card p {
-  margin: 16px 0 0;
+  margin: 0;
   color: #666666;
   font-size: 15px;
   line-height: 1.7;
+  word-break: keep-all;
 }
 
-.upload-success-actions,
-.upload-error-actions {
+.upload-success-actions {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
-  margin-top: 24px;
-  width: 100%;
-  max-width: 560px;
+  gap: 12px;
+  margin-top: 28px;
 }
 
 .primary-button,
@@ -972,7 +971,6 @@ a {
   font-size: 16px;
   font-weight: 700;
   cursor: pointer;
-  border-radius: 4px;
   transition: all 0.2s ease;
 }
 
@@ -982,7 +980,7 @@ a {
 }
 
 .primary-button:hover {
-  background: #333333;
+  background: #2d2d2d;
 }
 
 .secondary-button {
@@ -991,13 +989,32 @@ a {
 }
 
 .secondary-button:hover {
-  background: #d5d5d0;
+  background: #d9d9d6;
 }
 
-/* =========================
-   Section & Page Base
-========================= */
+/* Step 4: 에러 */
+.upload-message {
+  margin-bottom: 32px;
+  padding: 20px 24px;
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.04em;
+  text-align: left;
+  border-radius: 2px;
+}
 
+.upload-message--error {
+  background: #fff1f1;
+  color: #c0392b;
+}
+
+.upload-error-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* 전체 섹션 스타일 */
 .guest-snap-section {
   padding: 104px 0 108px;
   background: #ffffff;
@@ -1016,51 +1033,23 @@ a {
   color: #111111;
 }
 
-.guest-snap-section--page {
-  padding: 3rem 1.5rem 4rem;
-  background: #faf9f7;
-}
-
 .guest-upload-description {
-  margin: 24px 0 48px;
+  margin: 16px 0 0;
   color: #666666;
   font-size: 15px;
-  line-height: 1.7;
+  line-height: 1.6;
   letter-spacing: -0.04em;
 }
 
+/* 페이지 루트 */
 .guest-upload-page {
   min-height: 100dvh;
   background-color: #faf9f7;
 }
 
-.guest-upload-page__close {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  font-size: 16px;
-  color: #333;
-  cursor: pointer;
-  border: 0;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  backdrop-filter: blur(4px);
-}
-
-.guest-upload-page__close:hover {
-  background: rgba(255, 255, 255, 1);
-}
-
-/* =========================
-   Landing Page
-========================= */
+/* -----------------------------------------------
+   랜딩 화면
+----------------------------------------------- */
 
 .guest-upload-landing {
   display: flex;
@@ -1139,7 +1128,6 @@ a {
   padding: 1.75rem 1.5rem;
   border: 1px solid #ece9e3;
   background: #fff;
-  border-radius: 4px;
 }
 
 .guest-upload-landing__deadline {
@@ -1204,7 +1192,6 @@ a {
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.1s ease;
-  border-radius: 4px;
 }
 
 .guest-upload-landing__start-button:hover {
@@ -1215,102 +1202,79 @@ a {
   transform: scale(0.98);
 }
 
-/* =========================
-   Responsive
-========================= */
+/* 페이지 닫기 버튼 */
+.guest-upload-page__close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  color: #333;
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
 
-@media (max-width: 768px) {
-  .upload-files-grid {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 12px;
+.guest-upload-page__close:hover {
+  background: rgba(255, 255, 255, 1);
+  color: #111;
+}
+
+@media (max-width: 430px) {
+  .guest-snap-section {
+    padding: 88px 0 96px;
+  }
+
+  .guest-snap-section h2 {
+    font-size: 25px;
+  }
+
+  .guest-upload-form-step {
+    width: calc(100% - 40px);
+    margin-top: 54px;
   }
 
   .guest-upload-field {
-    grid-template-columns: 60px 1fr;
-    gap: 10px;
+    grid-template-columns: 62px 1fr;
   }
 
   .guest-upload-field span {
-    font-size: 14px;
+    font-size: 17px;
   }
 
   .guest-upload-field input {
-    font-size: 14px;
+    height: 44px;
+    width: 50%;
+    font-size: 16px;
   }
 
   .guest-upload-submit {
-    height: 48px;
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 480px) {
-  .upload-files-grid {
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .upload-file-card__info {
-    padding: 8px 10px;
-    min-height: 50px;
-  }
-
-  .upload-file-card__info strong {
-    font-size: 11px;
-  }
-
-  .guest-upload-fields {
-    margin-bottom: 12px;
-  }
-
-  .guest-upload-field {
-    grid-template-columns: 50px 1fr;
-    gap: 8px;
-  }
-
-  .guest-upload-field span {
-    font-size: 13px;
-  }
-
-  .guest-upload-field input {
-    height: 40px;
-    font-size: 14px;
-  }
-
-  .guest-upload-submit,
-  .guest-upload-cancel {
-    height: 44px;
-    font-size: 14px;
-  }
-
-  .upload-message,
-  .upload-success-card,
-  .upload-success-actions,
-  .upload-error-actions {
-    max-width: 100%;
+    height: 66px;
+    min-width: 124px;
+    font-size: 21px;
   }
 
   .upload-success-card {
-    padding: 24px 16px;
+    padding: 32px 20px;
   }
 
   .upload-success-card strong {
-    font-size: 18px;
-  }
-
-  .upload-success-card p {
-    font-size: 14px;
-    margin-top: 12px;
+    font-size: 20px;
   }
 
   .primary-button,
   .secondary-button {
-    height: 48px;
-    font-size: 14px;
+    height: 60px;
+    font-size: 18px;
   }
 }
-
 
 /* =========================
    Admin Page
