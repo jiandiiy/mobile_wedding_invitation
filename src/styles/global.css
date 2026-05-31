@@ -695,6 +695,39 @@ a {
   letter-spacing: -0.02em;
 }
 
+.footer-section__actions {
+  display: flex;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.footer-action-button {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+  
+  &:active {
+    background: #f5f5f5;
+  }
+  
+  &__icon {
+    font-size: 20px;
+  }
+  
+  &__text {
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
 /* =========================
    Guest Upload Form Step
 ========================= */

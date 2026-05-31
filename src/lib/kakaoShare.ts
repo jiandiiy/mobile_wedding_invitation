@@ -1,5 +1,3 @@
-// src/lib/kakaoShare.ts
-
 /**
  * Kakao SDK 초기화
  */
@@ -20,18 +18,18 @@ export const initializeKakao = () => {
 interface ShareConfig {
   title: string;
   description: string;
-  imageUrl: string; // 반드시 절대경로 (예: https://...)
+  imageUrl: string;
   webUrl: string;
   buttonTitle?: string;
 }
 
 /**
- * 상대경로를 절대경로로 변환
+ * URL을 절대경로로 변환
  */
 const getAbsoluteUrl = (path: string): string => {
+  if (typeof window === 'undefined') return path;
   if (path.startsWith('http')) return path;
-  const baseUrl = window.location.origin;
-  return `${baseUrl}${path.startsWith('/') ? path : '/' + path}`;
+  return `${window.location.origin}${path}`;
 };
 
 /**
@@ -44,27 +42,32 @@ export const shareToKakao = (config: ShareConfig) => {
   }
 
   try {
-    // imageUrl을 절대경로로 변환
-    const absoluteImageUrl = getAbsoluteUrl(config.imageUrl);
-    const absoluteWebUrl = getAbsoluteUrl(config.webUrl);
-
+    const locationUrl = 'https://map.kakao.com/link/to/웨딩스퀘어강변,37.535725176732,127.095692162256';
+    
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
         title: config.title,
         description: config.description,
-        imageUrl: absoluteImageUrl, // ✅ 절대경로 사용
+        imageUrl: getAbsoluteUrl(config.imageUrl),
         link: {
-          webUrl: absoluteWebUrl,
-          mobileWebUrl: absoluteWebUrl,
+          webUrl: getAbsoluteUrl(config.webUrl),
+          mobileWebUrl: getAbsoluteUrl(config.webUrl),
         },
       },
       buttons: [
         {
           title: config.buttonTitle || '청첩장 보기',
           link: {
-            webUrl: absoluteWebUrl,
-            mobileWebUrl: absoluteWebUrl,
+            webUrl: getAbsoluteUrl(config.webUrl),
+            mobileWebUrl: getAbsoluteUrl(config.webUrl),
+          },
+        },
+        {
+          title: '위치보기',
+          link: {
+            webUrl: locationUrl,
+            mobileWebUrl: locationUrl,
           },
         },
       ],
@@ -72,6 +75,35 @@ export const shareToKakao = (config: ShareConfig) => {
   } catch (error) {
     console.error('카카오톡 공유 실패:', error);
     alert('공유 중 오류가 발생했습니다.');
+  }
+};
+
+/**
+ * 카카오맵 위치보기
+ */
+export const openKakaoMap = () => {
+  const VENUE_NAME = '웨딩스퀘어 강변';
+  const LATITUDE = 37.535725176732;
+  const LONGITUDE = 127.095692162256;
+
+  // 웹 URL (카카오맵)
+  const webUrl = `https://map.kakao.com/link/to/${encodeURIComponent(VENUE_NAME)},${LATITUDE},${LONGITUDE}`;
+
+  // 모바일 앱 URL
+  const mobileUrl = `kakaomap://look?p=${LATITUDE},${LONGITUDE}`;
+
+  // 모바일 환경인지 체크
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    // 모바일: 카카오맵 앱으로 시도, 없으면 웹으로 폴백
+    window.location.href = mobileUrl;
+    setTimeout(() => {
+      window.location.href = webUrl;
+    }, 500);
+  } else {
+    // 웹: 카카오맵 웹 버전으로 새 탭 열기
+    window.open(webUrl, '_blank');
   }
 };
 
