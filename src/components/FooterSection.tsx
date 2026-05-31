@@ -32,7 +32,7 @@ export function FooterSection() {
     content: {
       title: `${groom.name} & ${bride.name}의 결혼식`,
       description: dateText,
-      imageUrl: 'https://your-domain.com/wedding-image.jpg', // 실제 이미지 URL
+      imageUrl: 'https://jidong-wedding.vercel.app/images/wedding-image.jpg', // 실제 이미지 URL
       link: {
         webUrl: window.location.href,
         mobileWebUrl: window.location.href,
