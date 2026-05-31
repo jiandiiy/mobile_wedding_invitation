@@ -1,69 +1,44 @@
 import { useState, useEffect } from 'react';
 import { weddingConfig } from '../config/weddingConfig';
+import { initializeKakao, shareToKakao, copyToClipboard } from '../lib/kakaoShare';
 
 export function FooterSection() {
   const { groom, bride } = weddingConfig.couple;
   const { dateText } = weddingConfig.date;
+  const { name: venueName, hall: venueHall } = weddingConfig.venue;
   const [copyFeedback, setCopyFeedback] = useState<'idle' | 'copied'>('idle');
 
   const mainPageUrl = window.location.origin;
 
   // Kakao SDK 초기화
   useEffect(() => {
-    if (window.Kakao && !window.Kakao.isInitialized()) {
-      const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
-      if (appKey) {
-        window.Kakao.init(appKey);
-        console.log('✅ Kakao 초기화 완료');
-      } else {
-        console.warn('⚠️ VITE_KAKAO_APP_KEY가 설정되지 않았습니다.');
-      }
-    }
+    initializeKakao();
   }, []);
 
   // 링크 복사
   const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(mainPageUrl);
+    const success = await copyToClipboard(mainPageUrl);
+    if (success) {
       setCopyFeedback('copied');
       setTimeout(() => setCopyFeedback('idle'), 2000);
-    } catch (err) {
-      console.error('링크 복사 실패:', err);
+    } else {
       alert('링크 복사에 실패했습니다.');
     }
   };
 
+  // 카카오톡 공유
   const handleShareToKakao = () => {
-  if (!window.Kakao?.isInitialized()) {
-    alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
-    return;
-  }
+    const imageUrl = `${window.location.origin}/images/wedding-image.jpg`;
+    const description = `${dateText}\n${venueName} ${venueHall}`;
 
-  // ✅ 현재 환경에 맞는 이미지 URL 동적 생성
-  const imageUrl = `${window.location.origin}/images/wedding-image.jpg`;
-
-  window.Kakao.Share.sendDefault({
-    objectType: 'feed',
-    content: {
+    shareToKakao({
       title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
-      description: dateText,
-      imageUrl, // ✅ 수정됨
-      link: {
-        webUrl: window.location.href,
-        mobileWebUrl: window.location.href,
-      },
-    },
-    buttons: [
-      {
-        title: '청첩장 보기',
-        link: {
-          webUrl: window.location.href,
-          mobileWebUrl: window.location.href,
-        },
-      },
-    ],
-  });
-};
+      description,
+      imageUrl,
+      webUrl: window.location.href,
+      buttonTitle: '청첩장 보기',
+    });
+  };
 
   return (
     <footer className="footer-section">

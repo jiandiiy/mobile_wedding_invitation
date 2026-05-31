@@ -19,7 +19,7 @@ export const weddingConfig: WeddingConfig = {
   },
 
   date: {
-    dateText: '2027년 02월 28일 일요일',
+    dateText: '2027년 02월 28일 일요일 오후3시',
     timeText: '오후 3시',
     isoDate: '2027-02-28T15:00:00+09:00',
   },
