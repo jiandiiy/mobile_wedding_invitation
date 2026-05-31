@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { weddingConfig } from '../config/weddingConfig';
 
 export function FooterSection() {
@@ -7,6 +7,19 @@ export function FooterSection() {
   const [copyFeedback, setCopyFeedback] = useState<'idle' | 'copied'>('idle');
 
   const mainPageUrl = window.location.origin;
+
+  // Kakao SDK 초기화
+  useEffect(() => {
+    if (window.Kakao && !window.Kakao.isInitialized()) {
+      const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
+      if (appKey) {
+        window.Kakao.init(appKey);
+        console.log('✅ Kakao 초기화 완료');
+      } else {
+        console.warn('⚠️ VITE_KAKAO_APP_KEY가 설정되지 않았습니다.');
+      }
+    }
+  }, []);
 
   // 링크 복사
   const handleCopyLink = async () => {
@@ -20,35 +33,35 @@ export function FooterSection() {
     }
   };
 
-  // 카카오톡 공유 (카카오 SDK 초기화 후 사용)
+  // 카카오톡 공유
   const handleShareToKakao = () => {
-  if (!window.Kakao?.isInitialized()) {
-    alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
-    return;
-  }
+    if (!window.Kakao?.isInitialized()) {
+      alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
 
-  window.Kakao.Share.sendDefault({
-    objectType: 'feed',
-    content: {
-      title: `${groom.name} & ${bride.name}의 결혼식`,
-      description: dateText,
-      imageUrl: 'https://jidong-wedding.vercel.app/images/wedding-image.jpg', // 실제 이미지 URL
-      link: {
-        webUrl: window.location.href,
-        mobileWebUrl: window.location.href,
-      },
-    },
-    buttons: [
-      {
-        title: '초대장 보기',
+    window.Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: `${groom.name} & ${bride.name}의 결혼식`,
+        description: dateText,
+        imageUrl: 'https://jidong-wedding.vercel.app/images/wedding-image.jpg',
         link: {
           webUrl: window.location.href,
           mobileWebUrl: window.location.href,
         },
       },
-    ],
-  });
-};
+      buttons: [
+        {
+          title: '초대장 보기',
+          link: {
+            webUrl: window.location.href,
+            mobileWebUrl: window.location.href,
+          },
+        },
+      ],
+    });
+  };
 
   return (
     <footer className="footer-section">
