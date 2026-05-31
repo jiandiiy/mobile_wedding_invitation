@@ -31,7 +31,7 @@ function revokePreviewUrls(previewFiles: PreviewFile[]) {
   });
 }
 
-function GuestUploadLanding({ onStart }: { onStart: () => void }) {
+function GuestUploadLanding({ onStart, onAdminClick }: { onStart: () => void; onAdminClick: () => void }) {
   return (
     <div className="guest-upload-landing">
       <div className="guest-upload-landing__hero">
@@ -76,6 +76,16 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
         >
           사진 업로드하기
         </button>
+
+        {/* 어드민 접근 버튼 */}
+        <button
+          type="button"
+          className="guest-upload-landing__admin-button"
+          onClick={onAdminClick}
+          aria-label="관리자 페이지"
+        >
+          📊 관리자
+        </button>
       </div>
     </div>
   );
@@ -112,6 +122,10 @@ export function GuestUploadPage() {
       setView('form');
       setIsFading(false);
     }, 400);
+  };
+
+  const handleAdminAccess = () => {
+    navigate('/admin/jian-dongyun-2027');
   };
 
   const handleClose = () => {
@@ -311,7 +325,7 @@ export function GuestUploadPage() {
       </button>
 
       {view === 'landing' ? (
-        <GuestUploadLanding onStart={handleStartUpload} />
+        <GuestUploadLanding onStart={handleStartUpload} onAdminClick={handleAdminAccess} />
       ) : (
         <section className="guest-snap-section guest-snap-section--page">
           <h2>Guest Snap</h2>
