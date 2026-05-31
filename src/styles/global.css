@@ -3217,7 +3217,7 @@ a {
 /* Mobile */
 @media (max-width: 430px) {
   .hero-section.hero-section--brand {
-    min-height: 45svh;
+    min-height: 65svh;
     padding: 24px 18px 28px;
   }
 
