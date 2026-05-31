@@ -121,14 +121,14 @@ export const weddingConfig: WeddingConfig = {
     {
       relation: '아버지',
       holder: '신용진',
-      bank: '카카오뱅크',
+      bank: '신한은행',
       number: '3333-04-9083408',
     },
     {
       relation: '어머니',
       holder: '이미라',
-      bank: '카카오뱅크',
-      number: '3333-04-9083408',
+      bank: '신한은행',
+      number: '110-501-074180',
     },
   ],
   },
