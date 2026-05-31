@@ -22,33 +22,33 @@ export function FooterSection() {
 
   // 카카오톡 공유 (카카오 SDK 초기화 후 사용)
   const handleShareToKakao = () => {
-    if (!window.Kakao || !window.Kakao.isInitialized()) {
-      alert('카카오톡 공유 준비 중입니다. 잠시 후 다시 시도해주세요.');
-      return;
-    }
+  if (!window.Kakao?.isInitialized()) {
+    alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
+    return;
+  }
 
-    window.Kakao.Link.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: `${groom.name} & ${bride.name} 결혼식`,
-        description: `${dateText}\n우리의 특별한 날을 함께해주세요.`,
-        imageUrl: `${mainPageUrl}/images/hero-couple.jpg`,
+  window.Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: `${groom.name} & ${bride.name}의 결혼식`,
+      description: dateText,
+      imageUrl: 'https://your-domain.com/wedding-image.jpg', // 실제 이미지 URL
+      link: {
+        webUrl: window.location.href,
+        mobileWebUrl: window.location.href,
+      },
+    },
+    buttons: [
+      {
+        title: '초대장 보기',
         link: {
-          webUrl: mainPageUrl,
-          mobileWebUrl: mainPageUrl,
+          webUrl: window.location.href,
+          mobileWebUrl: window.location.href,
         },
       },
-      buttons: [
-        {
-          title: '초대장 보기',
-          link: {
-            webUrl: mainPageUrl,
-            mobileWebUrl: mainPageUrl,
-          },
-        },
-      ],
-    });
-  };
+    ],
+  });
+};
 
   return (
     <footer className="footer-section">
