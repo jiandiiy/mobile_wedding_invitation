@@ -20,10 +20,19 @@ export const initializeKakao = () => {
 interface ShareConfig {
   title: string;
   description: string;
-  imageUrl: string;
+  imageUrl: string; // 반드시 절대경로 (예: https://...)
   webUrl: string;
   buttonTitle?: string;
 }
+
+/**
+ * 상대경로를 절대경로로 변환
+ */
+const getAbsoluteUrl = (path: string): string => {
+  if (path.startsWith('http')) return path;
+  const baseUrl = window.location.origin;
+  return `${baseUrl}${path.startsWith('/') ? path : '/' + path}`;
+};
 
 /**
  * Kakao Talk으로 공유
@@ -35,23 +44,27 @@ export const shareToKakao = (config: ShareConfig) => {
   }
 
   try {
+    // imageUrl을 절대경로로 변환
+    const absoluteImageUrl = getAbsoluteUrl(config.imageUrl);
+    const absoluteWebUrl = getAbsoluteUrl(config.webUrl);
+
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
         title: config.title,
         description: config.description,
-        imageUrl: config.imageUrl,
+        imageUrl: absoluteImageUrl, // ✅ 절대경로 사용
         link: {
-          webUrl: config.webUrl,
-          mobileWebUrl: config.webUrl,
+          webUrl: absoluteWebUrl,
+          mobileWebUrl: absoluteWebUrl,
         },
       },
       buttons: [
         {
           title: config.buttonTitle || '청첩장 보기',
           link: {
-            webUrl: config.webUrl,
-            mobileWebUrl: config.webUrl,
+            webUrl: absoluteWebUrl,
+            mobileWebUrl: absoluteWebUrl,
           },
         },
       ],

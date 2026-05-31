@@ -28,13 +28,13 @@ export function FooterSection() {
 
   // 카카오톡 공유
   const handleShareToKakao = () => {
-    const imageUrl = `${window.location.origin}/images/wedding-image.jpg`;
+    
     const description = `${dateText}\n${venueName} ${venueHall}`;
 
     shareToKakao({
       title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
       description,
-      imageUrl,
+      imageUrl: '/images/weding-image.jpg', // 공유할 이미지 경로
       webUrl: window.location.href,
       buttonTitle: '청첩장 보기',
     });
