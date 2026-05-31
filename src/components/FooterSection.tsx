@@ -1,15 +1,89 @@
+import { useState } from 'react';
 import { weddingConfig } from '../config/weddingConfig';
 
 export function FooterSection() {
   const { groom, bride } = weddingConfig.couple;
   const { dateText } = weddingConfig.date;
+  const [copyFeedback, setCopyFeedback] = useState<'idle' | 'copied'>('idle');
+
+  const mainPageUrl = window.location.origin;
+
+  // 링크 복사
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(mainPageUrl);
+      setCopyFeedback('copied');
+      setTimeout(() => setCopyFeedback('idle'), 2000);
+    } catch (err) {
+      console.error('링크 복사 실패:', err);
+      alert('링크 복사에 실패했습니다.');
+    }
+  };
+
+  // 카카오톡 공유 (카카오 SDK 초기화 후 사용)
+  const handleShareToKakao = () => {
+    if (!window.Kakao || !window.Kakao.isInitialized()) {
+      alert('카카오톡 공유 준비 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+
+    window.Kakao.Link.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: `${groom.name} & ${bride.name} 결혼식`,
+        description: `${dateText}\n우리의 특별한 날을 함께해주세요.`,
+        imageUrl: `${mainPageUrl}/images/hero-couple.jpg`,
+        link: {
+          webUrl: mainPageUrl,
+          mobileWebUrl: mainPageUrl,
+        },
+      },
+      buttons: [
+        {
+          title: '초대장 보기',
+          link: {
+            webUrl: mainPageUrl,
+            mobileWebUrl: mainPageUrl,
+          },
+        },
+      ],
+    });
+  };
 
   return (
     <footer className="footer-section">
-      <p className="footer-section__names">
-        {groom.name} &amp; {bride.name}
-      </p>
-      <p className="footer-section__date">{dateText}</p>
+      {/* 공유 기능 - 상단 */}
+      <div className="footer-section__share">
+        <button
+          type="button"
+          className="footer-share-button footer-share-button--kakao"
+          onClick={handleShareToKakao}
+          aria-label="카카오톡으로 공유"
+        >
+          <span className="footer-share-button__icon">💬</span>
+          <span className="footer-share-button__text">카카오톡으로 공유하기</span>
+        </button>
+
+        <button
+          type="button"
+          className="footer-share-button footer-share-button--link"
+          onClick={handleCopyLink}
+          aria-label="청첩장 링크 복사"
+        >
+          <span className="footer-share-button__icon">🔗</span>
+          <span className="footer-share-button__text">
+            {copyFeedback === 'copied' ? '복사됨!' : '청첩장 링크 복사하기'}
+          </span>
+        </button>
+      </div>
+
+      {/* 기본 정보 - 하단 */}
+      <div className="footer-section__info">
+        <p className="footer-section__names">
+          {groom.name} &amp; {bride.name}
+        </p>
+        <p className="footer-section__date">{dateText}</p>
+      </div>
     </footer>
   );
 }

@@ -630,23 +630,69 @@ a {
 ========================= */
 
 .footer-section {
-  padding: 60px 24px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  padding: 48px 20px;
+}
+
+/* 공유 버튼 섹션 */
+.footer-section__share {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.footer-share-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0;
+}
+
+.footer-share-button:active {
+  background: #f5f5f5;
+}
+
+.footer-share-button__icon {
+  font-size: 18px;
+}
+
+.footer-share-button__text {
+  letter-spacing: -0.04em;
+}
+
+/* 기본 정보 섹션 */
+.footer-section__info {
   text-align: center;
+  padding-top: 32px;
+  width: 100%;
 }
 
 .footer-section__names {
-  margin: 0 0 10px;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: #111;
+  color: #111111;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.04em;
 }
 
 .footer-section__date {
-  margin: 0;
+  color: #666666;
   font-size: 13px;
-  color: #999;
-  letter-spacing: 0.01em;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: -0.02em;
 }
 
 /* =========================
