@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import {
   BrowserRouter,
@@ -26,15 +26,16 @@ import { LocationSection } from './components/LocationSection';
 import { GuestbookSection } from './components/GuestbookSection';
 import { IntroScreen } from './components/IntroScreen';
 
+
 function InvitationPage() {
   const [isIntroFinished, setIsIntroFinished] = useState(false);
-
+  
   return (
     <>
       {!isIntroFinished && (
         <IntroScreen
-          config={weddingConfig}
-          onFinish={() => setIsIntroFinished(true)}
+        config={weddingConfig}
+        onFinish={() => setIsIntroFinished(true)}
         />
       )}
 
@@ -99,6 +100,20 @@ function AdminRoute() {
 }
 
 function App() {
+  useEffect(() => {
+  const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
+  
+  if (!appKey) {
+    console.error('❌ VITE_KAKAO_APP_KEY가 설정되지 않았습니다.');
+    return;
+  }
+
+  if (window.Kakao && !window.Kakao.isInitialized()) {
+    window.Kakao.init(appKey);
+    console.log('✅ Kakao SDK 초기화 완료');
+  }
+}, []);
+
   return (
     <BrowserRouter>
       <Routes>

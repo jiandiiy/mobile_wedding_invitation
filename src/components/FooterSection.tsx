@@ -33,35 +33,37 @@ export function FooterSection() {
     }
   };
 
-  // 카카오톡 공유
   const handleShareToKakao = () => {
-    if (!window.Kakao?.isInitialized()) {
-      alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
-      return;
-    }
+  if (!window.Kakao?.isInitialized()) {
+    alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
+    return;
+  }
 
-    window.Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: `${groom.name} & ${bride.name}의 결혼식`,
-        description: dateText,
-        imageUrl: 'https://jidong-wedding.vercel.app/images/wedding-image.jpg',
+  // ✅ 현재 환경에 맞는 이미지 URL 동적 생성
+  const imageUrl = `${window.location.origin}/images/wedding-image.jpg`;
+
+  window.Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: `${groom.name} & ${bride.name}의 결혼식`,
+      description: dateText,
+      imageUrl, // ✅ 수정됨
+      link: {
+        webUrl: window.location.href,
+        mobileWebUrl: window.location.href,
+      },
+    },
+    buttons: [
+      {
+        title: '초대장 보기',
         link: {
           webUrl: window.location.href,
           mobileWebUrl: window.location.href,
         },
       },
-      buttons: [
-        {
-          title: '초대장 보기',
-          link: {
-            webUrl: window.location.href,
-            mobileWebUrl: window.location.href,
-          },
-        },
-      ],
-    });
-  };
+    ],
+  });
+};
 
   return (
     <footer className="footer-section">
