@@ -31,7 +31,7 @@ function revokePreviewUrls(previewFiles: PreviewFile[]) {
   });
 }
 
-function GuestUploadLanding({ onStart, onAdminClick }: { onStart: () => void; onAdminClick: () => void }) {
+function GuestUploadLanding({ onStart }: { onStart: () => void }) {
   return (
     <div className="guest-upload-landing">
       <div className="guest-upload-landing__hero">
@@ -75,16 +75,6 @@ function GuestUploadLanding({ onStart, onAdminClick }: { onStart: () => void; on
           onClick={onStart}
         >
           사진 업로드하기
-        </button>
-
-        {/* 어드민 접근 버튼 */}
-        <button
-          type="button"
-          className="guest-upload-landing__admin-button"
-          onClick={onAdminClick}
-          aria-label="관리자 페이지"
-        >
-          📊 관리자
         </button>
       </div>
     </div>
@@ -325,7 +315,7 @@ export function GuestUploadPage() {
       </button>
 
       {view === 'landing' ? (
-        <GuestUploadLanding onStart={handleStartUpload} onAdminClick={handleAdminAccess} />
+        <GuestUploadLanding onStart={handleStartUpload} />
       ) : (
         <section className="guest-snap-section guest-snap-section--page">
           <h2>Guest Snap</h2>
@@ -352,16 +342,16 @@ export function GuestUploadPage() {
                     }}
                   />
                 </label>
-              </div>
 
-              <button
-                type="button"
-                className="guest-upload-submit"
-                disabled={guestName.trim().length === 0}
-                onClick={handleStartFileSelect}
-              >
-                사진 업로드하기
-              </button>
+                <button
+                  type="button"
+                  className="guest-upload-submit"
+                  disabled={guestName.trim().length === 0}
+                  onClick={handleStartFileSelect}
+                >
+                  사진 업로드
+                </button>
+              </div>
 
               <input
                 ref={fileInputRef}
@@ -478,6 +468,14 @@ export function GuestUploadPage() {
                     onClick={handleUploadMore}
                   >
                     사진 더 올리기
+                  </button>
+
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    onClick={handleAdminAccess}
+                  >
+                    📊 관리자
                   </button>
 
                   <button

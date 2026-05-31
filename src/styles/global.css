@@ -673,13 +673,14 @@ a {
 
 /* Step 1: 이름 입력 */
 .guest-upload-fields {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 18px;
+  display: flex;
+  /*gap: 12px;*/
+  align-items: flex-end;
   margin-bottom: 34px;
 }
 
 .guest-upload-field {
+  flex: 1;
   display: grid;
   grid-template-columns: 72px 1fr;
   align-items: center;
@@ -695,7 +696,7 @@ a {
 }
 
 .guest-upload-field input {
-  width: 30%;
+  width: 80%;
   height: 48px;
   border: 0;
   border-bottom: 1px solid #111111;
@@ -718,9 +719,12 @@ a {
 
 /* 업로드 버튼 */
 .guest-upload-submit {
+  flex-shrink: 0;
+  padding: 0 10px;
+  white-space: nowrap;
   display: inline-flex;
-  min-width: 70px;
-  height: 52px;
+  min-width: 50px;
+  height: 42px;
   align-items: center;
   justify-content: center;
   border: 0;
@@ -1215,23 +1219,6 @@ a {
   transform: scale(0.98);
 }
 
-.guest-upload-landing__admin-button {
-  display: block;
-  margin-top: 16px;
-  padding: 12px 24px;
-  background: #f0f0f0;
-  color: #666666;
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.guest-upload-landing__admin-button:hover {
-  background: #e0e0e0;
-}
 
 /* 페이지 닫기 버튼 */
 .guest-upload-page__close {
@@ -1282,14 +1269,14 @@ a {
 
   .guest-upload-field input {
     height: 44px;
-    width: 50%;
+    width: 80%;
     font-size: 16px;
   }
 
   .guest-upload-submit {
-    height: 66px;
-    min-width: 124px;
-    font-size: 21px;
+    height: 44px;
+    min-width: 54px;
+    font-size: 18px;
   }
 
   .upload-success-card {
