@@ -36,6 +36,7 @@ export function LocationSection({ config }: LocationSectionProps) {
   const { venue } = config;
 
   const mapRef = useRef<HTMLDivElement | null>(null);
+   const sectionRef = useRef<HTMLDivElement | null>(null);
   const isMapInitializedRef = useRef(false);
 
   const [toastMessage, setToastMessage] = useState('');
@@ -144,7 +145,7 @@ export function LocationSection({ config }: LocationSectionProps) {
   }, [toastMessage]);
 
   return (
-    <section className="content-section location-section">
+    <section ref={sectionRef} className="content-section location-section">
       <h2 className="location-section__title">WEDDING LOCATION</h2>
 
       <p className="location-section__venue">{venue.name}</p>
@@ -213,7 +214,7 @@ export function LocationSection({ config }: LocationSectionProps) {
         </a>
       </div>
 
-      <Toast message={toastMessage} />
+        <Toast message={toastMessage} parentRef={sectionRef} />
     </section>
   );
 }
