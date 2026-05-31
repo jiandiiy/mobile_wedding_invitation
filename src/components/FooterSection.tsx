@@ -45,7 +45,7 @@ export function FooterSection() {
   window.Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
-      title: `${groom.name} & ${bride.name}의 결혼식`,
+      title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
       description: dateText,
       imageUrl, // ✅ 수정됨
       link: {
@@ -55,7 +55,7 @@ export function FooterSection() {
     },
     buttons: [
       {
-        title: '초대장 보기',
+        title: '청첩장 보기',
         link: {
           webUrl: window.location.href,
           mobileWebUrl: window.location.href,
@@ -95,7 +95,7 @@ export function FooterSection() {
       {/* 기본 정보 - 하단 */}
       <div className="footer-section__info">
         <p className="footer-section__names">
-          {groom.name} &amp; {bride.name}
+          {groom.fullName} &amp; {bride.fullName}
         </p>
         <p className="footer-section__date">{dateText}</p>
       </div>
