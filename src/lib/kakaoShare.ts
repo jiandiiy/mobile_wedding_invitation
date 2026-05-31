@@ -42,7 +42,7 @@ export const shareToKakao = (config: ShareConfig) => {
   }
 
   try {
-    const locationUrl = 'https://map.kakao.com/link/to/웨딩스퀘어강변,37.535725176732,127.095692162256';
+    const locationUrl = 'https://kko.to/stczwqQlK8';
     
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
