@@ -3301,6 +3301,10 @@ a {
   color: var(--theme-on-primary-muted, hsla(0, 0%, 7%, .65));
 }
 
+.greeting-message__text--bold {
+  font-weight: 700 !important;
+}
+
 .greeting-message p {
   margin: 0;
   font-size: 14px;

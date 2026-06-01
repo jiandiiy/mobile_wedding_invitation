@@ -44,6 +44,8 @@ export type Account = {
   number: string;
 };
 
+export type MessageItem = string | { text: string; bold?: boolean };
+
 export type WeddingConfig = {
   couple: {
     groom: Person;
@@ -54,7 +56,7 @@ export type WeddingConfig = {
   greeting: {
     title: string;
     dateText: string;
-    message: string[];
+    message: MessageItem[];
   };
   gallery: GalleryImage[];
   video?: VideoConfig;

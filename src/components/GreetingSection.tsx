@@ -34,6 +34,7 @@ type RevealItem =
       type: 'message';
       id: string;
       text: string;
+      bold: boolean;
     }
   | {
       type: 'space';
@@ -113,8 +114,12 @@ export function GreetingSection({ config }: GreetingSectionProps) {
             : 'greeting-heading__serif',
       }));
 
-    const messageItems: RevealItem[] = greeting.message.map((line, index) =>
-      line === ''
+    // message 아이템 처리: 문자열 또는 객체 모두 지원
+    const messageItems: RevealItem[] = greeting.message.map((item, index) => {
+      const text = typeof item === 'string' ? item : item.text;
+      const bold = typeof item === 'string' ? false : item.bold ?? false;
+
+      return text === ''
         ? {
             type: 'space',
             id: `message-space-${index}`,
@@ -122,9 +127,10 @@ export function GreetingSection({ config }: GreetingSectionProps) {
         : {
             type: 'message',
             id: `message-${index}`,
-            text: line,
-          },
-    );
+            text,
+            bold,
+          };
+    });
 
     return [
       ...titleItems,
@@ -212,8 +218,17 @@ export function GreetingSection({ config }: GreetingSectionProps) {
 
             if (item.type !== 'message') return null;
 
+            // bold 속성이 있으면 font-weight: bold 추가
+            const messageClassName = item.bold
+              ? getRevealClassName('greeting-message__text--bold')
+              : getRevealClassName();
+
             return (
-              <p key={item.id} className={getRevealClassName()}>
+              <p 
+                key={item.id} 
+                className={messageClassName}
+                style={item.bold ? { fontWeight: 700 } : undefined}
+              >
                 {item.text}
               </p>
             );
