@@ -112,7 +112,7 @@ export function GallerySection({ images }: GallerySectionProps) {
 
   return (
     <section ref={sectionRef} className="gallery-section">
-      <h2 className={getRevealClassName(0)}>WEDDING GALLERY</h2>
+      <h2 className={getRevealClassName(0)}>GALLERY</h2>
 
 <div className={getRevealClassName(1, 'gallery-tabs')}>
         <span>Our Story</span>

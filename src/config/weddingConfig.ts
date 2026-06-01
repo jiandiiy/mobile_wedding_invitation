@@ -27,7 +27,7 @@ export const weddingConfig: WeddingConfig = {
   venue: {
   name: '웨딩스퀘어 강변',
   hall: '아모르홀',
-  address: '서울시 광진구 광나루로 56길 85, 4층',
+  address: '서울시 광진구 광나루로 56길 85(구의동 546-4), 웨딩스퀘어 강변 4층 아모르홀',
   mapUrl: 'https://naver.me/FdCx2LFq',
   lat: 37.535095,
   lng: 127.095681,
@@ -105,14 +105,14 @@ export const weddingConfig: WeddingConfig = {
     {
       relation: '아버지',
       holder: '신교철',
-      bank: '카카오뱅크',
-      number: '3333-03-9362064',
+      bank: '국민은행',
+      number: '504502-95-114485',
     },
     {
       relation: '어머니',
       holder: '박소영',
-      bank: '카카오뱅크',
-      number: '3333-03-9362064',
+      bank: '우리은행',
+      number: '467-08-177470',
     },
   ],
   bride: [
@@ -126,7 +126,7 @@ export const weddingConfig: WeddingConfig = {
       relation: '아버지',
       holder: '신용진',
       bank: '신한은행',
-      number: '3333-04-9083408',
+      number: '110-349-891741',
     },
     {
       relation: '어머니',

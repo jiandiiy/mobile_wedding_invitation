@@ -25,6 +25,20 @@
   font-display: swap;
 }
 
+@font-face {
+    font-family: 'GounBatang';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');
+    font-weight: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'GounBatang';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Bold.woff') format('woff');
+    font-weight: 700;
+    font-display: swap;
+}
+
 :root {
   --layout-width: 430px;
 
@@ -51,6 +65,7 @@
 --font-korean-hand: 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 --font-korean-classic: 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 --font-sans: 'SUIT', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+--font-section-title: 'GounBatang', serif;
 
   font-family: var(--font-sans);
   color: var(--color-text);
@@ -214,10 +229,10 @@ a {
 
 .gallery-section h2 {
   margin: 0;
-  font-family: var(--font-serif);
-  font-size: 18px;
+  font-family: var(--font-section-title);
+  font-size: 20px;
   font-weight: 400;
-  font-style: italic;
+  font-style: normal !important;
   line-height: 1;
   letter-spacing: -0.04em;
   color: #111111;
@@ -445,14 +460,20 @@ a {
 
 .account-section h2 {
   margin: 0;
-  font-family: var(--font-serif);
-  font-size: 18px;
+  font-family: var(--font-section-title);
+  font-size: 20px;
   font-weight: 400;
-  font-style: italic;
   line-height: 1;
   letter-spacing: -0.04em;
   color: #111111;
   text-transform: uppercase;
+}
+
+.account-section__description{
+  color: #666666;
+  font-size: 15px;
+  line-height: 1.6;
+  letter-spacing: -0.04em;
 }
 
 .account-tabs {
@@ -1107,10 +1128,9 @@ a {
 
 .guest-snap-section h2 {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-section-title);
   font-size: 25px;
-  font-weight: 200;
-  font-style: italic;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: -0.06em;
   color: #111111;
@@ -2149,7 +2169,7 @@ a {
 .wedding-date-section h2 {
   margin: 0;
   font-family: var(--font-serif);
-  font-size: 18px;
+  font-size: 25px;
   font-weight: 400;
   font-style: italic;
   line-height: 1;
@@ -2249,10 +2269,10 @@ a {
 
 .location-section h2 {
   margin: 0;
-  font-family: var(--font-serif);
-  font-size: 18px;
+  font-family: var(--font-section-title);
+  font-size: 20px;
   font-weight: 400;
-  font-style: italic;
+  font-style: normal !important;
   line-height: 1;
   letter-spacing: -0.04em;
   color: #111111;
@@ -2457,7 +2477,7 @@ a {
 
 .guestbook-section__heading {
   margin: 0 0 32px;
-  font-family: var(--font-korean-classic);
+  font-family: var(--font-section-title);
   font-size: 26px;
   font-weight: 700;
   font-style: normal !important;
@@ -2650,6 +2670,7 @@ a {
   background: #ffffff;
   text-align: center;
 }
+
 
 /* 탭 */
 .guestbook-tabs {
@@ -2907,7 +2928,7 @@ a {
 .guestbook-modal__h2 {
   margin: 0 0 28px;
   font-family: var(--font-korean-serif);
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #111111;
   text-align: center;

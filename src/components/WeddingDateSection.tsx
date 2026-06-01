@@ -96,7 +96,7 @@ const diffTime = targetDate.getTime() - today.getTime();
 
   return (
     <section ref={sectionRef} className="content-section wedding-date-section">
-      <h2 className={getRevealClassName(0)}>{monthLabel}.</h2>
+      <h2 className={getRevealClassName(0)}>{monthLabel}</h2>
 
       <div className="calendar-card">
         <div className={getRevealClassName(1, 'calendar-weekdays')}>
@@ -129,7 +129,7 @@ const diffTime = targetDate.getTime() - today.getTime();
         </p>
 
         <p className={getRevealClassName(4, 'calendar-card__dday')}>
-          {dDay >= 0 ? `D-${dDay}일 ෆ` : '함께해주셔서 감사합니다 ෆ'}
+          {dDay > 0 ? `D-${dDay}일 ෆ` : '우리의 첫걸음을 함께해주셔서 감사합니다 ෆ'}
         </p>
       </div>
     </section>

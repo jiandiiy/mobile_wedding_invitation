@@ -60,7 +60,9 @@ export function AccountSection({ config }: AccountSectionProps) {
   return (
     <section className="account-section is-visible" ref={sectionRef}>
       <h2>Wedding Gift</h2>
-
+      <p className="account-section__description">
+        참석이 어려우신 분들을 위해 마음 전하실 곳을 마련했습니다. <br/>축복해주시는 그 마음, 잊지 않고 평생 소중히 간직하겠습니다.
+      </p>
       <div className="account-tabs" role="tablist" aria-label="계좌 정보 선택">
         {ACCOUNT_OWNERS.map((owner) => {
           const isSelected = selectedOwner === owner;
