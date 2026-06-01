@@ -56,7 +56,7 @@ export function MusicPlayerButton() {
         onClick={handleToggleMusic}
         aria-label={isPlaying ? '배경음악 끄기' : '배경음악 켜기'}
       >
-        <span>{hasAudioError ? '!' : isPlaying ? 'Ⅱ' : '♪'}</span>
+        <span>{hasAudioError ? '!' : isPlaying ? 'Ⅱ' : '♫'}</span>
       </button>
     </div>
   );
