@@ -25,6 +25,10 @@ export const initializeKakaoAsync = (): Promise<boolean> => {
       resolve(true);
       return;
     }
+// kakaoShare.ts에 추가 - 카톡 WebView 감지
+    const isKakaoTalkWebView = /KAKAOTALK/i.test(navigator.userAgent);
+console.log('카톡 WebView?', isKakaoTalkWebView);
+console.log('User-Agent:', navigator.userAgent);
 
     const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
     if (!appKey) {
