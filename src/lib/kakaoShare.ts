@@ -1,4 +1,13 @@
 /**
+ * Kakao SDK 타입 확장
+ */
+declare global {
+  interface Window {
+    Kakao: any;
+  }
+}
+
+/**
  * Kakao SDK 초기화 (Promise 기반)
  * 모바일 웹뷰에서 SDK 로드 지연 대응
  */
@@ -8,11 +17,9 @@ let kakaoInitPromise: Promise<boolean> | null = null;
 export const initializeKakaoAsync = (): Promise<boolean> => {
   if (typeof window === 'undefined') return Promise.resolve(false);
 
-  // 이미 초기화 중이거나 완료됨
   if (kakaoInitPromise) return kakaoInitPromise;
 
   kakaoInitPromise = new Promise((resolve) => {
-    // 이미 초기화됨
     if (window.Kakao?.isInitialized()) {
       console.log('✅ Kakao는 이미 초기화됨');
       resolve(true);
@@ -26,9 +33,8 @@ export const initializeKakaoAsync = (): Promise<boolean> => {
       return;
     }
 
-    // window.Kakao를 기다리며 폴링
     let attempts = 0;
-    const maxAttempts = 50; // 5초 (100ms × 50)
+    const maxAttempts = 50;
 
     const checkAndInit = setInterval(() => {
       attempts++;
@@ -77,22 +83,49 @@ const getAbsoluteUrl = (path: string): string => {
 };
 
 /**
+ * 디버깅 정보를 localStorage에 저장
+ */
+const saveDebugLog = (key: string, data: unknown) => {
+  try {
+    const logs = JSON.parse(localStorage.getItem('kakao_debug_logs') || '[]');
+    logs.push({
+      timestamp: new Date().toISOString(),
+      key,
+      data,
+    });
+    // 최근 10개만 유지
+    localStorage.setItem('kakao_debug_logs', JSON.stringify(logs.slice(-10)));
+  } catch (error) {
+    console.error('디버그 로그 저장 실패:', error);
+  }
+};
+
+/**
  * Kakao Talk으로 공유 (비동기)
  */
 export const shareToKakao = async (config: ShareConfig): Promise<boolean> => {
   try {
-    // 1. SDK 초기화 완료 대기
     const isInitialized = await initializeKakaoAsync();
 
     if (!isInitialized || !window.Kakao?.isInitialized()) {
+      const errorMsg = 'Kakao SDK 미초기화';
+      saveDebugLog('SHARE_FAILED', { reason: errorMsg });
       alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
-      console.warn('⚠️ Kakao SDK가 초기화되지 않음');
+      console.warn(`⚠️ ${errorMsg}`);
       return false;
     }
 
-    // 2. 공유 실행
     const locationUrl = 'https://kko.to/stczwqQlK8';
 
+    // 공유 요청 정보 로깅
+    const shareData = {
+      title: config.title,
+      imageUrl: getAbsoluteUrl(config.imageUrl),
+      webUrl: getAbsoluteUrl(config.webUrl),
+    };
+    saveDebugLog('SHARE_ATTEMPT', shareData);
+
+    // ✅ 콜백 추가: success & fail
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
@@ -120,15 +153,48 @@ export const shareToKakao = async (config: ShareConfig): Promise<boolean> => {
           },
         },
       ],
+      success: (res: any) => {
+        console.log('✅ 카카오톡 공유 완료', res);
+        saveDebugLog('SHARE_SUCCESS', res);
+      },
+      fail: (error: any) => {
+        console.error('❌ 카카오톡 공유 API 실패:', error);
+        saveDebugLog('SHARE_FAILED', {
+          error: error?.message || String(error),
+          errorCode: error?.code,
+        });
+        alert('공유 중 오류가 발생했습니다.');
+      },
     });
 
-    console.log('✅ 카카오톡 공유 완료');
     return true;
   } catch (error) {
-    console.error('❌ 카카오톡 공유 실패:', error);
+    console.error('❌ 카카오톡 공유 실패 (예외):', error);
+    saveDebugLog('SHARE_ERROR', {
+      message: error instanceof Error ? error.message : String(error),
+    });
     alert('공유 중 오류가 발생했습니다.');
     return false;
   }
+};
+
+/**
+ * 디버그 로그 조회 (개발용)
+ */
+export const getKakaoDebugLogs = () => {
+  try {
+    return JSON.parse(localStorage.getItem('kakao_debug_logs') || '[]');
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * 디버그 로그 초기화
+ */
+export const clearKakaoDebugLogs = () => {
+  localStorage.removeItem('kakao_debug_logs');
+  console.log('✅ 디버그 로그 초기화됨');
 };
 
 /**
