@@ -3,9 +3,7 @@ import { weddingConfig } from '../config/weddingConfig';
 import { 
   initializeKakaoAsync, 
   shareToKakao, 
-  copyToClipboard,
-  getKakaoDebugLogs,
-  clearKakaoDebugLogs 
+  copyToClipboard 
 } from '../lib/kakaoShare';
 
 export function FooterSection() {
@@ -15,8 +13,6 @@ export function FooterSection() {
 
   const [copyFeedback, setCopyFeedback] = useState<'idle' | 'copied'>('idle');
   const [isSharing, setIsSharing] = useState(false);
-  const [showDebug, setShowDebug] = useState(false);
-  const [debugLogs, setDebugLogs] = useState<string>('');
 
   const mainPageUrl = window.location.origin;
 
@@ -62,19 +58,7 @@ export function FooterSection() {
     }
   };
 
-  // 디버그 로그 확인
-  const handleCheckDebugLogs = () => {
-    const logs = getKakaoDebugLogs();
-    setDebugLogs(JSON.stringify(logs, null, 2));
-    setShowDebug(true);
-  };
 
-  // 디버그 로그 초기화
-  const handleClearDebugLogs = () => {
-    clearKakaoDebugLogs();
-    setDebugLogs('');
-    setShowDebug(false);
-  };
 
   return (
     <footer className="footer-section">
@@ -114,55 +98,6 @@ export function FooterSection() {
           {groom.fullName} &amp; {bride.fullName}
         </p>
         <p className="footer-section__date">{dateText}</p>
-      </div>
-
-      {/* 개발용 디버그 패널 (배포 전 제거) */}
-      <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #ccc' }}>
-        <button
-          type="button"
-          onClick={handleCheckDebugLogs}
-          style={{
-            padding: '8px 12px',
-            marginRight: '8px',
-            fontSize: '12px',
-            background: '#f0f0f0',
-            border: '1px solid #999',
-            cursor: 'pointer',
-          }}
-        >
-          📋 디버그 로그 확인
-        </button>
-        <button
-          type="button"
-          onClick={handleClearDebugLogs}
-          style={{
-            padding: '8px 12px',
-            fontSize: '12px',
-            background: '#f0f0f0',
-            border: '1px solid #999',
-            cursor: 'pointer',
-          }}
-        >
-          🗑️ 로그 초기화
-        </button>
-
-        {showDebug && (
-          <pre
-            style={{
-              marginTop: '12px',
-              padding: '12px',
-              background: '#f9f9f9',
-              border: '1px solid #ddd',
-              borderRadius: '4px',
-              fontSize: '11px',
-              maxHeight: '300px',
-              overflowY: 'auto',
-              fontFamily: 'monospace',
-            }}
-          >
-            {debugLogs || '(로그 없음)'}
-          </pre>
-        )}
       </div>
     </footer>
   );
