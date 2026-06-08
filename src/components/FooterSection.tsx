@@ -8,19 +8,13 @@ export function FooterSection() {
   const { name: venueName, hall: venueHall } = weddingConfig.venue;
 
   const [copyFeedback, setCopyFeedback] = useState<'idle' | 'copied'>('idle');
-  const [isKakaoReady, setIsKakaoReady] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
 
   const mainPageUrl = window.location.origin;
 
   // Kakao SDK 초기화
   useEffect(() => {
-    initializeKakaoAsync().then((isReady) => {
-      setIsKakaoReady(isReady);
-      if (!isReady) {
-        console.warn('⚠️ 카카오 SDK 초기화 실패 - 공유 기능 비활성화됨');
-      }
-    });
+    initializeKakaoAsync();
   }, []);
 
   // 링크 복사
@@ -36,25 +30,27 @@ export function FooterSection() {
 
   // 카카오톡 공유
   const handleShareToKakao = async () => {
-    if (!isKakaoReady || isSharing) return;
+    if (isSharing) return;
 
     setIsSharing(true);
 
-    const description = `${dateText}\n${venueName} ${venueHall}`;
+    try {
+      // 공유할 때마다 SDK 재초기화 (카톡 웹뷰 대응)
+      await initializeKakaoAsync();
 
-    const success = await shareToKakao({
-      title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
-      description,
-      imageUrl: '/images/wedding-image.jpg',
-      webUrl: mainPageUrl,
-      buttonTitle: '청첩장 보기',
-    });
+      const description = `${dateText}\n${venueName} ${venueHall}`;
 
-    setIsSharing(false);
-
-    // 공유 성공 시 피드백 (선택사항)
-    if (success) {
-      console.log('✅ 공유 버튼 클릭 완료');
+      shareToKakao({
+        title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
+        description,
+        imageUrl: '/images/wedding-image.jpg',
+        webUrl: mainPageUrl,
+        buttonTitle: '청첩장 보기',
+      });
+    } catch (error) {
+      console.error('카카오톡 공유 실패:', error);
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -66,9 +62,8 @@ export function FooterSection() {
           type="button"
           className="footer-share-button footer-share-button--kakao"
           onClick={handleShareToKakao}
-          disabled={!isKakaoReady || isSharing}
+          disabled={isSharing}
           aria-label="카카오톡으로 공유"
-          title={!isKakaoReady ? '카카오 SDK 초기화 중입니다...' : ''}
         >
           <span className="footer-share-button__icon">
             {isSharing ? '⏳' : '💬'}
