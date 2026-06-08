@@ -693,6 +693,15 @@ a {
   letter-spacing: -0.04em;
 }
 
+.footer-share-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.footer-share-button:disabled:hover {
+  background-color: inherit; /* 호버 효과 제거 */
+}
+
 /* 기본 정보 섹션 */
 .footer-section__info {
   text-align: center;

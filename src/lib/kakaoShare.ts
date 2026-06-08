@@ -1,18 +1,62 @@
 /**
- * Kakao SDK 초기화
+ * Kakao SDK 초기화 (Promise 기반)
+ * 모바일 웹뷰에서 SDK 로드 지연 대응
  */
-export const initializeKakao = () => {
-  if (typeof window === 'undefined') return;
 
-  if (window.Kakao && !window.Kakao.isInitialized()) {
-    const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
-    if (appKey) {
-      window.Kakao.init(appKey);
-      console.log('✅ Kakao 초기화 완료');
-    } else {
-      console.warn('⚠️ VITE_KAKAO_APP_KEY가 설정되지 않았습니다.');
+let kakaoInitPromise: Promise<boolean> | null = null;
+
+export const initializeKakaoAsync = (): Promise<boolean> => {
+  if (typeof window === 'undefined') return Promise.resolve(false);
+
+  // 이미 초기화 중이거나 완료됨
+  if (kakaoInitPromise) return kakaoInitPromise;
+
+  kakaoInitPromise = new Promise((resolve) => {
+    // 이미 초기화됨
+    if (window.Kakao?.isInitialized()) {
+      console.log('✅ Kakao는 이미 초기화됨');
+      resolve(true);
+      return;
     }
-  }
+
+    const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
+    if (!appKey) {
+      console.warn('⚠️ VITE_KAKAO_APP_KEY가 설정되지 않았습니다.');
+      resolve(false);
+      return;
+    }
+
+    // window.Kakao를 기다리며 폴링
+    let attempts = 0;
+    const maxAttempts = 50; // 5초 (100ms × 50)
+
+    const checkAndInit = setInterval(() => {
+      attempts++;
+
+      if (window.Kakao) {
+        clearInterval(checkAndInit);
+
+        if (!window.Kakao.isInitialized()) {
+          try {
+            window.Kakao.init(appKey);
+            console.log('✅ Kakao 초기화 완료');
+            resolve(true);
+          } catch (error) {
+            console.error('❌ Kakao 초기화 실패:', error);
+            resolve(false);
+          }
+        } else {
+          resolve(true);
+        }
+      } else if (attempts >= maxAttempts) {
+        clearInterval(checkAndInit);
+        console.error('❌ Kakao SDK 로드 타임아웃 (5초)');
+        resolve(false);
+      }
+    }, 100);
+  });
+
+  return kakaoInitPromise;
 };
 
 interface ShareConfig {
@@ -33,17 +77,22 @@ const getAbsoluteUrl = (path: string): string => {
 };
 
 /**
- * Kakao Talk으로 공유
+ * Kakao Talk으로 공유 (비동기)
  */
-export const shareToKakao = (config: ShareConfig) => {
-  if (!window.Kakao?.isInitialized()) {
-    alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
-    return;
-  }
-
+export const shareToKakao = async (config: ShareConfig): Promise<boolean> => {
   try {
+    // 1. SDK 초기화 완료 대기
+    const isInitialized = await initializeKakaoAsync();
+
+    if (!isInitialized || !window.Kakao?.isInitialized()) {
+      alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      console.warn('⚠️ Kakao SDK가 초기화되지 않음');
+      return false;
+    }
+
+    // 2. 공유 실행
     const locationUrl = 'https://kko.to/stczwqQlK8';
-    
+
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
@@ -72,9 +121,13 @@ export const shareToKakao = (config: ShareConfig) => {
         },
       ],
     });
+
+    console.log('✅ 카카오톡 공유 완료');
+    return true;
   } catch (error) {
-    console.error('카카오톡 공유 실패:', error);
+    console.error('❌ 카카오톡 공유 실패:', error);
     alert('공유 중 오류가 발생했습니다.');
+    return false;
   }
 };
 
@@ -86,23 +139,17 @@ export const openKakaoMap = () => {
   const LATITUDE = 37.535725176732;
   const LONGITUDE = 127.095692162256;
 
-  // 웹 URL (카카오맵)
   const webUrl = `https://map.kakao.com/link/to/${encodeURIComponent(VENUE_NAME)},${LATITUDE},${LONGITUDE}`;
-
-  // 모바일 앱 URL
   const mobileUrl = `kakaomap://look?p=${LATITUDE},${LONGITUDE}`;
 
-  // 모바일 환경인지 체크
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
   if (isMobile) {
-    // 모바일: 카카오맵 앱으로 시도, 없으면 웹으로 폴백
     window.location.href = mobileUrl;
     setTimeout(() => {
       window.location.href = webUrl;
     }, 500);
   } else {
-    // 웹: 카카오맵 웹 버전으로 새 탭 열기
     window.open(webUrl, '_blank');
   }
 };
