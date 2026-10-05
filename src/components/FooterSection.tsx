@@ -14,7 +14,7 @@ export function FooterSection() {
   const [copyFeedback, setCopyFeedback] = useState<'idle' | 'copied'>('idle');
   const [isSharing, setIsSharing] = useState(false);
 
-  const mainPageUrl = window.location.origin;
+  const mainPageUrl = import.meta.env.VITE_SITE_URL ?? window.location.origin;
 
   // Kakao SDK 초기화
   useEffect(() => {
@@ -47,7 +47,7 @@ export function FooterSection() {
       shareToKakao({
         title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
         description,
-        imageUrl: '/images/wedding-image.jpg',
+        imageUrl: `${mainPageUrl}/images/wedding-image.jpg`,
         webUrl: mainPageUrl,
         buttonTitle: '청첩장 보기',
       });
