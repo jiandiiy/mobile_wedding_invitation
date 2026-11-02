@@ -12,7 +12,7 @@ export function HeroSection({ config }: HeroSectionProps) {
     <section className="hero-section hero-section--brand">
       <img
         className="hero-section__background"
-        src="/images/hero-couple.jpg"
+        src="/images/hero-couple-2.webp"
         alt={`${couple.groom.name}과 ${couple.bride.name} 웨딩 사진`}
       />
 

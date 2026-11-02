@@ -24,7 +24,7 @@ import { GuestUploadPage } from './pages/GuestUploadPage';
 import { WeddingDateSection } from './components/WeddingDateSection';
 import { LocationSection } from './components/LocationSection';
 import { GuestbookSection } from './components/GuestbookSection';
-import { IntroScreen } from './components/IntroScreen';
+import IntroOverlay from './components/IntroOverlay';
 
 
 function InvitationPage() {
@@ -33,9 +33,9 @@ function InvitationPage() {
   return (
     <>
       {!isIntroFinished && (
-        <IntroScreen
-        config={weddingConfig}
-        onFinish={() => setIsIntroFinished(true)}
+          <IntroOverlay
+          photoSrc="/images/hero-couple-1.webp"       // HeroSection과 같은 사진을 쓰면 전환이 자연스럽습니다
+          onComplete={() => setIsIntroFinished(true)} // 문이 완전히 열린 뒤 호출
         />
       )}
 

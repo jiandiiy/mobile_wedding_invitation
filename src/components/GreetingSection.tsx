@@ -242,7 +242,7 @@ export function GreetingSection({ config }: GreetingSectionProps) {
             )}
           >
             <div className="couple-photo-card__image image-tone image-tone--soft-mono">
-              <img src="/images/bride.jpg" alt="신부 사진" />
+              <img src="/images/bride.webp" alt="신부 사진" />
             </div>
 
             <p className="couple-photo-card__caption">
@@ -257,7 +257,7 @@ export function GreetingSection({ config }: GreetingSectionProps) {
             )}
           >
             <div className="couple-photo-card__image image-tone image-tone--soft-mono">
-              <img src="/images/groom.jpg" alt="신랑 사진" />
+              <img src="/images/groom.webp" alt="신랑 사진" />
             </div>
 
             <p className="couple-photo-card__caption">

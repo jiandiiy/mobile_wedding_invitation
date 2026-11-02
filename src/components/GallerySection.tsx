@@ -155,11 +155,13 @@ export function GallerySection({ images }: GallerySectionProps) {
                 {!isLoaded && <span className="image-skeleton" />}
 
                 <img
-                  src={image.src}
-                  alt={image.alt}
-                  className={isLoaded ? 'is-loaded' : ''}
-                  onLoad={() => handleImageLoad(image.id)}
-                />
+  src={image.src}
+  alt={image.alt}
+  loading="lazy"    // 화면 근처에 올 때 로드 (17장 한꺼번에 받지 않음)
+  decoding="async"  // 디코딩이 메인 스레드를 막지 않게
+  className={isLoaded ? 'is-loaded' : ''}
+  onLoad={() => handleImageLoad(image.id)}
+/>
               </button>
             );
           })}
@@ -194,7 +196,7 @@ export function GallerySection({ images }: GallerySectionProps) {
               </span>
 
               <button type="button" onClick={handleClose}>
-                닫기
+                ✕
               </button>
             </div>
 
@@ -206,7 +208,7 @@ export function GallerySection({ images }: GallerySectionProps) {
                   onClick={() => handleModalMove('prev')}
                   aria-label="이전 사진"
                 >
-                  ‹
+                
                 </button>
               )}
 
@@ -219,7 +221,7 @@ export function GallerySection({ images }: GallerySectionProps) {
                   onClick={() => handleModalMove('next')}
                   aria-label="다음 사진"
                 >
-                  ›
+                  
                 </button>
               )}
             </div>

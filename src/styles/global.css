@@ -112,6 +112,15 @@ video {
   max-width: 100%;
 }
 
+/* 이미지 보호: 길게 눌러 저장 메뉴, 선택, 드래그 방지 */
+img {
+  -webkit-touch-callout: none; /* iOS: 길게 누르기 메뉴 차단 */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;     /* 드래그 저장 차단 */
+  pointer-events: none;        /* 이미지가 터치 이벤트를 받지 않게 */
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -264,7 +273,7 @@ a {
   overflow-x: auto;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
-  padding: 0 calc((100% - 89%) / 2);
+  padding: 0 calc((100% - 97%) / 2);
   scrollbar-width: none;
 }
 
@@ -325,7 +334,7 @@ a {
   align-items: center;
   justify-content: center;
   width: 34px;
-  height: 48px;
+  height: 34px;
   border: 0;
   background: transparent;
   color: rgba(17, 17, 17, 0.55);
@@ -347,13 +356,18 @@ a {
 
 .gallery-modal-backdrop {
   position: fixed;
-  inset: 0;
-  z-index: 9999;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100%;
+  max-width: 480px; /* .invitation-card의 max-width와 맞추세요 */
+  transform: translateX(-50%);
+  z-index: 50;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 22px;
-  background: rgba(0, 0, 0, 0.82);
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.88);
 }
 
 .gallery-modal {
@@ -398,25 +412,51 @@ a {
   top: 50%;
   z-index: 2;
   width: 42px;
-  height: 64px;
+  height: 42px;
   border: 0;
-  background: rgba(0, 0, 0, 0.18);
+  background: transparent;
   color: #ffffff;
   font-family: var(--font-serif);
-  font-size: 42px;
-  line-height: 1;
+  /*font-size: 42px;*/
+  line-height: 0.25;
   transform: translateY(-50%);
   cursor: pointer;
 }
 
+/* 화살표를 CSS로 그림: 정사각형의 두 변만 보이게 하고 회전 */
+.gallery-modal__nav::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+}
+
+/* 이전: ‹ 모양 */
 .gallery-modal__nav--prev {
   left: 0;
 }
+.gallery-modal__nav--prev::before {
+  transform: translate(-30%, -50%) rotate(-45deg);
+}
 
+/* 다음: › 모양 */
 .gallery-modal__nav--next {
   right: 0;
 }
+.gallery-modal__nav--next::before {
+  transform: translate(-70%, -50%) rotate(135deg);
+}
 
+/* 사진 영역에서만 핀치 줌 차단, 세로 스크롤은 허용 */
+.gallery-section,
+.gallery-modal,
+.intro-overlay {
+  touch-action: pan-y;
+}
 
 
 /* =========================
@@ -2134,7 +2174,7 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
-  color: #ffffff;
+  color: #111111;
   backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
   transition:
@@ -3441,91 +3481,6 @@ a {
   white-space: nowrap;
 }
 
-/* intro-screen 전체를 fixed + 이미지가 꽉 채우도록 */
-.intro-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  overflow: hidden;
-  background: #000;
-  opacity: 1;
-  transition: opacity 0.9s ease;
-}
-
-.intro-screen.is-leaving {
-  opacity: 0;
-}
-
-
-/* inner는 이미지 레이어 역할 — 패딩/max-width 제거 */
-.intro-screen__inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transition:
-    opacity 1.2s ease,
-    transform 2.4s ease;
-  transform: scale(0.96);
-}
-
-.intro-screen.is-visible .intro-screen__inner {
-  opacity: 1;
-  transform: scale(1.04);
-}
-
-.intro-screen.is-leaving .intro-screen__inner {
-  opacity: 0;
-  transform: scale(1.1);
-  transition:
-    opacity 0.9s ease,
-    transform 0.9s ease;
-}
-
-/* 이미지 wrap이 화면 전체를 덮도록 */
-.intro-screen__image-wrap {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background: #111;
-}
-
-/* 이미지가 화면 전체를 cover */
-.intro-screen__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(60%);
-  transform: scale(1);
-  transition: transform 2.8s ease;
-}
-
-.intro-screen.is-visible .intro-screen__image {
-  transform: scale(1.08);
-}
-
-/* 텍스트를 이미지 위 — 중앙 오버레이 */
-.intro-screen__content {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  /* 그라디언트 제거, 중앙 배치용 반투명 배경 없음 */
-  background: none;
-
-  color: #111111;
-  text-align: center;
-}
-
-.intro-screen__content p {
-  margin: 0;
-  font-family: var(--font-script);
-  font-size: 56px;        /* 20px → 28px */
-  font-weight: 600;
-  letter-spacing: -0.02em;
-}
 
 .app-content {
   opacity: 0;
