@@ -3382,8 +3382,8 @@ a {
   line-height: 1;
   letter-spacing: -0.02em;
   /* 스크립트 폰트는 끝 획이 더 길어서 여유를 더 크게 */
-  padding-inline: 0.5em;
-  margin-inline: -0.5em;
+  padding-inline: 0.4em;
+  margin-inline: -0.4em;
 }
 
 
