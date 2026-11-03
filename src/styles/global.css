@@ -3362,6 +3362,11 @@ a {
 
 .greeting-heading__serif {
   display: block;
+  /* 이탤릭 끝 획이 박스 밖으로 나가므로 오른쪽에 여유 확보 */
+  padding: 0 0.12em;
+  /* letter-spacing 음수가 마지막 글자 뒤 공간을 깎는 것 보정 */
+  margin-right: -0.04em;
+  overflow: visible;
 }
 
 .greeting-heading__script {
