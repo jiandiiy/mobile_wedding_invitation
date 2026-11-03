@@ -3360,24 +3360,20 @@ a {
   color: #111111;
 }
 
-.greeting-heading > span {
-  /* 끝 획이 나갈 공간. 박스가 넓어진 만큼 음수 margin으로 상쇄 */
-  padding-inline: 0.2em;
-  margin-inline: -0.2em;
-  
+
+/* 공통 display만 두고, 여유 공간은 줄별로 지정 */
+.greeting-heading__serif,
+.greeting-heading__script {
+  display: block;
 }
 
 .greeting-heading__serif {
-  display: block;
-  /* 이탤릭 끝 획이 박스 밖으로 나가므로 오른쪽에 여유 확보 */
-  padding: 0 0.12em;
-  /* letter-spacing 음수가 마지막 글자 뒤 공간을 깎는 것 보정 */
-  margin-right: -0.04em;
-  overflow: visible;
+  /* 이탤릭 끝 획 여유 (padding으로 늘린 만큼 margin으로 상쇄해 중앙 유지) */
+  padding-inline: 0.3em;
+  margin-inline: -0.3em;
 }
 
 .greeting-heading__script {
-  display: block;
   margin-top: 10px;
   font-family: var(--font-script);
   font-size: 48px;
@@ -3385,7 +3381,11 @@ a {
   font-style: normal;
   line-height: 1;
   letter-spacing: 0;
+  /* 스크립트 폰트는 끝 획이 더 길어서 여유를 더 크게 */
+  padding-inline: 0.5em;
+  margin-inline: -0.5em;
 }
+
 
 .greeting-date {
   margin: 44px 0 0;
@@ -3805,7 +3805,7 @@ a {
   transition:
     opacity 0.95s ease,
     transform 0.95s cubic-bezier(0.22, 1, 0.36, 1) !important;
-  will-change: opacity, transform;
+  /*will-change: opacity, transform;*/
 }
 
 .reveal-up.is-visible {
