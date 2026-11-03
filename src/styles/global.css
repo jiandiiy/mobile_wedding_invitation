@@ -3360,6 +3360,13 @@ a {
   color: #111111;
 }
 
+.greeting-heading > span {
+  /* 끝 획이 나갈 공간. 박스가 넓어진 만큼 음수 margin으로 상쇄 */
+  padding-inline: 0.2em;
+  margin-inline: -0.2em;
+  
+}
+
 .greeting-heading__serif {
   display: block;
   /* 이탤릭 끝 획이 박스 밖으로 나가므로 오른쪽에 여유 확보 */
