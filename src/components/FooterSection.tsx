@@ -47,7 +47,7 @@ export function FooterSection() {
       shareToKakao({
         title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
         description,
-        imageUrl: `${mainPageUrl}/images/wedding-image.jpg`,
+        imageUrl: `${mainPageUrl}/images/wedding-image.webp`,
         webUrl: mainPageUrl,
         buttonTitle: '청첩장 보기',
       });

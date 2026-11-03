@@ -49,8 +49,8 @@ function InvitationPage() {
             <VideoSection video={weddingConfig.video} />
             <LocationSection config={weddingConfig} />
             <AccountSection config={weddingConfig} />
-            <GuestUploadSection />
             <GuestbookSection />
+            <GuestUploadSection />
             <FooterSection />
           </InvitationLayout>
         </div>
