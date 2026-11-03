@@ -3356,7 +3356,7 @@ a {
   font-weight: 500;
   font-style: italic;
   line-height: 0.95;
-  letter-spacing: -0.04em;
+  letter-spacing: 0em;
   color: #111111;
 }
 
@@ -3805,7 +3805,6 @@ a {
   transition:
     opacity 0.95s ease,
     transform 0.95s cubic-bezier(0.22, 1, 0.36, 1) !important;
-  /*will-change: opacity, transform;*/
 }
 
 .reveal-up.is-visible {
