@@ -112,10 +112,10 @@
 
 /* ---- 단계별 상태: 안쪽(화면 뒤쪽)으로 열림 ---- */
 .intro-overlay.is-opening .intro-door--left,
-.intro-overlay.is-fading  .intro-door--left  { transform: rotateY(80deg); }
+.intro-overlay.is-fading  .intro-door--left  { transform: rotateY(100deg); }
 
 .intro-overlay.is-opening .intro-door--right,
-.intro-overlay.is-fading  .intro-door--right { transform: rotateY(-80deg); }
+.intro-overlay.is-fading  .intro-door--right { transform: rotateY(-100deg); }
 
 /* 오버레이 전체: 화면을 덮고, 3D 회전의 원근감을 담당 */
 .intro-overlay {
