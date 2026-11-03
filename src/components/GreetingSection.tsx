@@ -238,6 +238,21 @@ export function GreetingSection({ config }: GreetingSectionProps) {
         <div className="couple-photo-row">
           <article
             className={getRevealClassName(
+              'couple-photo-card couple-photo-card--groom',
+            )}
+          >
+            <div className="couple-photo-card__image image-tone image-tone--soft-mono">
+              <img src="/images/groom.webp" alt="신랑 사진" />
+            </div>
+
+            <p className="couple-photo-card__caption">
+              <em>신랑.</em>
+              <strong>{couple.groom.name}</strong>
+            </p>
+          </article>
+
+          <article
+            className={getRevealClassName(
               'couple-photo-card couple-photo-card--bride',
             )}
           >
@@ -251,20 +266,6 @@ export function GreetingSection({ config }: GreetingSectionProps) {
             </p>
           </article>
 
-          <article
-            className={getRevealClassName(
-              'couple-photo-card couple-photo-card--groom',
-            )}
-          >
-            <div className="couple-photo-card__image image-tone image-tone--soft-mono">
-              <img src="/images/groom.webp" alt="신랑 사진" />
-            </div>
-
-            <p className="couple-photo-card__caption">
-              <em>신랑.</em>
-              <strong>{couple.groom.name}</strong>
-            </p>
-          </article>
         </div>
 
         <div className="couple-family-list">
@@ -272,7 +273,7 @@ export function GreetingSection({ config }: GreetingSectionProps) {
             <span className="couple-family-list__parents">
               {couple.groom.fatherName} · {couple.groom.motherName}
             </span>
-            <span className="couple-family-list__relation">의 아들</span>
+            <span className="couple-family-list__relation">의 장남</span>
             <strong className="couple-family-list__person">
               {couple.groom.fullName}
             </strong>
@@ -282,7 +283,7 @@ export function GreetingSection({ config }: GreetingSectionProps) {
             <span className="couple-family-list__parents">
               {couple.bride.fatherName} · {couple.bride.motherName}
             </span>
-            <span className="couple-family-list__relation">의 딸</span>
+            <span className="couple-family-list__relation">의 장녀</span>
             <strong className="couple-family-list__person">
               {couple.bride.fullName}
             </strong>

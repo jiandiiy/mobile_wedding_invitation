@@ -695,7 +695,27 @@ a {
   flex-direction: column;
   align-items: center;
   gap: 32px;
-  padding: 48px 20px;
+  padding: 20px 0 20px;
+}
+
+.footer-section__photo {
+  width: 100%;
+  aspect-ratio: 2 / 1;      /* 사진 비율에 맞게 조정 (3/4, 1/1 등) */
+  overflow: hidden;
+  background: #eeeeee;      /* 로딩 중 빈 자리 표시 */
+}
+
+.footer-section__photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;        /* 비율 유지하며 꽉 채움 */
+  object-position: center;  /* 인물이 잘리면 'center top' 등으로 조정 */
+}
+
+/* 사진과 버튼 사이 간격 */
+.footer-section__share {
+  margin: 45px 0 60px;
 }
 
 /* 공유 버튼 섹션 */
@@ -3421,13 +3441,13 @@ a {
   color: #111111;
 }
 .couple-photo-card--bride .couple-photo-card__caption {
-  justify-content: flex-start;
-  text-align: left;
+  justify-content: flex-end;
+  text-align: right;
 }
 
 .couple-photo-card--groom .couple-photo-card__caption {
-  justify-content: flex-end;
-  text-align: right;
+  justify-content: flex-start;
+  text-align: left;
 }
 
 .couple-photo-card__caption em {
@@ -3446,7 +3466,7 @@ a {
 
 .couple-family-list {
   display: grid;
-  gap: 18px;
+  gap: 25px;
   width: fit-content;
   margin: 150px auto -20px;
   font-family: var(--font-sans);
@@ -3456,8 +3476,8 @@ a {
   display: grid;
   grid-template-columns: 80px 46px 30px;
   align-items: baseline;
-  column-gap: 10px;
-  color: #777777;
+  column-gap: 14px;
+  color: #333333;
   font-size: 16px;
   line-height: 1.2;
   letter-spacing: -0.08em;
@@ -3466,18 +3486,22 @@ a {
 .couple-family-list__parents {
   text-align: right;
   white-space: nowrap;
+  font-size: 18px;
+  font-weight: 500;       
 }
 
 .couple-family-list__relation {
   text-align: left;
   white-space: nowrap;
+  margin: 0 16px;
 }
 
 .couple-family-list__person {
   color: #111111;
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: -0.08em;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.09em;
+  margin: 0 5px;
   white-space: nowrap;
 }
 

@@ -13,7 +13,7 @@ export function GuestUploadSection() {
 
       {/* 페이지 이동 — button 대신 Link로 의미에 맞게 */}
       <Link to="/guest-upload" className="guest-upload-open-button">
-        업로드하기
+        사진 올리기
       </Link>
     </section>
   );

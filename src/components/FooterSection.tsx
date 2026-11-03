@@ -47,7 +47,7 @@ export function FooterSection() {
       shareToKakao({
         title: `${groom.fullName} ♥️ ${bride.fullName} 결혼합니다.`,
         description,
-        imageUrl: `${mainPageUrl}/images/wedding-image.webp`,
+        imageUrl: `${mainPageUrl}/images/hero-couple-1.webp`,
         webUrl: mainPageUrl,
         buttonTitle: '청첩장 보기',
       });
@@ -62,7 +62,23 @@ export function FooterSection() {
 
   return (
     <footer className="footer-section">
-      {/* 공유 기능 - 상단 */}
+       {/* 상단 사진 */}
+    <div className="footer-section__photo">
+      <img
+        src="/images/footer.webp"
+        alt="백조 사진"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    {/* 기본 정보 - 상단 */}
+      <div className="footer-section__info">
+        <p className="footer-section__names">
+          {groom.fullName} &amp; {bride.fullName}
+        </p>
+        <p className="footer-section__date">{dateText}</p>
+      </div>
+      {/* 공유 기능 - 하단 */}
       <div className="footer-section__share">
         <button
           type="button"
@@ -92,13 +108,7 @@ export function FooterSection() {
         </button>
       </div>
 
-      {/* 기본 정보 - 하단 */}
-      <div className="footer-section__info">
-        <p className="footer-section__names">
-          {groom.fullName} &amp; {bride.fullName}
-        </p>
-        <p className="footer-section__date">{dateText}</p>
-      </div>
+      
     </footer>
   );
 }

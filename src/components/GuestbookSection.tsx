@@ -87,7 +87,7 @@ export function GuestbookSection() {
 
   return (
     <section className="content-section guestbook-section">
-      <h2 className="guestbook-section__heading">방명록</h2>
+      <h2 className="guestbook-section__heading">축하 한마디</h2>
       {/* 탭 */}
       <div
         className="guestbook-tabs"
@@ -116,8 +116,8 @@ export function GuestbookSection() {
       {/* 카드 그리드 */}
       {previewMessages.length === 0 ? (
         <div className="guestbook-empty">
-          <p>아직 작성된 방명록이 없습니다.</p>
-          <p>첫 방명록을 작성해주세요.</p>
+          <p>아직 작성된 글이 없습니다.</p>
+          <p>따뜻한 축하의 한마디를 남겨주세요.</p>
         </div>
       ) : (
         <div className="guestbook-cards">
