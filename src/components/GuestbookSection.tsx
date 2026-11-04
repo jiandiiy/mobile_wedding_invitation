@@ -30,6 +30,14 @@ type GuestbookMessage = {
   createdAt: string; // 표시용 포맷 문자열
 };
 
+const formatDate = (date: Date) => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const dd = String(date.getDate()).padStart(2, '0');
+
+  return `${yyyy}.${mm}.${dd}`; // 예: 2026.11.04
+};
+
 const TARGET_LABEL: Record<GuestbookTarget, string> = {
   groom: '신랑에게',
   bride: '신부에게',
@@ -59,17 +67,11 @@ export function GuestbookSection() {
 
         return {
           id: docSnap.id,
-          target: data.target as GuestbookTarget,
-          name: data.name as string,
-          message: data.message as string,
-          password: data.password as string,
-          createdAt: ts
-            ? ts.toDate().toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-              })
-            : '',
+  target: data.target as GuestbookTarget,
+  name: data.name as string,
+  message: data.message as string,
+  password: data.password as string,
+  createdAt: ts ? formatDate(ts.toDate()) : '',
         } satisfies GuestbookMessage;
       });
 
@@ -95,6 +97,9 @@ export function GuestbookSection() {
 
   return (
     <section className="content-section guestbook-section">
+      <p className="guestbook-section__eyebrow">GUESTBOOK</p>
+  <span className="guestbook-section__line" aria-hidden="true" />
+  
       <h2 className="guestbook-section__heading">축하 한마디</h2>
       <p className="guestbook-section__desc">
         따뜻한 축하의 한마디를 남겨주세요.
@@ -339,13 +344,30 @@ function WriteForm({ target }: WriteFormProps) {
           placeholder="축하 메시지를 입력하세요"
           maxLength={MAX_MESSAGE}
         />
-        <button
-          type="submit"
-          className="guestbook-form__send"
-          disabled={!canSubmit}
-        >
-          {isSubmitting ? '등록 중' : '등록'}
-        </button>
+       <button
+  type="submit"
+  className="guestbook-form__send"
+  disabled={!canSubmit}
+  aria-label="메시지 등록"
+>
+  {isSubmitting ? (
+    <span className="guestbook-form__sending">···</span>
+  ) : (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"   // 버튼 color를 그대로 따라감
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  )}
+</button>
       </div>
     </form>
   );

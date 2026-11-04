@@ -15,6 +15,7 @@ export type WeddingDate = {
 export type Venue = {
   name: string;
   hall: string;
+  semiAddress: string;
   address: string;
   mapUrl: string;
   lat?: number;
@@ -53,6 +54,9 @@ export type WeddingConfig = {
   };
   date: WeddingDate;
   venue: Venue;
+  hall: Venue['hall'];
+  semiAddress: Venue['semiAddress'];
+  address: Venue['address'];
   greeting: {
     title: string;
     dateText: string;

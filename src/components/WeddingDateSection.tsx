@@ -17,7 +17,7 @@ type CalendarItem =
       day: number;
     };
 
-const WEEK_DAYS = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const WEEK_DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 export function WeddingDateSection({ config }: WeddingDateSectionProps) {
   const weddingDate = new Date(config.date.isoDate);
@@ -26,13 +26,15 @@ export function WeddingDateSection({ config }: WeddingDateSectionProps) {
   const month = weddingDate.getMonth();
   const weddingDay = weddingDate.getDate();
 
-  const monthLabel = new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-  }).format(weddingDate);
+  const monthLabel = `${month + 1}월`;      
 
-  const fullDateLabel = new Intl.DateTimeFormat('en-US', {
-    dateStyle: 'full',
-  }).format(weddingDate);
+  const weekdayLabel = new Intl.DateTimeFormat('ko-KR', {
+  weekday: 'long',
+}).format(weddingDate);
+
+const fullDateLabel = `${year}.${String(month + 1).padStart(2, '0')}.${String(
+  weddingDay,
+).padStart(2, '0')} ${weekdayLabel}`;
 
   const firstDateOfMonth = new Date(year, month, 1);
   const lastDateOfMonth = new Date(year, month + 1, 0);
@@ -96,6 +98,8 @@ const diffTime = targetDate.getTime() - today.getTime();
 
   return (
     <section ref={sectionRef} className="content-section wedding-date-section">
+       <p className="calendar-section__eyebrow">THE DAY</p>
+  <span className="calendar-section__line" aria-hidden="true" />
       <h2 className={getRevealClassName(0)}>{monthLabel}</h2>
 
       <div className="calendar-card">

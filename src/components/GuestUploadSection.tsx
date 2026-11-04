@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 export function GuestUploadSection() {
   return (
     <section className="guest-snap-section">
-      <h2>Guest Snap</h2>
+      <h2>GUEST SNAP</h2>
+      <span className="guest-snap-section__line" aria-hidden="true" />
+
 
       <p className="guest-upload-description">
         여러분의 시선이 담긴 사진과 영상을 남겨주세요.

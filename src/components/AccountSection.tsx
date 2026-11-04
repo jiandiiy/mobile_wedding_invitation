@@ -59,7 +59,8 @@ export function AccountSection({ config }: AccountSectionProps) {
 
   return (
     <section className="account-section is-visible" ref={sectionRef}>
-      <h2>Wedding Gift</h2>
+      <h2>WEDDING GIFT</h2>
+      <span className="account-section__line" aria-hidden="true" />
       <p className="account-section__description">
         참석이 어려우신 분들을 위해 마음 전하실 곳을 마련했습니다. <br/>축복해주시는 그 마음, 잊지 않고 평생 소중히 간직하겠습니다.
       </p>

@@ -174,17 +174,6 @@ a {
   text-transform: uppercase;
 }
 
-.content-section h2 {
-  margin: 0 0 26px;
-  color: var(--color-text);
-  font-family: var(--font-serif);
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  font-style: italic;
-}
-
 .section-description,
 .greeting-message {
   margin: 0 auto;
@@ -237,15 +226,25 @@ a {
 }
 
 .gallery-section h2 {
-  margin: 0;
-  font-family: var(--font-section-title);
-  font-size: 20px;
-  font-weight: 400;
-  font-style: normal !important;
+   font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
   line-height: 1;
-  letter-spacing: -0.04em;
-  color: #111111;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #999;
 }
+
+/* 라벨 아래 짧은 밑줄 */
+.gallery-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 0 auto 48px;
+  background: #a9a9a9;
+} 
 
 .gallery-tabs {
   display: flex;
@@ -502,20 +501,30 @@ a {
 }
 
 .account-section h2 {
-  margin: 0;
-  font-family: var(--font-section-title);
-  font-size: 20px;
-  font-weight: 400;
+   font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
   line-height: 1;
-  letter-spacing: -0.04em;
-  color: #111111;
-  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #999;
 }
+
+/* 라벨 아래 짧은 밑줄 */
+.account-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 0 auto 48px;
+  background: #a9a9a9;
+} 
 
 .account-section__description{
   color: #666666;
   font-size: 15px;
-  line-height: 1.6;
+  line-height: 2;
   letter-spacing: -0.04em;
 }
 
@@ -1198,15 +1207,27 @@ a {
   text-align: center;
 }
 
-.guest-snap-section h2 {
-  margin: 0;
-  font-family: var(--font-section-title);
-  font-size: 25px;
+.guest-snap-section h2 {  /* 선택자를 한 단계 높여 우선순위 확보 */
+  font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
   font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.06em;
-  color: #111111;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #999;
 }
+
+/* 라벨 아래 짧은 밑줄 */
+.guest-snap-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 0 auto 28px;
+  background: #a9a9a9;
+} 
+
+
 
 .guest-upload-description {
   margin: 16px 0 0;
@@ -2242,19 +2263,40 @@ a {
   background: #ffffff;
   text-align: center;
 }
+.calendar-section__eyebrow {  /* 선택자를 한 단계 높여 우선순위 확보 */
+  font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #999;
+}
+
+/* 라벨 아래 짧은 밑줄 */
+.calendar-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 0 auto 48px;
+  background: #a9a9a9;
+} 
 
 .wedding-date-section h2 {
   margin: 0;
-  font-family: var(--font-serif);
+  font-family: var(--font-section-title), 'Noto Serif KR', serif;
   font-size: 25px;
   font-weight: 400;
-  font-style: italic;
+  font-style: normal;
+  font-synthesis: none;
+  letter-spacing: 0.05em;
   line-height: 1;
-  color: #111111;
+  color: #444444;
 }
 
 .calendar-card {
-  margin-top: 44px;
+  margin-top: 24px;
 }
 
 .calendar-weekdays,
@@ -2273,7 +2315,7 @@ a {
 
 .calendar-weekdays span {
   font-family: var(--font-sans);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 1;
   color: #999999;
@@ -2297,8 +2339,8 @@ a {
   width: 32px;
   height: 32px;
   margin: 0 auto;
-  font-family: var(--font-sans);
-  font-size: 18px;
+  font-family: var(--font-section-title), 'Noto Serif KR', serif;
+  font-size: 16px;
   font-weight: 400;
   color: #444444;
 }
@@ -2318,17 +2360,18 @@ a {
 }
 
 .calendar-card__date {
-  margin: 38px 0 0;
-  font-family: var(--font-serif);
-  font-size: 17px;
-  font-style: italic;
+  font-family: var(--font-section-title), 'Noto Serif KR', serif;
+  font-size: 18px;
+  font-style: normal;
+  font-synthesis: none;
   color: #777777;
+  margin: 0;
 }
 
 .calendar-card__dday {
   margin: 12px 0 0;
   font-family: var(--font-korean-serif);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   color: #111111;
 }
@@ -2345,25 +2388,51 @@ a {
 }
 
 .location-section h2 {
-  margin: 0;
-  font-family: var(--font-section-title);
-  font-size: 20px;
+   font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
   font-weight: 400;
-  font-style: normal !important;
-  line-height: 1;
-  letter-spacing: -0.04em;
-  color: #111111;
-  text-transform: uppercase;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #a9a9a9;
+}
+
+.location-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 0 auto 20px;
+  background: #a9a9a9;
+}
+
+.location-section__eyebrow {
+  margin: 0;
+  font-family: var(--font-korean-classic);
+  font-size: 18px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: #666666;
+  margin: 0 auto 36px;
 }
 
 .location-section__venue {
   margin: 10px 0;
-  font-family: var(--font-korean-serif);
-  font-size: 14px;
-  font-weight: 400;
+  font-family: var(--font-korean-classic);
+  font-size: 18px;
+  font-weight: 300;
   line-height: 1.5;
   color: #666666;
 }
+.location-section__hall, .location-section__semi_address {
+  margin: 10px 0;
+  font-family: var(--font-korean-classic);
+  font-size: 15px;
+  font-weight: 200;
+  line-height: 1.5;
+  color: #666666;
+}
+
 
 .location-map-box {
   width: 100%;
@@ -2540,20 +2609,39 @@ a {
 ========================= */
 
 .guestbook-section {
-  --gb-bubble-blue: #bccfe0;
-  --gb-accent: #8eaac4;
-  --gb-send: #111111;
+  --gb-bubble-blue: #a9a9a9;   /* 오른쪽 말풍선: 회색 */
+  --gb-accent: #8eaac4;        /* 원래 값으로 복구 */
+  --gb-send: #111111;          /* 등록 버튼은 블랙 유지 */
   --gb-send-disabled: #e5e5e5;
-  --gb-danger: #e55;
 
-  background: #ffffff;
+  background: #ffffff;         /* 섹션 배경은 원래대로 흰색 */
   text-align: center;
 }
 
+.guestbook-section .guestbook-section__eyebrow {  /* 선택자를 한 단계 높여 우선순위 확보 */
+  font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #999;
+}
+
+/* 라벨 아래 짧은 밑줄 */
+.guestbook-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 0 auto 28px;
+  background: #a9a9a9;
+} 
+
 .guestbook-section__heading {
   margin: 0 0 12px;
-  font-family: var(--font-section-title);
-  font-size: 26px;
+  font-family: var(--font-korean-serif);
+  font-size: 20px;
   font-weight: 700;
   font-style: normal !important;
   letter-spacing: -0.04em;
@@ -2617,28 +2705,48 @@ a {
   gap: 22px;
   margin: 0 -4px 16px;
   padding: 24px 16px;
-  border-radius: 16px;
-  background: #f1f1ee;
+  background: #ebeae5;
 }
 
 .guestbook-item {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-width: 80%;
+  max-width: 92%;               /* 옆 공간 확보 */
 }
 
 .guestbook-item--left  { align-self: flex-start; align-items: flex-start; }
 .guestbook-item--right { align-self: flex-end;   align-items: flex-end; }
 
+/* 이름은 위, 말풍선 + 날짜/× 는 같은 줄 */
 .guestbook-bubble {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  align-items: end;             /* 날짜/×를 말풍선 하단에 맞춤 */
+  column-gap: 6px;
   max-width: 100%;
 }
 
-.guestbook-bubble--left  { align-items: flex-start; }
-.guestbook-bubble--right { align-items: flex-end; }
+.guestbook-bubble__name   { grid-area: name; }
+.guestbook-bubble__text   { grid-area: text; }
+.guestbook-bubble__footer { grid-area: footer; }
+
+/* 왼쪽: [말풍선] 날짜 × */
+.guestbook-bubble--left {
+  grid-template-columns: minmax(0, auto) auto;
+  grid-template-areas:
+    'name name'
+    'text footer';
+  justify-items: start;
+}
+
+/* 오른쪽: × 날짜 [말풍선] */
+.guestbook-bubble--right {
+  grid-template-columns: auto minmax(0, auto);
+  grid-template-areas:
+    'name name'
+    'footer text';
+  justify-items: end;
+}
 
 .guestbook-bubble__name {
   margin: 0 8px 5px;
@@ -2657,11 +2765,10 @@ a {
   white-space: pre-wrap;
   word-break: keep-all;
   overflow-wrap: anywhere;
-  /* 꼬리까지 그림자가 따라가도록 box-shadow 대신 drop-shadow 사용 */
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.06));
 }
 
-/* 꼬리: 위쪽 모서리에서 바깥으로 뾰족하게 */
+/* 꼬리 */
 .guestbook-bubble__text::before {
   content: '';
   position: absolute;
@@ -2682,7 +2789,8 @@ a {
 }
 
 .guestbook-bubble--right .guestbook-bubble__text {
-  background: var(--gb-bubble-blue);
+  background: var(--gb-bubble-blue);   /* 빠져 있던 배경 복구 */
+  color: #222222;
   border-radius: 20px 0 20px 20px;
 }
 
@@ -2691,26 +2799,28 @@ a {
   clip-path: polygon(0 0, 100% 0, 0 100%);
 }
 
-/* 날짜 + × 한 줄 */
+/* 날짜 + × */
 .guestbook-bubble__footer {
   display: flex;
   align-items: center;
   gap: 2px;
-  margin: 5px 4px 0;
+  margin: 0 0 2px;
+  white-space: nowrap;          /* 날짜 줄바꿈 방지 */
 }
 
-.guestbook-bubble--left  .guestbook-bubble__footer { justify-content: flex-start; }
-.guestbook-bubble--right .guestbook-bubble__footer { justify-content: flex-end; }
+.guestbook-bubble--right .guestbook-bubble__footer {
+  flex-direction: row-reverse;  /* × 바깥쪽, 날짜가 말풍선 쪽 */
+}
 
 .guestbook-bubble__date {
-  margin: 0 4px;
+  margin: 0 2px;
   font-size: 10px;
   color: var(--color-muted);
 }
 
-/* × 삭제 버튼: 배경 없이 글자만 (터치 영역은 padding으로 확보) */
+/* × 삭제 버튼 */
 .guestbook-bubble__delete {
-  padding: 6px 8px;
+  padding: 6px 2px;
   border: 0;
   background: none;
   font-size: 14px;
@@ -2725,7 +2835,7 @@ a {
   color: var(--gb-danger);
 }
 
-/* 삭제 비밀번호 패널 */
+/* 삭제 비밀번호 패널 (아래 부분은 기존과 동일) */
 .guestbook-delete-panel {
   display: flex;
   flex-wrap: wrap;
@@ -2741,7 +2851,7 @@ a {
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: #ffffff;
-  font-size: 16px; /* iOS 포커스 시 자동 확대 방지 */
+  font-size: 16px;
   outline: none;
 }
 
@@ -2772,7 +2882,6 @@ a {
   text-align: left;
   color: #e53e3e;
 }
-
 /* 전체보기 */
 .guestbook-more {
   display: block;
@@ -2819,7 +2928,7 @@ input.guestbook-form__field {
   border-bottom: 1px solid var(--color-border);
   border-radius: 0;
   background: transparent;
-  font-size: 13px; /* iOS에서 확대되면 16px로 */
+  font-size: 16px; /* iOS에서 확대되면 16px로 */
   outline: none;
 }
 
@@ -2829,9 +2938,10 @@ input.guestbook-form__field:focus {
 }
 
 .guestbook-form__from {
-  font-family: var(--font-script);
-  font-size: 18px;
-  color: var(--gb-accent);
+  font-family: var(--font-serif);
+  font-size: 20px;
+  color: #333333;
+  margin-right: 6px;
 }
 
 .guestbook-form__count {
@@ -2861,14 +2971,15 @@ input.guestbook-form__field:focus {
 
 /* 등록 버튼 (텍스트) */
 .guestbook-form__send {
+  display: grid;
+  place-items: center;      /* 아이콘을 정중앙에 */
   flex-shrink: 0;
-  height: 36px;
-  padding: 0 16px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   border: 0;
-  border-radius: 999px;
+  border-radius: 50%;
   background: var(--gb-send);
-  font-size: 13px;
-  font-weight: 600;
   color: #ffffff;
   cursor: pointer;
   transition: background 0.2s;
@@ -2884,6 +2995,10 @@ input.guestbook-form__field:focus {
   background: #333333;
 }
 
+.guestbook-form input::placeholder {
+  color: #c4c4c4;
+  opacity: 1;   
+}
 /* =========================
    전체보기 모달
 ========================= */
@@ -2971,8 +3086,8 @@ input.guestbook-form__field:focus {
 
 .hero-section.hero-section--brand {
   position: relative;
-  min-height: 45svh;
-  padding: 28px 24px 34px;
+  min-height: 70svh;
+  padding: 28px 25px 34px;
   overflow: hidden;
   background: #f7f7f5;
   text-align: center;
@@ -3057,7 +3172,7 @@ input.guestbook-form__field:focus {
   gap: 16px;
   color: #111111;
   font-family: var(--font-serif);
-  font-size: clamp(10px, 4.8vw, 12px);
+  font-size: clamp(12px, 4.8vw, 14px);
   font-style: italic;
   font-weight: 400;
   line-height: 1.1;
@@ -3071,7 +3186,7 @@ input.guestbook-form__field:focus {
 /* Mobile */
 @media (max-width: 430px) {
   .hero-section.hero-section--brand {
-    min-height: 65svh;
+    min-height: 70svh;
     padding: 24px 18px 28px;
   }
 
@@ -3095,7 +3210,7 @@ input.guestbook-form__field:focus {
     right: 18px;
     bottom: 20px;
     gap: 10px;
-    font-size: 14px;
+    font-size: 16px;
   }
 }
 
@@ -3116,7 +3231,7 @@ input.guestbook-form__field:focus {
   align-items: center;
   padding-top: 40px;
   font-family: var(--font-serif);
-  font-size: 40px;
+  font-size: 56px;
   font-weight: 500;
   font-style: normal;
   line-height: 0.95;
@@ -3141,12 +3256,12 @@ input.guestbook-form__field:focus {
   display: block;
   margin-top: 10px;
   font-family: var(--font-script);
-  font-size: 48px;
+  font-size: 56px;
   font-weight: 400;
   font-style: normal;
   line-height: 1.2;
   letter-spacing: 0.02em;
-  font-kerning: none;              /* 커닝 과다 적용 끄기 */
+  font-kerning: none;             
   font-variant-ligatures: none; 
   padding-inline: 0.25em;
   margin-inline: -0.25em;
@@ -3156,15 +3271,36 @@ input.guestbook-form__field:focus {
 .greeting-date {
   margin: 44px 0 0;
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 1;
   color: var(--theme-on-primary-muted, hsla(0, 0%, 7%, .65));
   letter-spacing: -0.01em;
 }
 
+.greeting-section__eyebrow {  /* 선택자를 한 단계 높여 우선순위 확보 */
+  font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #999;
+  margin-top: 300px;
+}
+
+/* 라벨 아래 짧은 밑줄 */
+.greeting-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 0 auto 28px;
+  background: #a9a9a9;
+} 
+
 .greeting-message {
-  margin-top: 174px;
+  margin-top: 25px;
   font-family: var(--font-korean-serif);
   color: var(--theme-on-primary-muted, hsla(0, 0%, 7%, .65));
 }
@@ -3175,9 +3311,9 @@ input.guestbook-form__field:focus {
 
 .greeting-message p {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
-  line-height: 1.75;
+  line-height: 2;
   letter-spacing: -0.04em;
   word-break: keep-all;
 }
@@ -3190,7 +3326,7 @@ input.guestbook-form__field:focus {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
-  margin-top: 34px;
+  margin-top: 150px;
 }
 
 .couple-photo-card {
@@ -3246,7 +3382,7 @@ input.guestbook-form__field:focus {
   display: grid;
   gap: 25px;
   width: fit-content;
-  margin: 150px auto -20px;
+  margin: 70px auto -20px;
   font-family: var(--font-sans);
 }
 
@@ -3596,4 +3732,102 @@ input.guestbook-form__field:focus {
     transform: none;
     transition: none;
   }
+}
+
+.info-section__eyebrow {
+  font-family: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif; /* 직립형 세리프 */
+  font-style: normal;
+  font-synthesis: none;
+  line-height: 1;
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: #999;
+}
+
+.info-section__line {
+  display: block;
+  width: 30px;
+  height: 1px;
+  margin: 14px auto 22px;
+  background: #999;
+}
+
+.info-section__title {
+  margin: 0 0 36px;
+  font-size: 18px;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.info-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid #cfcfcf;
+  text-align: left;
+}
+
+.info-item {
+  border-bottom: 1px solid #cfcfcf;
+}
+
+.info-item__header {
+  display: grid;
+  grid-template-columns: 76px 1fr 24px; /* 라벨 | 제목 | 아이콘 */
+  align-items: center;
+  width: 100%;
+  padding: 22px 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.info-item__label {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--gb-accent, #4a7fb5); /* 포인트 컬러 */
+}
+
+.info-item__name {
+  font-size: 15px;
+  color: #222;
+}
+
+.info-item__icon {
+  font-size: 18px;
+  font-weight: 300;
+  color: #888;
+  text-align: right;
+}
+
+/* 열림/닫힘 애니메이션 */
+.info-item__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.info-item__panel.is-open {
+  grid-template-rows: 1fr;
+}
+
+.info-item__panel-inner {
+  overflow: hidden;       /* 0fr일 때 내용을 잘라냄 */
+  padding: 0 4px 0 80px;  /* 제목 시작 위치와 맞춤 (라벨 76px + 4px) */
+}
+
+.info-item__panel.is-open .info-item__panel-inner {
+  padding-bottom: 22px;
+}
+
+.info-item__panel-inner p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  line-height: 1.8;
+  color: #444;
+  word-break: keep-all;   /* 한글 단어 단위 줄바꿈 */
 }

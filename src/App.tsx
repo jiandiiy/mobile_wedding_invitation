@@ -28,6 +28,7 @@ import {
   MusicPlayerButton,
   type MusicPlayerHandle,
 } from './components/MusicPlayerButton';
+import { InformationSection } from './components/InformationSection';
 
 
 
@@ -51,9 +52,10 @@ function InvitationPage() {
           <InvitationLayout>
             <HeroSection config={weddingConfig} />
             <GreetingSection config={weddingConfig} />
-            <GallerySection images={weddingConfig.gallery} />
             <WeddingDateSection config={weddingConfig} />
             <LocationSection config={weddingConfig} />
+            <InformationSection />
+            <GallerySection images={weddingConfig.gallery} />
             <AccountSection config={weddingConfig} />
             <GuestbookSection />
             <GuestUploadSection />

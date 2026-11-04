@@ -210,6 +210,8 @@ export function GreetingSection({ config }: GreetingSectionProps) {
           );
         })}
 
+         <p className="greeting-section__eyebrow">INVITATION</p>
+  <span className="greeting-section__line" aria-hidden="true" />
         <div className="greeting-message">
           {revealItems.map((item) => {
             if (item.type === 'space') {
