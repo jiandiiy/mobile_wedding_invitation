@@ -2542,8 +2542,8 @@ a {
 .guestbook-section {
   --gb-bubble-blue: #bccfe0;
   --gb-accent: #8eaac4;
-  --gb-send: #6f8fb0;
-  --gb-send-disabled: #c9d1d9;
+  --gb-send: #111111;
+  --gb-send-disabled: #e5e5e5;
   --gb-danger: #e55;
 
   background: #ffffff;
@@ -2876,7 +2876,12 @@ input.guestbook-form__field:focus {
 
 .guestbook-form__send:disabled {
   background: var(--gb-send-disabled);
+  color: #999999; /* 비활성 글자는 회색 */
   cursor: not-allowed;
+}
+
+.guestbook-form__send:not(:disabled):hover {
+  background: #333333;
 }
 
 /* =========================
