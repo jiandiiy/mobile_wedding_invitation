@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { FormEvent } from 'react';
 
@@ -7,8 +7,7 @@ import type { FormEvent } from 'react';
 import {
   collection,
   addDoc,
-  updateDoc,
-  //deleteDoc,
+  deleteDoc,
   doc,
   query,
   orderBy,
@@ -20,14 +19,15 @@ import { db } from '../lib/firebase'; // 본인 firebase 초기화 경로에 맞
 
 // ─── 타입 ─────────────────────────────────────────────────────
 type GuestbookTarget = 'groom' | 'bride';
+type BubbleSide = 'left' | 'right';
 
 type GuestbookMessage = {
-  id: string;           // Firestore 문서 ID
+  id: string; // Firestore 문서 ID
   target: GuestbookTarget;
   name: string;
   message: string;
-  password: string;     // 평문 저장 (청첩장 수준)
-  createdAt: string;    // 표시용 포맷 문자열
+  password: string; // 평문 저장 (청첩장 수준)
+  createdAt: string; // 표시용 포맷 문자열
 };
 
 const TARGET_LABEL: Record<GuestbookTarget, string> = {
@@ -36,20 +36,21 @@ const TARGET_LABEL: Record<GuestbookTarget, string> = {
 };
 
 const PREVIEW_COUNT = 4;
+const MAX_MESSAGE = 200;
+
+// 인덱스 → 좌/우 (짝수: 왼쪽, 홀수: 오른쪽)
+const getSide = (index: number): BubbleSide =>
+  index % 2 === 0 ? 'left' : 'right';
 
 // ─── 메인 섹션 ────────────────────────────────────────────────
 export function GuestbookSection() {
   const [messages, setMessages] = useState<GuestbookMessage[]>([]);
   const [target, setTarget] = useState<GuestbookTarget>('groom');
-  const [isWriting, setIsWriting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Firestore 실시간 구독
   useEffect(() => {
-    const q = query(
-      collection(db, 'guestbook'),
-      orderBy('createdAt', 'desc'),
-    );
+    const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const docs = snapshot.docs.map((docSnap) => {
@@ -83,11 +84,22 @@ export function GuestbookSection() {
     [messages, target],
   );
 
-  const previewMessages = filteredMessages.slice(0, PREVIEW_COUNT);
+  // 최신 4개를 가져온 뒤 뒤집어서, 오래된 글이 위 / 최신 글이 아래 (채팅 UX)
+  const previewMessages = useMemo(
+    () => filteredMessages.slice(0, PREVIEW_COUNT).reverse(),
+    [filteredMessages],
+  );
+
+  // 참조를 고정해 모달의 useEffect가 매 렌더마다 재실행되지 않게 함
+  const handleCloseModal = useCallback(() => setIsModalOpen(false), []);
 
   return (
     <section className="content-section guestbook-section">
       <h2 className="guestbook-section__heading">축하 한마디</h2>
+      <p className="guestbook-section__desc">
+        따뜻한 축하의 한마디를 남겨주세요.
+      </p>
+
       {/* 탭 */}
       <div
         className="guestbook-tabs"
@@ -113,49 +125,36 @@ export function GuestbookSection() {
         </button>
       </div>
 
-      {/* 카드 그리드 */}
+      {/* 말풍선 목록 */}
       {previewMessages.length === 0 ? (
         <div className="guestbook-empty">
           <p>아직 작성된 글이 없습니다.</p>
-          <p>따뜻한 축하의 한마디를 남겨주세요.</p>
         </div>
       ) : (
-        <div className="guestbook-cards">
-          {previewMessages.map((item) => (
-            <GuestbookCard key={item.id} item={item} />
+        <div className="guestbook-chat">
+          {previewMessages.map((item, index) => (
+            <GuestbookBubble
+              key={item.id}
+              item={item}
+              side={getSide(index)}
+            />
           ))}
         </div>
       )}
 
-      {/* 액션 버튼 */}
-      <div className="guestbook-section__actions">
-        {filteredMessages.length > 0 && (
-          <button
-            type="button"
-            className="guestbook-action-button"
-            onClick={() => setIsModalOpen(true)}
-          >
-            전체보기
-          </button>
-        )}
-
+      {/* 전체보기 (4개 초과일 때만) — 삭제는 각 말풍선의 × 버튼으로 처리 */}
+      {filteredMessages.length > PREVIEW_COUNT && (
         <button
           type="button"
-          className="guestbook-action-button guestbook-action-button--primary"
-          onClick={() => setIsWriting((prev) => !prev)}
+          className="guestbook-more"
+          onClick={() => setIsModalOpen(true)}
         >
-          {isWriting ? '닫기' : '작성하기'}
+          전체보기 ({filteredMessages.length})
         </button>
-      </div>
-
-      {/* 작성 폼 */}
-      {isWriting && (
-        <WriteForm
-          target={target}
-          onChangeTarget={setTarget}
-          onSuccess={() => setIsWriting(false)}
-        />
       )}
+
+      {/* 작성 폼 (항상 노출) */}
+      <WriteForm target={target} />
 
       {/* 전체보기 모달 */}
       {isModalOpen &&
@@ -163,7 +162,7 @@ export function GuestbookSection() {
           <GuestbookModal
             messages={filteredMessages}
             target={target}
-            onClose={() => setIsModalOpen(false)}
+            onClose={handleCloseModal}
           />,
           document.body,
         )}
@@ -171,53 +170,132 @@ export function GuestbookSection() {
   );
 }
 
-// ─── 카드 (미리보기) ──────────────────────────────────────────
-type GuestbookCardProps = { item: GuestbookMessage };
+// ─── 말풍선 + × 삭제 버튼 (미리보기/모달 공용) ────────────────
+type GuestbookBubbleProps = {
+  item: GuestbookMessage;
+  side: BubbleSide;
+};
 
-function GuestbookCard({ item }: GuestbookCardProps) {
+function GuestbookBubble({ item, side }: GuestbookBubbleProps) {
+  const [isAsking, setIsAsking] = useState(false); // 비밀번호 입력창 표시 여부
+  const [inputPassword, setInputPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const closePanel = () => {
+    setIsAsking(false);
+    setInputPassword('');
+    setPasswordError(false);
+  };
+
+  // 비밀번호 확인 → 확인창 → 삭제
+  const handleDelete = async () => {
+    if (inputPassword !== item.password) {
+      setPasswordError(true);
+      return;
+    }
+    if (!window.confirm('이 글을 삭제할까요?')) return;
+
+    setIsDeleting(true);
+    try {
+      await deleteDoc(doc(db, 'guestbook', item.id));
+      // 성공하면 onSnapshot이 목록에서 제거하므로 별도 상태 정리 불필요
+    } catch (error) {
+      console.error('삭제 실패:', error);
+      alert('삭제에 실패했습니다. 다시 시도해 주세요.');
+      setIsDeleting(false);
+    }
+  };
+
   return (
-    <article className="guestbook-card">
-      <p className="guestbook-card__message">{item.message}</p>
-      <footer className="guestbook-card__footer">
-        <span>– {item.name} –</span>
-      </footer>
-    </article>
+    <div className={`guestbook-item guestbook-item--${side}`}>
+      <article className={`guestbook-bubble guestbook-bubble--${side}`}>
+        <span className="guestbook-bubble__name">{item.name}</span>
+        <p className="guestbook-bubble__text">{item.message}</p>
+
+        {/* 날짜 + × 삭제 버튼 한 줄 */}
+        <div className="guestbook-bubble__footer">
+          <time className="guestbook-bubble__date">{item.createdAt}</time>
+          <button
+            type="button"
+            className="guestbook-bubble__delete"
+            onClick={() => (isAsking ? closePanel() : setIsAsking(true))}
+            aria-label={`${item.name}님의 글 삭제`}
+            aria-expanded={isAsking}
+          >
+            ×
+          </button>
+        </div>
+      </article>
+
+      {isAsking && (
+        <div className="guestbook-delete-panel">
+          <input
+            type="password"
+            value={inputPassword}
+            onChange={(e) => {
+              setInputPassword(e.target.value);
+              setPasswordError(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleDelete();
+            }}
+            placeholder="작성 시 입력한 비밀번호"
+            maxLength={20}
+            autoFocus
+            aria-label="삭제 비밀번호"
+          />
+          <button
+            type="button"
+            className="guestbook-delete-panel__confirm"
+            onClick={handleDelete}
+            disabled={isDeleting || !inputPassword}
+          >
+            {isDeleting ? '삭제 중' : '삭제'}
+          </button>
+          {passwordError && (
+            <p className="guestbook-delete-panel__error">
+              비밀번호가 맞지 않습니다.
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
 
 // ─── 작성 폼 ──────────────────────────────────────────────────
 type WriteFormProps = {
   target: GuestbookTarget;
-  onChangeTarget: (t: GuestbookTarget) => void;
-  onSuccess: () => void;
 };
 
-function WriteForm({ target, onChangeTarget, onSuccess }: WriteFormProps) {
+function WriteForm({ target }: WriteFormProps) {
   const [name, setName] = useState('');
-  const [message, setMessage] = useState('');
   const [password, setPassword] = useState('');
+  const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const canSubmit =
+    !!name.trim() && !!password.trim() && !!message.trim() && !isSubmitting;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const trimName = name.trim();
-    const trimMessage = message.trim();
-    const trimPassword = password.trim();
-
-    if (!trimName || !trimMessage || !trimPassword) return;
+    if (!canSubmit) return;
 
     setIsSubmitting(true);
 
     try {
       await addDoc(collection(db, 'guestbook'), {
         target,
-        name: trimName,
-        message: trimMessage,
-        password: trimPassword, // 평문 저장
+        name: name.trim(),
+        message: message.trim(),
+        password: password.trim(), // 평문 저장
         createdAt: serverTimestamp(),
       });
-      onSuccess();
+      // 등록 성공 시 모든 입력값 초기화
+      setName('');
+      setPassword('');
+      setMessage('');
     } catch (error) {
       console.error('방명록 저장 실패:', error);
       alert('저장에 실패했습니다. 다시 시도해 주세요.');
@@ -228,56 +306,47 @@ function WriteForm({ target, onChangeTarget, onSuccess }: WriteFormProps) {
 
   return (
     <form className="guestbook-form" onSubmit={handleSubmit}>
-      <label className="guestbook-form__label">
-        남기는 대상
-        <select
-          value={target}
-          onChange={(e) => onChangeTarget(e.target.value as GuestbookTarget)}
-        >
-          <option value="groom">신랑에게</option>
-          <option value="bride">신부에게</option>
-        </select>
-      </label>
+      <div className="guestbook-form__meta">
+        <label className="guestbook-form__field">
+          <span className="guestbook-form__from">from</span>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="이름"
+            maxLength={20}
+          />
+        </label>
 
-      <label className="guestbook-form__label">
-        이름
         <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="이름을 입력해 주세요"
-          maxLength={20}
-        />
-      </label>
-
-      <label className="guestbook-form__label">
-        비밀번호
-        <input
+          className="guestbook-form__field"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="수정 시 사용할 비밀번호"
+          placeholder="삭제 비밀번호"
           maxLength={20}
+          aria-label="삭제 비밀번호"
         />
-      </label>
 
-      <label className="guestbook-form__label">
-        메시지
-        <textarea
+        <span className="guestbook-form__count">
+          {message.length} / {MAX_MESSAGE}
+        </span>
+      </div>
+
+      <div className="guestbook-form__composer">
+        <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="축하 메시지를 남겨주세요"
-          maxLength={200}
-          rows={5}
+          placeholder="축하 메시지를 입력하세요"
+          maxLength={MAX_MESSAGE}
         />
-      </label>
-
-      <button
-        type="submit"
-        className="guestbook-submit-button"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? '저장 중...' : '방명록 남기기'}
-      </button>
+        <button
+          type="submit"
+          className="guestbook-form__send"
+          disabled={!canSubmit}
+        >
+          {isSubmitting ? '등록 중' : '등록'}
+        </button>
+      </div>
     </form>
   );
 }
@@ -338,224 +407,17 @@ function GuestbookModal({ messages, target, onClose }: GuestbookModalProps) {
           {TARGET_LABEL[target]}
         </h2>
 
-        <ul className="guestbook-modal__list">
-          {messages.map((item) => (
-            <GuestbookModalItem key={item.id} item={item} />
+        {/* 모달도 같은 말풍선 컴포넌트를 재사용 (최신 글이 위) */}
+        <div className="guestbook-chat">
+          {messages.map((item, index) => (
+            <GuestbookBubble
+              key={item.id}
+              item={item}
+              side={getSide(index)}
+            />
           ))}
-        </ul>
+        </div>
       </div>
     </div>
-  );
-}
-
-// ─── 모달 아이템 (수정 포함) ──────────────────────────────────
-type GuestbookModalItemProps = { item: GuestbookMessage };
-
-type ItemMode = 'view' | 'password-check' | 'edit' | 'delete-confirm';
-
-function GuestbookModalItem({ item }: GuestbookModalItemProps) {
-  const [mode, setMode] = useState<ItemMode>('view');
-  const [inputPassword, setInputPassword] = useState('');
-  const [editMessage, setEditMessage] = useState(item.message);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const editRef = useRef<HTMLTextAreaElement>(null);
-
-  // 수정 모드 진입 시 textarea 포커스
-  useEffect(() => {
-    if (mode === 'edit') {
-      editRef.current?.focus();
-    }
-  }, [mode]);
-
-  // 비밀번호 확인 후 → 수정/삭제 선택 화면으로
-  const handlePasswordCheck = () => {
-    if (inputPassword === item.password) {
-      setPasswordError(false);
-      setMode('delete-confirm');
-    } else {
-      setPasswordError(true);
-    }
-  };
-
-  //const handleDelete = async () => {
-  //  setIsSubmitting(true);
-  //  try {
-  //    await deleteDoc(doc(db, 'guestbook', item.id));
-  //    // 삭제 후 모달 아이템은 onSnapshot이 알아서 제거
-  //  } catch (error) {
-  //    console.error('삭제 실패:', error);
-  //    alert('삭제에 실패했습니다. 다시 시도해 주세요.');
-  //    setIsSubmitting(false);
-  //  }
-  //};
-
-  const handleEdit = async () => {
-    const trimmed = editMessage.trim();
-    if (!trimmed || trimmed === item.message) {
-      setMode('view');
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await updateDoc(doc(db, 'guestbook', item.id), {
-        message: trimmed,
-      });
-      setMode('view');
-    } catch (error) {
-      console.error('수정 실패:', error);
-      alert('수정에 실패했습니다. 다시 시도해 주세요.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setMode('view');
-    setInputPassword('');
-    setEditMessage(item.message);
-    setPasswordError(false);
-  };
-
-  // ── view 모드
-  if (mode === 'view') {
-    return (
-      <li className="guestbook-modal__item">
-        <p className="guestbook-modal__message">{item.message}</p>
-        <div className="guestbook-modal__meta">
-          <div className="guestbook-modal__meta-left">
-            <strong>{item.name}</strong>
-            <span>{item.createdAt}</span>
-          </div>
-          {/* 비밀번호 확인 진입점 — 수정/삭제는 확인 후 선택 */}
-          <button
-            type="button"
-            className="guestbook-edit-trigger"
-            onClick={() => setMode('password-check')}
-          >
-            수정 ·
-          </button>
-        </div>
-      </li>
-    );
-  }
-
-  // ── 비밀번호 확인 모드
-  if (mode === 'password-check') {
-    return (
-      <li className="guestbook-modal__item guestbook-modal__item--editing">
-        <p className="guestbook-modal__item-name">{item.name}</p>
-
-        <div className="guestbook-password-check">
-          <input
-            type="password"
-            value={inputPassword}
-            onChange={(e) => {
-              setInputPassword(e.target.value);
-              setPasswordError(false);
-            }}
-            placeholder="비밀번호를 입력해 주세요"
-            maxLength={20}
-            // 엔터 키로도 확인 가능
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handlePasswordCheck();
-            }}
-          />
-          {passwordError && (
-            <p className="guestbook-password-check__error">
-              비밀번호가 맞지 않습니다.
-            </p>
-          )}
-          <div className="guestbook-modal__edit-actions">
-            <button
-              type="button"
-              className="guestbook-edit-button guestbook-edit-button--confirm"
-              onClick={handlePasswordCheck}
-            >
-              확인
-            </button>
-            <button
-              type="button"
-              className="guestbook-edit-button"
-              onClick={handleCancel}
-            >
-              취소
-            </button>
-          </div>
-        </div>
-      </li>
-    );
-  }
-
-  // ── 비밀번호 확인 후 수정/삭제 선택 모드
-  if (mode === 'delete-confirm') {
-    return (
-      <li className="guestbook-modal__item guestbook-modal__item--editing">
-        <p className="guestbook-modal__item-name">{item.name}</p>
-        <p className="guestbook-modal__delete-desc">
-          수정하거나 삭제할 수 있습니다.
-        </p>
-        <div className="guestbook-modal__edit-actions">
-          <button
-            type="button"
-            className="guestbook-edit-button guestbook-edit-button--confirm"
-            onClick={() => setMode('edit')}
-          >
-            수정
-          </button>
-          {/*<button
-            type="button"
-            className="guestbook-edit-button guestbook-edit-button--delete"
-            onClick={handleDelete}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? '삭제 중...' : '삭제'}
-          </button>*/}
-          <button
-            type="button"
-            className="guestbook-edit-button"
-            onClick={handleCancel}
-          >
-            취소
-          </button>
-        </div>
-      </li>
-    );
-  }
-
-  // ── 편집 모드
-  return (
-    <li className="guestbook-modal__item guestbook-modal__item--editing">
-      <p className="guestbook-modal__item-name">{item.name}</p>
-
-      <textarea
-        ref={editRef}
-        className="guestbook-edit-textarea"
-        value={editMessage}
-        onChange={(e) => setEditMessage(e.target.value)}
-        maxLength={200}
-        rows={4}
-      />
-
-      <div className="guestbook-modal__edit-actions">
-        <button
-          type="button"
-          className="guestbook-edit-button guestbook-edit-button--confirm"
-          onClick={handleEdit}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? '저장 중...' : '저장'}
-        </button>
-        <button
-          type="button"
-          className="guestbook-edit-button"
-          onClick={handleCancel}
-        >
-          취소
-        </button>
-      </div>
-    </li>
   );
 }
