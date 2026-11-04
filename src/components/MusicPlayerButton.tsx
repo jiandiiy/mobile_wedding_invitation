@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 
-const BGM_SRC = '/audio/wedding-bgm.mp3';
+const BGM_SRC = '/audio/wedding-bgm-quiet.mp3';
 
 export interface MusicPlayerHandle {
   play: () => void;
@@ -24,7 +24,7 @@ export const MusicPlayerButton = forwardRef<
     if (!audio) return;
 
     try {
-      audio.volume = 0.25;
+      audio.volume = 0.12;
       audio.muted = false;
       await audio.play();
       setHasAudioError(false);
