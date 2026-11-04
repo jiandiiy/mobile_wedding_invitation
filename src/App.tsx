@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 import {
   BrowserRouter,
@@ -24,16 +24,24 @@ import { WeddingDateSection } from './components/WeddingDateSection';
 import { LocationSection } from './components/LocationSection';
 import { GuestbookSection } from './components/GuestbookSection';
 import IntroOverlay from './components/IntroOverlay';
+import {
+  MusicPlayerButton,
+  type MusicPlayerHandle,
+} from './components/MusicPlayerButton';
+
 
 
 function InvitationPage() {
   const [isIntroFinished, setIsIntroFinished] = useState(false);
-  
+  const musicRef = useRef<MusicPlayerHandle>(null);
+
   return (
     <>
+    <MusicPlayerButton ref={musicRef} visible={isIntroFinished} />
       {!isIntroFinished && (
           <IntroOverlay
-          photoSrc="/images/hero-couple-1.webp"       // HeroSection과 같은 사진을 쓰면 전환이 자연스럽습니다
+          photoSrc="/images/hero-couple-1.webp"
+          onOpen={() => musicRef.current?.play()}       
           onComplete={() => setIsIntroFinished(true)} // 문이 완전히 열린 뒤 호출
         />
       )}

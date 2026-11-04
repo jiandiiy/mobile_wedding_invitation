@@ -1,5 +1,4 @@
 import type { WeddingConfig } from '../types/wedding';
-import { MusicPlayerButton } from './MusicPlayerButton';
 
 type HeroSectionProps = {
   config: WeddingConfig;
@@ -18,7 +17,6 @@ export function HeroSection({ config }: HeroSectionProps) {
 
       <div className="hero-section__overlay" />
 
-        <MusicPlayerButton />
 
 
       <div className="hero-center-copy">
