@@ -24,7 +24,7 @@ export const MusicPlayerButton = forwardRef<
     if (!audio) return;
 
     try {
-      audio.volume = 0.45;
+      audio.volume = 0.25;
       audio.muted = false;
       await audio.play();
       setHasAudioError(false);
