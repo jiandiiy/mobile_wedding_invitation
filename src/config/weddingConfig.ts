@@ -146,10 +146,6 @@ export const weddingConfig: WeddingConfig = {
     },
   ],
 
-  video: {
-    src: '/videos/wedding-film.mp4',
-    poster: '/images/video-poster.webp',
-  },
 
   accounts: {
     groom: [

@@ -15,7 +15,6 @@ import { GreetingSection } from './components/GreetingSection';
 import { GuestUploadSection } from './components/GuestUploadSection';
 import { HeroSection } from './components/HeroSection';
 import { InvitationLayout } from './components/InvitationLayout';
-import { VideoSection } from './components/VideoSection';
 import { weddingConfig } from './config/weddingConfig';
 import { useAuthUser } from './hooks/useAuthUser';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
@@ -46,7 +45,6 @@ function InvitationPage() {
             <GreetingSection config={weddingConfig} />
             <GallerySection images={weddingConfig.gallery} />
             <WeddingDateSection config={weddingConfig} />
-            <VideoSection video={weddingConfig.video} />
             <LocationSection config={weddingConfig} />
             <AccountSection config={weddingConfig} />
             <GuestbookSection />

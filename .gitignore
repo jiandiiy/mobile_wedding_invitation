@@ -30,3 +30,5 @@ service-account.json
 
 functions/.env
 functions/drive-key.json
+
+public/videos/*.mp4
