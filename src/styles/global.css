@@ -566,7 +566,7 @@ a {
 
 .account-row {
   display: grid;
-  grid-template-columns: 1fr 1.4fr 42px;
+  grid-template-columns: 1fr 1.4fr 40px;
   align-items: center;
   column-gap: 14px;
   min-height: 74px;
@@ -672,7 +672,7 @@ a {
 
   .account-row {
     grid-template-columns: 78px 1fr 38px;
-    column-gap: 40px;
+    column-gap: 20px;
     min-height: 72px;
   }
 
