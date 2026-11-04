@@ -217,7 +217,7 @@ a {
 
 .wedding-video {
   display: block;
-  width: calc(100% - 30px);
+  width: 100%;
   margin: 42px auto 0;
   aspect-ratio: 16 / 10;
   object-fit: cover;
@@ -3354,7 +3354,7 @@ a {
   font-family: var(--font-serif);
   font-size: 40px;
   font-weight: 500;
-  font-style: italic;
+  font-style: normal;
   line-height: 0.95;
   letter-spacing: 0em;
   color: #111111;
@@ -3368,18 +3368,19 @@ a {
 }
 
 .greeting-heading__serif {
-  /* 이탤릭 끝 획 여유 (padding으로 늘린 만큼 margin으로 상쇄해 중앙 유지) */
+  display: block;
   padding-inline: 0.3em;
   margin-inline: -0.3em;
 }
 
 .greeting-heading__script {
+  display: block;
   margin-top: 10px;
   font-family: var(--font-script);
   font-size: 48px;
   font-weight: 400;
   font-style: normal;
-  line-height: 1;
+  line-height: 1.2;
   letter-spacing: 0.02em;
   font-kerning: none;              /* 커닝 과다 적용 끄기 */
   font-variant-ligatures: none; 
