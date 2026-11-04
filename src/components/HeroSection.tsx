@@ -17,7 +17,12 @@ export function HeroSection({ config }: HeroSectionProps) {
 
       <div className="hero-section__overlay" />
 
+      <p className="hero-top-names">
+  {couple.groom.fullName} 
+</p>
 
+      <p className="hero-top-names--and"> {couple.bride.fullName}</p>
+      
 
       <div className="hero-center-copy">
   <p className="hero-center-copy__title">A New Chapter</p>
@@ -28,8 +33,8 @@ export function HeroSection({ config }: HeroSectionProps) {
 </div>
 
 <div className="hero-bottom-info">
-  <span>2027.02.28</span>
-  <span>SUN 3:00 PM</span>
+  <span>2027.02.28 <br /> 일요일 오후 3시</span> 
+  <span>웨딩 스퀘어 <br /> 4층 아모르홀</span>
 </div>
     </section>
   );

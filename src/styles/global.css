@@ -2204,9 +2204,9 @@ a {
 
 .music-player {
   position: fixed;
-  top: 22px;
+  top: 35px;
   /* 청첩장 폭 430px 가정: 창이 넓으면 청첩장 오른쪽 끝에서 22px 안쪽 */
-  right: max(22px, calc(50% - 215px + 22px));
+  right: max(22px, calc(50% - 215px + 10px));
   z-index: 50; /* 본문 섹션, 갤러리 위 */
 }
 
@@ -3087,7 +3087,7 @@ input.guestbook-form__field:focus {
 .hero-section.hero-section--brand {
   position: relative;
   min-height: 70svh;
-  padding: 28px 25px 34px;
+  padding: 10px 25px 34px;
   overflow: hidden;
   background: #f7f7f5;
   text-align: center;
@@ -3126,6 +3126,29 @@ input.guestbook-form__field:focus {
   pointer-events: none;
 }
 
+.hero-top-names {
+  position: absolute;
+  left: 22px;
+  z-index: 2;   
+  margin: 0;
+  font-family: var(--font-section-title);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #111111;
+}
+
+.hero-top-names--and {
+  position: absolute;
+  right: 22px;
+  z-index: 2;   
+  margin: 0;
+  font-family: var(--font-section-title);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #111111;
+}
 
 /* 중앙 텍스트 */
 .hero-center-copy {
@@ -3164,16 +3187,16 @@ input.guestbook-form__field:focus {
   position: absolute;
   left: 24px;
   right: 24px;
-  bottom: 2px;
+  bottom: 8px;
   z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   gap: 16px;
   color: #111111;
-  font-family: var(--font-serif);
+  font-family: var(--font-korean-serif);
   font-size: clamp(12px, 4.8vw, 14px);
-  font-style: italic;
+  font-style: normal;
   font-weight: 400;
   line-height: 1.1;
   white-space: nowrap;
