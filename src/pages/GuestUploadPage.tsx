@@ -36,7 +36,7 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
     <div className="guest-upload-landing">
       <div className="guest-upload-landing__hero">
         <img
-          src="/images/hero-couple.jpg"
+          src="/images/hero-couple-1.jpg"
           alt="웨딩 커플 사진"
           className="guest-upload-landing__hero-img"
         />

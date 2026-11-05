@@ -735,7 +735,7 @@ a {
 /* 필기체 감사 인사 */
 .footer-section__thanks {
   margin: 72px 0 48px;
-  font-family: 'Pinyon Script', cursive;
+  font-family: 'Nanum Myeongjo', serif;
   font-style: italic;
   font-size: 56px;
   line-height: 1.1;
