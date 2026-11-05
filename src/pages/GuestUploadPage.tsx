@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const MAX_FILE_COUNT = 100;
+const UPLOAD_URL = 'https://guestuploadapi-lqzumz2quq-an.a.run.app';
 
 type PageView = 'landing' | 'form';
 type FormStep = 'name-input' | 'uploading' | 'success' | 'error';
@@ -31,12 +32,52 @@ function revokePreviewUrls(previewFiles: PreviewFile[]) {
   });
 }
 
+// 파일 1개를 XHR로 업로드하고 진행률을 콜백으로 전달
+function uploadOneFile(
+  file: File,
+  weddingId: string,
+  guestName: string,
+  onProgress: (percent: number) => void,
+  signal: AbortSignal,
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    // 서버의 upload.single('file')과 키 이름이 같아야 함
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('weddingId', weddingId);
+    formData.append('guestName', guestName);
+
+    const xhr = new XMLHttpRequest();
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        onProgress(Math.round((e.loaded / e.total) * 100));
+      }
+    });
+
+    xhr.addEventListener('load', () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve();
+      } else {
+        reject(new Error(`업로드 실패 (${xhr.status})`));
+      }
+    });
+    xhr.addEventListener('error', () => reject(new Error('네트워크 오류가 발생했습니다.')));
+    xhr.addEventListener('abort', () => reject(new Error('업로드가 취소되었습니다.')));
+
+    signal.addEventListener('abort', () => xhr.abort());
+
+    xhr.open('POST', UPLOAD_URL);
+    xhr.send(formData); // Content-Type은 직접 지정하지 않음
+  });
+}
+
 function GuestUploadLanding({ onStart }: { onStart: () => void }) {
   return (
     <div className="guest-upload-landing">
       <div className="guest-upload-landing__hero">
         <img
-          src="/images/hero-couple-1.jpg"
+          src="/images/hero-couple-1.webp"
           alt="웨딩 커플 사진"
           className="guest-upload-landing__hero-img"
         />
@@ -80,9 +121,6 @@ function GuestUploadLanding({ onStart }: { onStart: () => void }) {
     </div>
   );
 }
-
-const API_BASE_URL =
-  'https://asia-northeast1-mobile-wedding-invitatio-d2312.cloudfunctions.net';
 
 export function GuestUploadPage() {
   const navigate = useNavigate();
@@ -141,9 +179,10 @@ export function GuestUploadPage() {
     }
   };
 
-  const updateAllFilesProgress = (progress: number) => {
+  // 특정 파일의 진행률만 갱신
+  const updatePreviewProgress = (fileId: string, progress: number) => {
     setPreviewFiles((prev) =>
-      prev.map((pf) => ({ ...pf, progress }))
+      prev.map((pf) => (pf.id === fileId ? { ...pf, progress } : pf)),
     );
   };
 
@@ -169,84 +208,33 @@ export function GuestUploadPage() {
       return;
     }
 
+    const controller = new AbortController();
+    uploadAbortControllerRef.current = controller;
+
     try {
       setErrorMessage('');
-      uploadAbortControllerRef.current = new AbortController();
+      const name = guestName.trim();
 
-      // ✅ FormData 구성
-      const formData = new FormData();
-      formData.append('weddingId', weddingId);
-      formData.append('guestName', guestName.trim());
+      // 서버가 파일 1개씩 받으므로 순차 업로드
+      for (const pf of filesToUpload) {
+        if (controller.signal.aborted) return; // 전체 취소 시 중단
 
-      filesToUpload.forEach((previewFile) => {
-        formData.append('files', previewFile.file);
-      });
-
-      // 🔍 디버깅: FormData 내용 확인
-      console.group('📦 FormData 디버깅');
-      console.log('weddingId:', weddingId);
-      console.log('guestName:', guestName.trim());
-      console.log('파일 개수:', filesToUpload.length);
-      filesToUpload.forEach((pf, i) => {
-        console.log(`  [${i}] ${pf.file.name} (${pf.file.size} bytes, ${pf.file.type})`);
-      });
-      console.groupEnd();
-
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        // 🔍 요청 시작 시 디버깅
-        xhr.upload.addEventListener('start', () => {
-          console.log('📤 XHR 업로드 시작');
-        });
-
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            const percentComplete = Math.round((e.loaded / e.total) * 100);
-            console.log(`📊 업로드 진행: ${e.loaded}/${e.total} bytes (${percentComplete}%)`);
-            updateAllFilesProgress(percentComplete);
-          }
-        });
-
-        xhr.addEventListener('loadstart', () => {
-          console.log('🚀 XHR loadstart');
-        });
-
-        xhr.addEventListener('load', () => {
-          console.log(`✅ XHR load (상태: ${xhr.status})`);
-          if (xhr.status >= 200 && xhr.status < 300) {
-            console.log('✅ 업로드 성공');
-            updateAllFilesProgress(100);
-            resolve();
-          } else {
-            console.error(`❌ 업로드 실패 상태: ${xhr.status}`);
-            console.error('응답:', xhr.responseText);
-            reject(new Error(`Upload failed with status ${xhr.status}`));
-          }
-        });
-
-        xhr.addEventListener('error', () => {
-          console.error('❌ XHR 네트워크 에러');
-          reject(new Error('Upload failed'));
-        });
-
-        xhr.addEventListener('abort', () => {
-          console.error('❌ XHR 취소됨');
-          reject(new Error('Upload cancelled'));
-        });
-
-        uploadAbortControllerRef.current?.signal.addEventListener('abort', () => {
-          xhr.abort();
-        });
-
-        console.log('📡 XHR 요청 전송:', `${API_BASE_URL}/guestUploadApi`);
-        xhr.open('POST', `${API_BASE_URL}/guestUploadApi`);
-        xhr.send(formData);
-      });
+        await uploadOneFile(
+          pf.file,
+          weddingId,
+          name,
+          (percent) => updatePreviewProgress(pf.id, percent),
+          controller.signal,
+        );
+        updatePreviewProgress(pf.id, 100);
+      }
 
       setFormStep('success');
     } catch (error) {
-      console.error('❌ performUpload 에러:', error);
+      // 사용자가 전체 취소한 경우에는 에러 화면으로 보내지 않음
+      if (controller.signal.aborted) return;
+
+      console.error('❌ 업로드 에러:', error);
       setFormStep('error');
       setErrorMessage(
         error instanceof Error

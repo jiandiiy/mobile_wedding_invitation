@@ -24,7 +24,7 @@ app.use(
       'http://localhost:5173', // Vite 개발 서버
       'http://localhost:3000',
       'http://localhost:3001',
-      // 배포 후 실제 도메인 추가
+      'https://jidong-wedding.com', // 실제 도메인
     ],
     credentials: true,
   })
