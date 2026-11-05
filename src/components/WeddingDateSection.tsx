@@ -34,9 +34,15 @@ export function WeddingDateSection({ config }: WeddingDateSectionProps) {
   weekday: 'long',
 }).format(weddingDate);
 
-const fullDateLabel = `${year}.${String(month + 1).padStart(2, '0')}.${String(
+const period = weddingDate.getHours() < 12 ? '오전' : '오후';
+const hour12 = weddingDate.getHours() % 12 || 12;
+const minute = weddingDate.getMinutes();
+
+const timeLabel = `${period} ${hour12}시${minute ? ` ${String(minute).padStart(2, '0')}분` : ''}`;
+
+const fullDateLabel = `${year}년 ${String(month + 1).padStart(2, '0')}월 ${String(
   weddingDay,
-).padStart(2, '0')} ${weekdayLabel}`;
+).padStart(2, '0')}일 ${weekdayLabel} ${timeLabel}`;
 
   const firstDateOfMonth = new Date(year, month, 1);
   const lastDateOfMonth = new Date(year, month + 1, 0);
