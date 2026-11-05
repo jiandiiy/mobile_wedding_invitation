@@ -2,6 +2,8 @@ import { createPortal } from 'react-dom';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { FormEvent } from 'react';
+import { useTypingEffect } from '../hooks/useTypingEffect';
+
 
 // ─── Firestore ───────────────────────────────────────────────
 import {
@@ -56,6 +58,8 @@ export function GuestbookSection() {
   const [target, setTarget] = useState<GuestbookTarget>('groom');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const eyebrowRef = useTypingEffect<HTMLParagraphElement>();
+
   // Firestore 실시간 구독
   useEffect(() => {
     const q = query(collection(db, 'guestbook'), orderBy('createdAt', 'desc'));
@@ -97,7 +101,7 @@ export function GuestbookSection() {
 
   return (
     <section className="content-section guestbook-section">
-      <p className="guestbook-section__eyebrow">GUESTBOOK</p>
+      <p ref={eyebrowRef} className="guestbook-section__eyebrow">GUESTBOOK</p>
   <span className="guestbook-section__line" aria-hidden="true" />
   
       <h2 className="guestbook-section__heading">축하 한마디</h2>

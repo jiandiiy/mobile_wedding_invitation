@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import type { WeddingConfig } from '../types/wedding';
 import { Toast } from './Toast';
 
+import { useTypingEffect } from '../hooks/useTypingEffect';
+
 type LocationSectionProps = {
   config: WeddingConfig;
 };
@@ -34,7 +36,8 @@ const TRANSPORT_ITEMS = [
 
 export function LocationSection({ config }: LocationSectionProps) {
   const { venue } = config;
-
+   const titleRef = useTypingEffect<HTMLHeadingElement>();
+   
   const mapRef = useRef<HTMLDivElement | null>(null);
    const sectionRef = useRef<HTMLDivElement | null>(null);
   const isMapInitializedRef = useRef(false);
@@ -146,7 +149,9 @@ export function LocationSection({ config }: LocationSectionProps) {
 
   return (
     <section ref={sectionRef} className="content-section location-section">
-      <h2 className="location-section__title">LOCATION</h2>
+      <h2 ref={titleRef} className="location-section__title">
+  LOCATION
+</h2>
      <span className="location-section__line" aria-hidden="true" />
 
     <p className="location-section__eyebrow">오시는 길</p>

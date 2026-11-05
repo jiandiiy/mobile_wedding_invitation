@@ -43,8 +43,8 @@ export const weddingConfig: WeddingConfig = {
     title: 'Our\nWedding\nDay',
     dateText: '2027.02.28 PM 3:00',
     message: [
-      { text: '하늘 아래 내가 받은 가장 커다란 선물은 오늘입니다.', bold: true },
-      { text: '오늘 받은 선물 가운데서도 가장 아름다운 선물은 당신입니다', bold: true },
+      { text: '"하늘 아래 내가 받은 가장 커다란 선물은 오늘입니다.', bold: true },
+      { text: '오늘 받은 선물 가운데서도 가장 아름다운 선물은 당신입니다"', bold: true },
       { text: '- 나태주 <선물> -', bold: true },
       '',
       '당신의 나지막한 목소리와 웃는 얼굴을',

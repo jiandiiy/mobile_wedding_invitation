@@ -1,5 +1,7 @@
 import { useState } from 'react';
 
+import { useTypingEffect } from '../hooks/useTypingEffect';
+
 type InfoItem = {
   id: string;
   label: string;   // 왼쪽 영문 라벨
@@ -26,6 +28,7 @@ const INFO_ITEMS: InfoItem[] = [
 
 export function InformationSection() {
   // 한 번에 하나만 열림 (여러 개를 열고 싶으면 string[]로 변경)
+  const eyebrowRef = useTypingEffect<HTMLParagraphElement>();
   const [openId, setOpenId] = useState<string | null>(null);
 
   const toggle = (id: string) =>
@@ -33,7 +36,7 @@ export function InformationSection() {
 
   return (
     <section className="content-section info-section">
-      <p className="info-section__eyebrow">INFORMATION</p>
+      <p ref={eyebrowRef} className="info-section__eyebrow">INFORMATION</p>
       <span className="info-section__line" aria-hidden="true" />
       <h2 className="info-section__title">안내 사항</h2>
 

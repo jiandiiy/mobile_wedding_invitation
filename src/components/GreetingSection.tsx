@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom';
 
 import type { WeddingConfig } from '../types/wedding';
 
+import { useTypingEffect } from '../hooks/useTypingEffect';
+
 type GreetingSectionProps = {
   config: WeddingConfig;
 };
@@ -101,6 +103,7 @@ export function GreetingSection({ config }: GreetingSectionProps) {
 
   const [isContactOpen, setIsContactOpen] = useState(false);
 
+
   const revealItems = useMemo<RevealItem[]>(() => {
     const titleItems: RevealItem[] = greeting.title
       .split('\n')
@@ -168,6 +171,12 @@ export function GreetingSection({ config }: GreetingSectionProps) {
     interval: 260,
   });
 
+ const titleLineCount = greeting.title.split('\n').length;
+  const invitationRef = useTypingEffect<HTMLParagraphElement>(
+    90,
+    visibleIndex >= titleLineCount - 1,
+  );
+
   let revealIndex = -1;
 
   const getRevealClassName = (className = '') => {
@@ -210,7 +219,12 @@ export function GreetingSection({ config }: GreetingSectionProps) {
           );
         })}
 
-         <p className="greeting-section__eyebrow">INVITATION</p>
+        <p
+  ref={invitationRef}
+  className="greeting-section__eyebrow"
+>
+  INVITATION
+</p>
   <span className="greeting-section__line" aria-hidden="true" />
         <div className="greeting-message">
           {revealItems.map((item) => {

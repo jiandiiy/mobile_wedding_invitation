@@ -700,135 +700,139 @@ a {
 
 /* =========================
    Footer
+   필기체: index.html에서 불러오기
+   <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 ========================= */
 
 .footer-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  padding: 20px 0 20px;
+  padding: 20px 0 0;
+  text-align: center;
 }
 
-.footer-section__photo {
+/* 자식 요소가 flex 축 때문에 줄어들지 않도록 폭을 고정 */
+.footer-section > * {
   width: 100%;
-  aspect-ratio: 2 / 1;      /* 사진 비율에 맞게 조정 (3/4, 1/1 등) */
+}
+
+/* 상단 사진 */
+.footer-section__photo {
+  aspect-ratio: 2 / 1;      /* 사진 비율에 맞게 조정 */
   overflow: hidden;
-  background: #eeeeee;      /* 로딩 중 빈 자리 표시 */
+  background: #eeeeee;
 }
 
 .footer-section__photo img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;        /* 비율 유지하며 꽉 채움 */
+  object-fit: cover;
   object-position: center;  /* 인물이 잘리면 'center top' 등으로 조정 */
 }
 
-/* 사진과 버튼 사이 간격 */
-.footer-section__share {
-  margin: 45px 0 60px;
+/* 필기체 감사 인사 */
+.footer-section__thanks {
+  margin: 72px 0 48px;
+  font-family: 'Pinyon Script', cursive;
+  font-style: italic;
+  font-size: 56px;
+  line-height: 1.1;
+  color: #1c1c1c;
 }
 
-/* 공유 버튼 섹션 */
-.footer-section__share {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  max-width: 300px;
-}
-
-.footer-share-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: transparent;
-  color: #111111;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border-radius: 0;
-}
-
-.footer-share-button:active {
-  background: #f5f5f5;
-}
-
-.footer-share-button__icon {
-  font-size: 18px;
-}
-
-.footer-share-button__text {
-  letter-spacing: -0.04em;
-}
-
-.footer-share-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.footer-share-button:disabled:hover {
-  background-color: inherit; /* 호버 효과 제거 */
-}
-
-/* 기본 정보 섹션 */
-.footer-section__info {
-  text-align: center;
-  padding-top: 32px;
-  width: 100%;
+.footer-section__message {
+  margin: 0 0 40px;
+  font-size: 15px;
+  line-height: 2;
+  color: #8a8a8a;
+  word-break: keep-all;
 }
 
 .footer-section__names {
-  color: #111111;
+  margin: 0 0 56px;
   font-size: 14px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.04em;
+  color: #8a8a8a;
 }
 
-.footer-section__date {
-  color: #666666;
-  font-size: 13px;
-  font-weight: 400;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
+/* 공유 버튼 */
 .footer-section__actions {
   display: flex;
-  gap: 12px;
-  margin: 16px 0;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 64px;
 }
 
-.footer-action-button {
-  flex: 1;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
+.footer-section__actions button {
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.2s;
-  
-  &:active {
-    background: #f5f5f5;
-  }
-  
-  &__icon {
-    font-size: 20px;
-  }
-  
-  &__text {
-    font-size: 12px;
-    font-weight: 600;
-  }
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  letter-spacing: 0.15em;
+  color: #666;
+  cursor: pointer;
 }
+
+.footer-section__actions button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.footer-section__kakao-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 20px;
+  border-radius: 50%;
+  background: #8a8a8a;
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0;
+  color: #fff;
+}
+
+/* 하단 마퀴 띠 */
+.footer-marquee {
+  width: 100%;              /* 핵심: 폭을 명시해야 트랙이 뷰포트 안에서 잘림 */
+  overflow: hidden;
+  border-top: 1px solid #aaaaaa;
+  border-bottom: 1px solid #aaaaaa;
+  padding: 12px 0;
+  margin-bottom: 40px;
+}
+
+.footer-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: footer-marquee 30s linear infinite;
+  will-change: transform;
+}
+
+.footer-marquee__group {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.footer-marquee__group span {
+  padding-right: 0.6em;
+  font-family: 'Nanum Myeongjo', serif;
+  font-style: normal;
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  white-space: nowrap;
+  color: #666666;
+}
+
+@keyframes footer-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 
 /* =========================
    Guest Upload Form Step
@@ -3521,7 +3525,7 @@ input.guestbook-form__field:focus {
   max-height: calc(100svh - 48px);
   overflow-y: auto;
   padding: 52px 30px 44px;
-  background: #2a2318;
+  background: #222222;
   color: #e9ddc8;
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
 }
@@ -3542,7 +3546,7 @@ input.guestbook-form__field:focus {
   height: 30px;
   border: 0;
   background: transparent;
-  color: #e9ddc8;
+  color: #ffffff;
   font-size: 28px;
   font-weight: 200;
   line-height: 1;
@@ -3560,7 +3564,7 @@ input.guestbook-form__field:focus {
 .contact-modal__heading span {
   display: block;
   height: 1px;
-  border-top: 1px dashed rgba(233, 221, 200, 0.72);
+  border-top: 1px dashed #ffffff;
 }
 
 .contact-modal__heading h2 {
@@ -3583,8 +3587,8 @@ input.guestbook-form__field:focus {
 .contact-group h3 {
   margin: 0 0 22px;
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(233, 221, 200, 0.16);
-  color: #e9ddc8;
+  border-bottom: 1px solid #ffffff;
+  color: #ffffff;
   font-family: var(--font-korean-serif);
   font-size: 18px;
   font-weight: 700;
@@ -3607,7 +3611,7 @@ input.guestbook-form__field:focus {
 }
 
 .contact-row__relation {
-  color: rgba(233, 221, 200, 0.82);
+  color: rgba(255, 255, 255, 0.82);
   font-size: 16px;
   font-weight: 400;
   text-align: left;
@@ -3638,7 +3642,7 @@ input.guestbook-form__field:focus {
   border: 0;
   padding: 0;
   background: transparent;
-  color: #e9ddc8;
+  color: #ffffff;
   cursor: pointer;
   text-decoration: none;
 }
@@ -3812,7 +3816,7 @@ input.guestbook-form__field:focus {
 .info-item__label {
   font-size: 10px;
   letter-spacing: 0.12em;
-  color: var(--gb-accent, #4a7fb5); /* 포인트 컬러 */
+  color: #999; /* 포인트 컬러 */
 }
 
 .info-item__name {
@@ -3853,4 +3857,21 @@ input.guestbook-form__field:focus {
   line-height: 1.8;
   color: #444;
   word-break: keep-all;   /* 한글 단어 단위 줄바꿈 */
+}
+
+/* 타이핑 중 커서: 애니메이션을 ::after에 직접 지정 */
+.is-typing::after {
+  content: '|';
+  margin-left: 2px;
+  animation: caret-blink 0.8s steps(1) infinite;
+}
+
+
+/* 끝나면 커서 숨김 */
+.is-typed::after {
+  content: none;
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
 }

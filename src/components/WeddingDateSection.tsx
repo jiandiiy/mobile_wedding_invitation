@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 
 import type { WeddingConfig } from '../types/wedding';
 
+import { useTypingEffect } from '../hooks/useTypingEffect';
+
 type WeddingDateSectionProps = {
   config: WeddingConfig;
 };
@@ -82,6 +84,10 @@ targetDate.setHours(0, 0, 0, 0);
 const diffTime = targetDate.getTime() - today.getTime();
   const dDay = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+
+  // eyebrow 타이핑 (글자 속도 ms)
+  const eyebrowRef = useTypingEffect<HTMLParagraphElement>(280);
+
   const { sectionRef, visibleIndex } = useSequentialReveal({
     itemCount: 5,
     interval: 260,
@@ -96,9 +102,13 @@ const diffTime = targetDate.getTime() - today.getTime();
       .filter(Boolean)
       .join(' ');
 
+
+
   return (
     <section ref={sectionRef} className="content-section wedding-date-section">
-       <p className="calendar-section__eyebrow">THE DAY</p>
+       <p ref={eyebrowRef} className="calendar-section__eyebrow">
+        THE DAY
+      </p>
   <span className="calendar-section__line" aria-hidden="true" />
       <h2 className={getRevealClassName(0)}>{monthLabel}</h2>
 

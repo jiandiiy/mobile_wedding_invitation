@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState, useRef } from 'react';
 import type { WeddingConfig } from '../types/wedding';
 import { Toast } from './Toast';
 
+import { useTypingEffect } from '../hooks/useTypingEffect';
+
 type AccountOwner = 'groom' | 'bride';
 
 type AccountSectionProps = {
@@ -18,6 +20,9 @@ const ACCOUNT_OWNERS: AccountOwner[] = ['groom', 'bride'];
 
 export function AccountSection({ config }: AccountSectionProps) {
   const { accounts } = config;
+
+   const titleRef = useTypingEffect<HTMLHeadingElement>();
+
 
   const [selectedOwner, setSelectedOwner] = useState<AccountOwner>('groom');
   const [toastMessage, setToastMessage] = useState('');
@@ -59,7 +64,7 @@ export function AccountSection({ config }: AccountSectionProps) {
 
   return (
     <section className="account-section is-visible" ref={sectionRef}>
-      <h2>WEDDING GIFT</h2>
+      <h2 ref={titleRef}>WITH HEART</h2>
       <span className="account-section__line" aria-hidden="true" />
       <p className="account-section__description">
         참석이 어려우신 분들을 위해 마음 전하실 곳을 마련했습니다. <br/>축복해주시는 그 마음, 잊지 않고 평생 소중히 간직하겠습니다.

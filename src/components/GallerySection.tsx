@@ -10,6 +10,8 @@ import { createPortal } from 'react-dom';
 
 import type { GalleryImage } from '../types/wedding';
 
+import { useTypingEffect } from '../hooks/useTypingEffect';
+
 type GallerySectionProps = {
   images: GalleryImage[];
 };
@@ -17,6 +19,7 @@ type GallerySectionProps = {
 const SWIPE_THRESHOLD = 50; // px: 이 이상 밀면 사진 넘김
 
 export function GallerySection({ images }: GallerySectionProps) {
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [selectedImageId, setSelectedImageId] = useState<number | null>(null);
   const [loadedImageIds, setLoadedImageIds] = useState<number[]>([]);
@@ -27,6 +30,8 @@ export function GallerySection({ images }: GallerySectionProps) {
     itemCount: 3,
     interval: 240,
   });
+
+  const titleRef = useTypingEffect<HTMLHeadingElement>(120, visibleIndex >= 0);
 
   const selectedImageIndex = useMemo(() => {
     if (selectedImageId === null) return -1;
@@ -139,7 +144,12 @@ export function GallerySection({ images }: GallerySectionProps) {
 
   return (
     <section ref={sectionRef} className="gallery-section">
-      <h2 className={getRevealClassName(0)}>GALLERY</h2>
+      <h2
+  ref={titleRef}
+  className={getRevealClassName(0)}
+>
+  GALLERY
+</h2>
        <span className="gallery-section__line" aria-hidden="true" />
 
       <div className={getRevealClassName(1, 'gallery-tabs')}>
