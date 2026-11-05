@@ -92,7 +92,7 @@ const CONTACT_GROUPS: ContactGroup[] = [
       {
         relation: '신부 어머니',
         name: '이미라',
-        phone: '010-7685-0878',
+        phone: '010-8496-0878',
       },
     ],
   },
