@@ -1,3 +1,14 @@
+const diag = {
+  hasKakao: typeof window.Kakao !== 'undefined',
+  isInitialized: window.Kakao?.isInitialized?.(),
+  hasAppKey: !!import.meta.env.VITE_KAKAO_APP_KEY,
+  isKakaoTalk: /KAKAOTALK/i.test(navigator.userAgent),
+  ua: navigator.userAgent.slice(-60),
+  logs: JSON.parse(localStorage.getItem('kakao_debug_logs') || '[]').slice(-3),
+};
+alert(JSON.stringify(diag, null, 2));
+
+
 /**
  * Kakao SDK 타입 확장
  */
