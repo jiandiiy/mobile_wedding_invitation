@@ -1,4 +1,3 @@
-
 /**
  * Kakao SDK 타입 확장
  */
@@ -109,106 +108,73 @@ const saveDebugLog = (key: string, data: unknown) => {
 };
 
 /**
- * 실제 공유 호출
- * 반드시 클릭 이벤트 안에서 동기적으로 실행해야 합니다.
+ * 공유 실패를 콘솔과 디버그 로그에 기록하고, 사용자에게 안내합니다.
  */
-const sendFeed = (config: ShareConfig) => {
+function handleShareError(tag: string, error: unknown): void {
+  const message = error instanceof Error ? error.message : String(error);
+
+  console.error(`[${tag}]`, error);
+  saveDebugLog(tag, { message });
+  alert('카카오톡 공유에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+}
+
+/**
+ * 실제 공유 호출 (Kakao JS SDK v2)
+ * - sendDefault는 콜백/Promise를 받지 않으며, 실패 시 예외를 던집니다.
+ * - 반드시 클릭 이벤트 안에서 동기적으로 실행해야 합니다.
+ */
+const sendFeed = (config: ShareConfig): void => {
   const webUrl = getAbsoluteUrl(config.webUrl);
   const imageUrl = getAbsoluteUrl(config.imageUrl);
 
- window.Kakao.Share.sendDefault({
-    objectType: 'feed',
-    content: {
-      title: config.title,
-      description: config.description,
-      imageUrl,
-      link: { webUrl, mobileWebUrl: webUrl },
-    },
-    buttons: [
-      { title: config.buttonTitle || '청첩장 보기', link: { webUrl, mobileWebUrl: webUrl } },
-      { title: '위치보기', link: { webUrl: LOCATION_URL, mobileWebUrl: LOCATION_URL } },
-    ],
-  })
-     .then((res: unknown) => {
-      console.log('✅ 카카오톡 공유 완료', res);
-      saveDebugLog('SHARE_SUCCESS', res);
-    })
-    .catch((error: unknown) => {
-      reportShareError('SHARE_API_FAIL', error); // 진단용 alert 포함
+  try {
+    window.Kakao.Share.sendDefault({
+      objectType: 'feed',
+      content: {
+        title: config.title,
+        description: config.description,
+        imageUrl,
+        link: { webUrl, mobileWebUrl: webUrl },
+      },
+      buttons: [
+        {
+          title: config.buttonTitle || '청첩장 보기',
+          link: { webUrl, mobileWebUrl: webUrl },
+        },
+        {
+          title: '위치보기',
+          link: { webUrl: LOCATION_URL, mobileWebUrl: LOCATION_URL },
+        },
+      ],
     });
+    saveDebugLog('SHARE_CALLED', {});
+  } catch (error) {
+    handleShareError('SHARE_SEND_FAILED', error);
+  }
 };
 
 /**
  * Kakao Talk으로 공유
- * - SDK가 이미 준비되어 있으면 await 없이 바로 공유합니다.
+ * - SDK가 이미 준비되어 있으면 바로 공유합니다.
  * - 준비되지 않은 경우에만 비동기로 초기화 후 공유합니다.
  */
-//export const shareToKakao = (config: ShareConfig): void => {
-//  try {
-//    if (window.Kakao?.isInitialized()) {
-//      sendFeed(config);
-//      return;
-//    }
-//
-//    initializeKakaoAsync().then((ok) => {
-//      if (ok && window.Kakao?.isInitialized()) {
-//        sendFeed(config);
-//      } else {
-//        saveDebugLog('SHARE_FAILED', { reason: 'Kakao SDK 미초기화' });
-//        console.warn('⚠️ Kakao SDK 미초기화');
-//        alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
-//      }
-//    });
-//  } catch (error) {
-//    console.error('❌ 카카오톡 공유 실패 (예외):', error);
-//    saveDebugLog('SHARE_ERROR', {
-//      message: error instanceof Error ? error.message : String(error),
-//    });
-//    alert('공유 중 오류가 발생했습니다.');
-//  }
-//};
-
-// 에러를 한 곳에서 기록하고 알림으로 보여 줍니다. (진단용, 원인 해결 후 alert만 제거)
-function reportShareError(tag: string, error: unknown): void {
-  const detail =
-    error instanceof Error
-      ? `${error.name}: ${error.message}`
-      : JSON.stringify(error);
-
-  console.error(tag, error);
-  saveDebugLog(tag, { detail });
-  alert(`[${tag}]\n${detail}`); // TODO: 원인 확인 후 제거
-}
-
 export const shareToKakao = (config: ShareConfig): void => {
-  // sendFeed 호출 자체가 던지는 예외를 따로 잡습니다.
-  const send = () => {
-    try {
-      sendFeed(config);
-    } catch (error) {
-      reportShareError('SHARE_SEND_THROW', error);
-    }
-  };
-
-  try {
-    if (window.Kakao?.isInitialized()) {
-      send();
-      return;
-    }
-
-    initializeKakaoAsync()
-      .then((ok) => {
-        if (ok && window.Kakao?.isInitialized()) {
-          send();
-        } else {
-          reportShareError('SHARE_NOT_INITIALIZED', 'Kakao SDK 미초기화');
-        }
-      })
-      .catch((error) => reportShareError('SHARE_INIT_REJECT', error));
-  } catch (error) {
-    reportShareError('SHARE_SYNC_THROW', error);
+  if (window.Kakao?.isInitialized()) {
+    sendFeed(config);
+    return;
   }
+
+  initializeKakaoAsync()
+    .then((ok) => {
+      if (ok && window.Kakao?.isInitialized()) {
+        sendFeed(config);
+      } else {
+        handleShareError('SHARE_NOT_INITIALIZED', new Error('Kakao SDK 초기화 실패'));
+      }
+    })
+    .catch((error: unknown) => handleShareError('SHARE_INIT_FAILED', error));
 };
+
 /**
  * 디버그 로그 조회 (개발용)
  */
