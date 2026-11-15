@@ -10,6 +10,7 @@ declare global {
 /**
  * Kakao SDK 초기화 (Promise 기반)
  * 모바일 웹뷰에서 SDK 로드 지연 대응
+ * - 실패한 결과는 캐시하지 않아 다음 호출에서 재시도합니다.
  */
 
 let kakaoInitPromise: Promise<boolean> | null = null;
@@ -17,26 +18,25 @@ let kakaoInitPromise: Promise<boolean> | null = null;
 export const initializeKakaoAsync = (): Promise<boolean> => {
   if (typeof window === 'undefined') return Promise.resolve(false);
 
+  if (window.Kakao?.isInitialized()) {
+    console.log('✅ Kakao는 이미 초기화됨');
+    return Promise.resolve(true);
+  }
+
   if (kakaoInitPromise) return kakaoInitPromise;
 
-  kakaoInitPromise = new Promise((resolve) => {
-    if (window.Kakao?.isInitialized()) {
-      console.log('✅ Kakao는 이미 초기화됨');
-      resolve(true);
-      return;
-    }
-// kakaoShare.ts에 추가 - 카톡 WebView 감지
-    const isKakaoTalkWebView = /KAKAOTALK/i.test(navigator.userAgent);
-console.log('카톡 WebView?', isKakaoTalkWebView);
-console.log('User-Agent:', navigator.userAgent);
+  // 카톡 WebView 감지 로그
+  const isKakaoTalkWebView = /KAKAOTALK/i.test(navigator.userAgent);
+  console.log('카톡 WebView?', isKakaoTalkWebView);
+  console.log('User-Agent:', navigator.userAgent);
 
-    const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
-    if (!appKey) {
-      console.warn('⚠️ VITE_KAKAO_APP_KEY가 설정되지 않았습니다.');
-      resolve(false);
-      return;
-    }
+  const appKey = import.meta.env.VITE_KAKAO_APP_KEY;
+  if (!appKey) {
+    console.warn('⚠️ VITE_KAKAO_APP_KEY가 설정되지 않았습니다.');
+    return Promise.resolve(false);
+  }
 
+  kakaoInitPromise = new Promise<boolean>((resolve) => {
     let attempts = 0;
     const maxAttempts = 50;
 
@@ -46,17 +46,15 @@ console.log('User-Agent:', navigator.userAgent);
       if (window.Kakao) {
         clearInterval(checkAndInit);
 
-        if (!window.Kakao.isInitialized()) {
-          try {
+        try {
+          if (!window.Kakao.isInitialized()) {
             window.Kakao.init(appKey);
             console.log('✅ Kakao 초기화 완료');
-            resolve(true);
-          } catch (error) {
-            console.error('❌ Kakao 초기화 실패:', error);
-            resolve(false);
           }
-        } else {
           resolve(true);
+        } catch (error) {
+          console.error('❌ Kakao 초기화 실패:', error);
+          resolve(false);
         }
       } else if (attempts >= maxAttempts) {
         clearInterval(checkAndInit);
@@ -64,6 +62,10 @@ console.log('User-Agent:', navigator.userAgent);
         resolve(false);
       }
     }, 100);
+  }).then((ok) => {
+    // 실패한 결과는 캐시하지 않음 (재시도 허용)
+    if (!ok) kakaoInitPromise = null;
+    return ok;
   });
 
   return kakaoInitPromise;
@@ -77,11 +79,12 @@ interface ShareConfig {
   buttonTitle?: string;
 }
 
+const LOCATION_URL = 'https://kko.to/stczwqQlK8';
+
 /**
  * URL을 절대경로로 변환
  */
 const getAbsoluteUrl = (path: string): string => {
-  if (typeof window === 'undefined') return path;
   if (path.startsWith('http')) return path;
   return `${window.location.origin}${path}`;
 };
@@ -105,80 +108,75 @@ const saveDebugLog = (key: string, data: unknown) => {
 };
 
 /**
- * Kakao Talk으로 공유 (비동기)
+ * 실제 공유 호출
+ * 반드시 클릭 이벤트 안에서 동기적으로 실행해야 합니다.
  */
-export const shareToKakao = async (config: ShareConfig): Promise<boolean> => {
-  try {
-    const isInitialized = await initializeKakaoAsync();
+const sendFeed = (config: ShareConfig) => {
+  const webUrl = getAbsoluteUrl(config.webUrl);
+  const imageUrl = getAbsoluteUrl(config.imageUrl);
 
-    if (!isInitialized || !window.Kakao?.isInitialized()) {
-      const errorMsg = 'Kakao SDK 미초기화';
-      saveDebugLog('SHARE_FAILED', { reason: errorMsg });
-      alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
-      console.warn(`⚠️ ${errorMsg}`);
-      return false;
+  saveDebugLog('SHARE_ATTEMPT', { title: config.title, imageUrl, webUrl });
+
+  window.Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: config.title,
+      description: config.description,
+      imageUrl,
+      link: { webUrl, mobileWebUrl: webUrl },
+    },
+    buttons: [
+      {
+        title: config.buttonTitle || '청첩장 보기',
+        link: { webUrl, mobileWebUrl: webUrl },
+      },
+      {
+        title: '위치보기',
+        link: { webUrl: LOCATION_URL, mobileWebUrl: LOCATION_URL },
+      },
+    ],
+    success: (res: any) => {
+      console.log('✅ 카카오톡 공유 완료', res);
+      saveDebugLog('SHARE_SUCCESS', res);
+    },
+    fail: (error: any) => {
+      console.error('❌ 카카오톡 공유 API 실패:', error);
+      saveDebugLog('SHARE_FAILED', {
+        error: error?.message || String(error),
+        errorCode: error?.code,
+      });
+      alert('공유 중 오류가 발생했습니다.');
+    },
+  });
+};
+
+/**
+ * Kakao Talk으로 공유
+ * - SDK가 이미 준비되어 있으면 await 없이 바로 공유합니다.
+ * - 준비되지 않은 경우에만 비동기로 초기화 후 공유합니다.
+ */
+export const shareToKakao = (config: ShareConfig): void => {
+  try {
+    if (window.Kakao?.isInitialized()) {
+      sendFeed(config);
+      return;
     }
 
-    const locationUrl = 'https://kko.to/stczwqQlK8';
-
-    // 공유 요청 정보 로깅
-    const shareData = {
-      title: config.title,
-      imageUrl: getAbsoluteUrl(config.imageUrl),
-      webUrl: getAbsoluteUrl(config.webUrl),
-    };
-    saveDebugLog('SHARE_ATTEMPT', shareData);
-
-    // ✅ 콜백 추가: success & fail
-    window.Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: config.title,
-        description: config.description,
-        imageUrl: getAbsoluteUrl(config.imageUrl),
-        link: {
-          webUrl: getAbsoluteUrl(config.webUrl),
-          mobileWebUrl: getAbsoluteUrl(config.webUrl),
-        },
-      },
-      buttons: [
-        {
-          title: config.buttonTitle || '청첩장 보기',
-          link: {
-            webUrl: getAbsoluteUrl(config.webUrl),
-            mobileWebUrl: getAbsoluteUrl(config.webUrl),
-          },
-        },
-        {
-          title: '위치보기',
-          link: {
-            webUrl: locationUrl,
-            mobileWebUrl: locationUrl,
-          },
-        },
-      ],
-      success: (res: any) => {
-        console.log('✅ 카카오톡 공유 완료', res);
-        saveDebugLog('SHARE_SUCCESS', res);
-      },
-      fail: (error: any) => {
-        console.error('❌ 카카오톡 공유 API 실패:', error);
-        saveDebugLog('SHARE_FAILED', {
-          error: error?.message || String(error),
-          errorCode: error?.code,
-        });
-        alert('공유 중 오류가 발생했습니다.');
-      },
+    initializeKakaoAsync().then((ok) => {
+      if (ok && window.Kakao?.isInitialized()) {
+        sendFeed(config);
+      } else {
+        saveDebugLog('SHARE_FAILED', { reason: 'Kakao SDK 미초기화' });
+        console.warn('⚠️ Kakao SDK 미초기화');
+        alert('카카오톡 공유 기능을 사용할 수 없습니다. 잠시 후 다시 시도해주세요.');
+      }
     });
-
-    return true;
   } catch (error) {
     console.error('❌ 카카오톡 공유 실패 (예외):', error);
     saveDebugLog('SHARE_ERROR', {
       message: error instanceof Error ? error.message : String(error),
     });
     alert('공유 중 오류가 발생했습니다.');
-    return false;
   }
 };
 
