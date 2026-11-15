@@ -140,13 +140,10 @@ const sendFeed = (config: ShareConfig) => {
       console.log('✅ 카카오톡 공유 완료', res);
       saveDebugLog('SHARE_SUCCESS', res);
     },
-    fail: (error: any) => {
+    fail:  (error: any) => {
       console.error('❌ 카카오톡 공유 API 실패:', error);
-      saveDebugLog('SHARE_FAILED', {
-        error: error?.message || String(error),
-        errorCode: error?.code,
-      });
-      alert('공유 중 오류가 발생했습니다.');
+      saveDebugLog('SHARE_FAILED', { message: error?.message, code: error?.code });
+      alert(`공유 실패\n${JSON.stringify(error, null, 2)}`); // 임시 진단용: 확인 후 제거
     },
   });
 };
