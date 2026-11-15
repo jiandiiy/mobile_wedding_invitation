@@ -116,9 +116,7 @@ const sendFeed = (config: ShareConfig) => {
   const webUrl = getAbsoluteUrl(config.webUrl);
   const imageUrl = getAbsoluteUrl(config.imageUrl);
 
-  saveDebugLog('SHARE_ATTEMPT', { title: config.title, imageUrl, webUrl });
-
-  window.Kakao.Share.sendDefault({
+ window.Kakao.Share.sendDefault({
     objectType: 'feed',
     content: {
       title: config.title,
@@ -127,25 +125,17 @@ const sendFeed = (config: ShareConfig) => {
       link: { webUrl, mobileWebUrl: webUrl },
     },
     buttons: [
-      {
-        title: config.buttonTitle || '청첩장 보기',
-        link: { webUrl, mobileWebUrl: webUrl },
-      },
-      {
-        title: '위치보기',
-        link: { webUrl: LOCATION_URL, mobileWebUrl: LOCATION_URL },
-      },
+      { title: config.buttonTitle || '청첩장 보기', link: { webUrl, mobileWebUrl: webUrl } },
+      { title: '위치보기', link: { webUrl: LOCATION_URL, mobileWebUrl: LOCATION_URL } },
     ],
-    success: (res: any) => {
+  })
+     .then((res: unknown) => {
       console.log('✅ 카카오톡 공유 완료', res);
       saveDebugLog('SHARE_SUCCESS', res);
-    },
-    fail:  (error: any) => {
-      console.error('❌ 카카오톡 공유 API 실패:', error);
-      saveDebugLog('SHARE_FAILED', { message: error?.message, code: error?.code });
-      alert(`공유 실패\n${JSON.stringify(error, null, 2)}`); // 임시 진단용: 확인 후 제거
-    },
-  });
+    })
+    .catch((error: unknown) => {
+      reportShareError('SHARE_API_FAIL', error); // 진단용 alert 포함
+    });
 };
 
 /**
